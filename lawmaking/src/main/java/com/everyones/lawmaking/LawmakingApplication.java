@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 public class LawmakingApplication {
     public static void main(String[] args) {
         SpringApplication.run(LawmakingApplication.class, args);
+
     }
 
 }

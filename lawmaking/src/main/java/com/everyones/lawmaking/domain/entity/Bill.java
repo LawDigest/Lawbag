@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -13,9 +16,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Bill {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "bill_id")
-    private long id;
+    private String id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
@@ -25,27 +27,28 @@ public class Bill {
     private int age;
 
     @Column(name = "bill_name")
-
     private String billName;
 
-    @Column(name = "represent_proposer")
-    private String representProposer;
 
-    @Column(name = "public_proposer")
-    private String publicProposer;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "represent_proposer_id")
+    private Congressman representProposer;
 
-    private String committe;
+    @Builder.Default
+    @OneToMany(mappedBy = "bill")
+    private List<BillProposer> publicProposer = new ArrayList<>();
+
+    private String committee;
 
     @Column(name = "propose_date")
-    private LocalDateTime proposeDate;
+    private LocalDate proposeDate;
 
     private String status;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String summary;
 
-    @Lob
-    @Column(name = "gpt_summary")
+    @Column(name = "gpt_summary", columnDefinition = "TEXT")
     private String gptSummary;
 
     private String keyword;

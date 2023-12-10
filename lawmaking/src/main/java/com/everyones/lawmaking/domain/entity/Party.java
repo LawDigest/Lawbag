@@ -9,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@ToString
 @SuperBuilder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,7 +21,7 @@ public class Party extends BaseEntity{
 
     @Builder.Default
     @OneToMany(mappedBy = "party")
-    private List<CongressMan> congressManList = new ArrayList<>();
+    private List<Congressman> congressmanList = new ArrayList<>();
 
     private String name;
 
