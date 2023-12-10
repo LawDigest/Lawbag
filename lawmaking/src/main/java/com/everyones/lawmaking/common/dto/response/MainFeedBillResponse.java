@@ -10,11 +10,12 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class GetBillWithMainFeedRes {
-    private int page;
+public class MainFeedBillResponse {
     private List<BillDto> Bills;
 
-//    public static GetBillWithMainFeedRes of(BillDto billDto) {
-//
-//    }
+    public static MainFeedBillResponse of(List<BillDto> billList) {
+        return MainFeedBillResponse.builder()
+                .Bills(billList)
+                .build();
+    }
 }

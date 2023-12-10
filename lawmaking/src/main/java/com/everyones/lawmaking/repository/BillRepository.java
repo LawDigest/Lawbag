@@ -1,11 +1,7 @@
 package com.everyones.lawmaking.repository;
 
 import com.everyones.lawmaking.common.dto.BillDto;
-import com.everyones.lawmaking.common.dto.response.GetBillWithMainFeedRes;
 import com.everyones.lawmaking.domain.entity.Bill;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,6 +22,6 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "(:lastProposeDate IS NOT NULL AND b.proposeDate < :lastProposeDate) OR " +
             "(:lastProposeDate IS NOT NULL AND b.proposeDate = :lastProposeDate AND b.id < :lastBillId) " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
-    List<BillDto> findNext3Bills(@Param("lastBillId") String lastBillId, @Param("lastProposeDate") LocalDateTime lastProposeDate);
+    List<BillDto> getNext3Bills(@Param("lastBillId") String lastBillId, @Param("lastProposeDate") LocalDateTime lastProposeDate);
 
 }
