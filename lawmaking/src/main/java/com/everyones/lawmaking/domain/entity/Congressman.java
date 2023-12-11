@@ -27,6 +27,23 @@ public class Congressman {
     @OneToMany(mappedBy = "congressman")
     private List<BillProposer> billPublicProposer = new ArrayList<>();
 
-    @Column(name = "bill_count")
-    private int billCount;
+    @Column(name = "elect_sort")
+    private String electSort;
+
+    private String district;
+
+    @Column(name = "commits", columnDefinition = "TEXT")
+    private String commits;
+
+    @Column(name = "elected")
+    private String elected;
+
+    @Column(name = "homepage")
+    private String homepage;
+
+    @Column(name = "represent_count")
+    private int representCount;
+
+    @Column(name = "public_count")
+    private int publicCount;
 }

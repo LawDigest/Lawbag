@@ -26,4 +26,7 @@ public class BillProposer {
     @Column(name = "is_represent")
     private boolean isRepresent;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "party_id")
+    private Party party;
 }

@@ -43,7 +43,8 @@ public class Bill {
     @Column(name = "propose_date")
     private LocalDate proposeDate;
 
-    private String status;
+    @Column(name = "stage")
+    private String stage;
 
     @Column(columnDefinition = "TEXT")
     private String summary;
