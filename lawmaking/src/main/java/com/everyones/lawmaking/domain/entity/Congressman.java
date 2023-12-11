@@ -27,11 +27,10 @@ public class Congressman {
     @OneToMany(mappedBy = "congressman")
     private List<BillProposer> billPublicProposer = new ArrayList<>();
 
-    @Column(name = "elect_name")
-    private String electName;
+    @Column(name = "elect_sort")
+    private String electSort;
 
-    @Column(name = "ori_name")
-    private String oriName;
+    private String district;
 
     @Column(name = "commits", columnDefinition = "TEXT")
     private String commits;
