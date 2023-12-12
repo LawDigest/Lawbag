@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface BillProposerRepository extends JpaRepository<BillProposer, Long> {
     List<BillProposer> findByBill(Bill bill);
+
+    List<BillProposer> findByBillId(String billId);
 }
