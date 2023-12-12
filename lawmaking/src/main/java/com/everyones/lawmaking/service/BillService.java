@@ -42,7 +42,7 @@ public class BillService {
         var publicProposers = billProposerRepository.findCongressmanNamesByBillIdList(billIds).stream()
                 .collect(Collectors.groupingBy(row -> (String) row[0],
                         Collectors.mapping(row -> (String) row[1], Collectors.toList())));
-
+        log.debug("publicProposers= " +publicProposers);
         // publicProposers에서 가져온 공동발의자 명단 BillDto에 넣기
         bills.forEach(billDto -> {
             String billId = billDto.getBillId();

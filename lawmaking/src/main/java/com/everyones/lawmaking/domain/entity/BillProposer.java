@@ -29,4 +29,5 @@ public class BillProposer {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
+
 }
