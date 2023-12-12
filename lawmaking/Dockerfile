@@ -6,7 +6,7 @@ RUN chmod +x ./gradlew
 
 RUN ./gradlew clean build
 
-ARG JAR_FILE=./build/libs/lawmaking-0.0.1-SNAPSHOT.jar
+ARG JAR_FILE=/Lawbag/lawmaking/build/libs/*-SNAPSHOT.jar
 
 COPY ${JAR_FILE} app.jar
 
