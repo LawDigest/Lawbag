@@ -1,5 +1,7 @@
 FROM openjdk:17-jdk-slim
 
+WORKDIR /Lawbag/lawmaking
+
 RUN chmod +x ./gradlew
 
 RUN ./gradlew clean build
