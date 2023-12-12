@@ -4,6 +4,8 @@ WORKDIR /Lawbag/lawmaking
 
 COPY gradlew .
 
+COPY gradle gradle
+
 COPY build.gradle .
 
 RUN chmod +x ./gradlew
