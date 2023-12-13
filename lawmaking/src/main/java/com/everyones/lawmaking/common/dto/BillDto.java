@@ -20,27 +20,26 @@ public class BillDto {
     private String billId;
     private String billName;
     private String representProposer;
-    private List<String> publicProposer;
+    private String representProposerId;
+    private String proposers;
     private String summary;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate proposeDate;
     private int view;
     private int like;
-    private boolean isRepresent; // 추가된 필드
 
-    public BillDto(String billId, String name, String representProposer, String summary, LocalDate proposeDate) {
+    public BillDto(String billId, String name, String representProposer, String representProposerId, String proposers, String summary, LocalDate proposeDate) {
         this.billId = billId;
         this.billName = name;
         this.representProposer = representProposer;
+        this.representProposerId = representProposerId;
+        this.proposers = proposers;
         this.summary = summary;
         this.proposeDate = proposeDate;
         this.view = 0;
         this.like = 0;
     }
 
-    public void setIsRepresent(boolean isRepresent) {
-        this.isRepresent = isRepresent;
-    }
 
 
 }

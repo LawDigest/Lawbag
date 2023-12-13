@@ -34,24 +34,20 @@ public class BillService {
 
         // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
         var bills = billRepository.findNextThreeBills(pageable);
-        var billIds = bills.stream()
-                .map(BillDto::getBillId)
-                .collect(Collectors.toList());
+        var paginationResponse = PaginationResponse.builder().pageNumber(page).isLastPage(false).build();
+        return MainFeedBillResponse.builder()
+                .Bills(bills)
+                .paginationResponse(paginationResponse)
+                .build();
+    }
 
-        // billid와 같은 공동발의자가져오고 묶어주기
-        var publicProposers = billProposerRepository.findCongressmanNamesByBillIdList(billIds).stream()
-                .collect(Collectors.groupingBy(row -> (String) row[0],
-                        Collectors.mapping(row -> (String) row[1], Collectors.toList())));
-        log.debug("publicProposers= " +publicProposers);
-        // publicProposers에서 가져온 공동발의자 명단 BillDto에 넣기
-        bills.forEach(billDto -> {
-            String billId = billDto.getBillId();
-            List<String> proposers = publicProposers.getOrDefault(billId, Collections.emptyList());
-            billDto.setPublicProposer(proposers);
-        });
-        var paginationResponse = PaginationResponse.builder().pageNumber(page).build();
-        var mainfeedBillResponse = MainFeedBillResponse.of(paginationResponse, bills);
-        return mainfeedBillResponse;
+    public MainFeedBillResponse getNext3BillsWithStage(int page, Pageable pageable, String stage) {
+        var bills = billRepository.findNextThreeBillsWithStage(pageable, stage);
+        var paginationResponse = PaginationResponse.builder().pageNumber(page).isLastPage(false).build();
+        return MainFeedBillResponse.builder()
+                .Bills(bills)
+                .paginationResponse(paginationResponse)
+                .build();
     }
 
 }

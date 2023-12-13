@@ -28,25 +28,25 @@ public class CongressmanService {
     private final CongressmanRepository congressmanRepository;
     private final BillRepository billRepository;
     private final BillProposerRepository billProposerRepository;
-    public MainFeedBillResponse getCongressmanDetails(String id, Pageable pageable) {
-        Congressman congressman = congressmanRepository.findCongressmanById(id);
-        Slice<Bill> billsSlice = billRepository.findAllBillsByCongressmanId(id, pageable);
-        List<BillDto> billDtos = billsSlice.getContent().stream()
-                .map(this::convertToBillDto)
-                .collect(Collectors.toList());
-
-        boolean isLastPage = billsSlice.isLast();
-
-        var paginationResponse = PaginationResponse.builder()
-                .pageNumber(pageable.getPageNumber())
-                .isLastPage(isLastPage)
-                .build();
-
-        CongressmanDto congressmanDto = convertToCongressmanDto(congressman, billDtos);
-
-        return MainFeedBillResponse.of(paginationResponse, congressmanDto);
-
-    }
+//    public MainFeedBillResponse getCongressmanDetails(String id, Pageable pageable) {
+//        Congressman congressman = congressmanRepository.findCongressmanById(id);
+//        Slice<Bill> billsSlice = billRepository.findAllBillsByCongressmanId(id, pageable);
+//        List<BillDto> billDtos = billsSlice.getContent().stream()
+//                .map(this::convertToBillDto)
+//                .collect(Collectors.toList());
+//
+//        boolean isLastPage = billsSlice.isLast();
+//
+//        var paginationResponse = PaginationResponse.builder()
+//                .pageNumber(pageable.getPageNumber())
+//                .isLastPage(isLastPage)
+//                .build();
+//
+//        CongressmanDto congressmanDto = convertToCongressmanDto(congressman, billDtos);
+//
+//        return MainFeedBillResponse.of(paginationResponse, congressmanDto);
+//
+//    }
 //    public MainFeedBillResponse getCongressmanDetails(String id, Pageable pageable) {
 //        Congressman congressman = congressmanRepository.findCongressmanById(id);
 //        Slice<Bill> billsSlice = billRepository.findAllBillsByCongressmanId(id, pageable);
@@ -97,6 +97,7 @@ public class CongressmanService {
                 .build();
     }
 
+    // Service 단에서 값을 일일이 넣어주지 말고, 따로 Dto 내부에 congressman, bills 인자로 갖는 static builder 만들어서 처리해주세요.
     private CongressmanDto convertToCongressmanDto(Congressman congressman, List<BillDto> bills) {
         return CongressmanDto.builder()
                 .congressmanId(congressman.getId())
