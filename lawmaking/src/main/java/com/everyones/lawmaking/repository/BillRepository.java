@@ -16,14 +16,15 @@ import java.util.List;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, String> {
-    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, b.proposers, b.summary, b.proposeDate)" +
+    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id,  b.proposers, b.gptSummary, b.proposeDate)" +
             "FROM Bill b " +
             "JOIN b.publicProposer bp " +
             "WHERE bp.isRepresent = true " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
     List<BillDto> findNextThreeBills(Pageable pageable);
 
-    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, b.proposers, b.summary, b.proposeDate)" +
+    // TODO: 추후 summary gptSummary로 변경
+    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id, b.proposers, b.summary, b.proposeDate)" +
             "FROM Bill b " +
             "JOIN b.publicProposer bp " +
             "WHERE bp.isRepresent = true " +
