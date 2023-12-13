@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.repository;
 
 import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.response.BillDetailDto;
 import com.everyones.lawmaking.domain.entity.Bill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -32,10 +33,23 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "ORDER BY b.proposeDate DESC, b.id DESC")
     List<BillDto> findNextThreeBillsWithStage(Pageable pageable, @Param("stage")String stage);
 
-    List<Bill> findByRepresentProposerId(String congressmanId);
+    @Query("SELECT new com.everyones.lawmaking.common.dto.response.BillDetailDto(b.id, b.billName, b.proposers, b.gptSummary,  b.proposeDate, b.stage, c.name, c.id)" +
+            "FROM Bill b " +
+            "JOIN b.publicProposer bp " +
+            "JOIN bp.congressman c " +
+            "WHERE bp.isRepresent = true AND b.id = :billId")
+    BillDetailDto findBillDetailByBillId(@Param("billId") String billId);
 
-    @Query("SELECT b FROM Bill b WHERE b.representProposer.id = :congressmanId OR EXISTS (SELECT bp FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.bill = b)")
-    Slice<Bill> findAllBillsByCongressmanId(@Param("congressmanId") String congressmanId, Pageable pageable);
+//    @Query("select new com.everyones.lawmaking.common.dto(b.id, b.billName, b.gptSummary, b.proposeDate, b.stage, c.name,  c.congressmanId) " +
+//    "FROM Bill b " +
+//    "JOIN b.publicProposer bp " +
+//    "WHERE ")
+//    BillDetailDto findBillByBillId(String billId);
+
+//    List<Bill> findByRepresentProposerId(String congressmanId);
+
+//    @Query("SELECT b FROM Bill b WHERE b.representProposer.id = :congressmanId OR EXISTS (SELECT bp FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.bill = b)")
+//    Slice<Bill> findAllBillsByCongressmanId(@Param("congressmanId") String congressmanId, Pageable pageable);
 
 
 }

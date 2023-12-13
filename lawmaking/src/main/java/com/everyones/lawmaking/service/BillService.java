@@ -3,23 +3,18 @@ package com.everyones.lawmaking.service;
 import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.response.MainFeedBillResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
+import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.repository.BillProposerRepository;
 import com.everyones.lawmaking.repository.BillRepository;
-import com.everyones.lawmaking.repository.BillRepositoryImpl;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -54,12 +49,27 @@ public class BillService {
                 .build();
     }
 
+    public Object getBillWtihDeatail(String billId) {
+        var bill = billRepository.findBillDetailByBillId(billId);
+        var publicProposersAndIds = billProposerRepository.findPartyByBill(billId);
+        List<String> publicProposers = publicProposersAndIds.stream()
+                .map(congressman -> congressman[1].length() > 3 ? congressman[1].substring(0, 3) : congressman[1])
+                .collect(Collectors.toList());
+
+        List<String> publicProposerIds = publicProposersAndIds.stream()
+                .map(congressman -> congressman[0])
+                .collect(Collectors.toList());
+        bill.setPublicProposerList(publicProposers);
+        bill.setPublicProposerIdList(publicProposerIds);
+        return bill;
+    }
+
 
     public List<BillDto> setPartyInBillDto(List<BillDto> bills) {
         var billIds = bills.stream()
                 .map(BillDto::getBillId)
                 .collect(Collectors.toList());
-        var partyList = billProposerRepository.findPartyByBill(billIds);
+        var partyList = billProposerRepository.findPartyByBills(billIds);
 
         Map<String, List<Long>> partyIdMap = partyList.stream()
                 .collect(Collectors.groupingBy(row -> (String) row[0],

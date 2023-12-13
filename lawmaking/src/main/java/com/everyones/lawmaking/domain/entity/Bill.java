@@ -32,10 +32,6 @@ public class Bill {
     @Column(name = "proposers")
     private String proposers;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "represent_proposer_id")
-    private Congressman representProposer;
-
     @Builder.Default
     @OneToMany(mappedBy = "bill")
     private List<BillProposer> publicProposer = new ArrayList<>();
