@@ -13,8 +13,8 @@ public class CongressmanDto {
     private String congressmanId;
     private String name;
     private String partyName; // Assume that we get the party name from the 'Party' entity
-    private String electName;
-    private String oriName;
+    private String electSort;
+    private String district;
     private String commits;
     private String elected;
     private String homepage;

@@ -33,19 +33,22 @@ public class CongressmanService {
     private BillDto convertToBillDto(Bill bill) {
         return BillDto.builder()
                 .billId(bill.getId())
-                .name(bill.getBillName())
+                .billName(bill.getBillName()) // 여기를 수정함
                 .representProposer(bill.getRepresentProposer().getName())
-                .content(bill.getSummary())
-                .date(bill.getProposeDate().atStartOfDay())
+                .summary(bill.getSummary()) // 여기를 수정함
+                .proposeDate(bill.getProposeDate()) // 여기를 수정함
+//                .view(0) // 기본값 설정
+//                .like(0) // 기본값 설정
                 .build();
     }
+
     private CongressmanDto convertToCongressmanDto(Congressman congressman, List<BillDto> bills) {
         return CongressmanDto.builder()
                 .congressmanId(congressman.getId())
                 .name(congressman.getName())
                 .partyName(congressman.getParty().getName())
-                .electName(congressman.getElectName())
-                .oriName(congressman.getOriName())
+                .electSort(congressman.getElectSort())
+                .district(congressman.getDistrict())
                 .commits(congressman.getCommits())
                 .elected(congressman.getElected())
                 .homepage(congressman.getHomepage())

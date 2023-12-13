@@ -23,8 +23,8 @@ public class BillProposer {
     @JoinColumn(name = "congressman_id")
     private Congressman congressman;
 
-//    @Column(name = "is_represent")
-//    private boolean isRepresent; # 이거 무슨 용도인지 궁금하네요
+    @Column(name = "is_represent")
+    private boolean isRepresent;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")

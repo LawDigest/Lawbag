@@ -27,11 +27,10 @@ public class Congressman {
     @OneToMany(mappedBy = "congressman")
     private List<BillProposer> billPublicProposer = new ArrayList<>();
 
-    @Column(name = "elect_name")
-    private String electName;
+    @Column(name = "elect_sort")
+    private String electSort;
 
-    @Column(name = "ori_name")
-    private String oriName;
+    private String district;
 
     @Column(name = "commits", columnDefinition = "TEXT")
     private String commits;
@@ -48,3 +47,38 @@ public class Congressman {
     @Column(name = "public_count")
     private int publicCount;
 }
+//public class Congressman {
+//    @Id
+//    @Column(name = "congressman_id")
+//    private String id;
+//
+//    private String name;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "party_id")
+//    private Party party;
+//
+//    @Builder.Default
+//    @OneToMany(mappedBy = "congressman")
+//    private List<BillProposer> billPublicProposer = new ArrayList<>();
+//
+//    @Column(name = "elect_name")
+//    private String electName;
+//
+//    @Column(name = "ori_name")
+//    private String oriName;
+//
+//    @Column(name = "commits", columnDefinition = "TEXT")
+//    private String commits;
+//
+//    @Column(name = "elected")
+//    private String elected;
+//
+//    @Column(name = "homepage")
+//    private String homepage;
+//
+//    @Column(name = "represent_count")
+//    private int representCount;
+//
+//    @Column(name = "public_count")
+//    private int publicCount;
+//}

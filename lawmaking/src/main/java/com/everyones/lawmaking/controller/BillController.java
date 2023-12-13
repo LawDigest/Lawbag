@@ -7,6 +7,7 @@ import com.everyones.lawmaking.service.BillService;
 import com.everyones.lawmaking.service.CongressmanService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -15,8 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Controller
@@ -26,11 +28,13 @@ public class BillController {
     private final BillService billService;
     private final CongressmanService congressmanService;
     @GetMapping("/mainfeed")
-    public ResponseEntity<?> getNext3Bills(@RequestParam(required = false) String lastBillId,
-                                                              @RequestParam(required = false) LocalDateTime lastProposeDate) {
+    public ResponseEntity<Map<String, Object>> getNext3Bills(
+            @RequestParam(name = "page", required = true) int page,
+            @RequestParam(name = "size", required = true) int size,
+            Pageable pageable) {
         try {
-            var result = billService.getNext3Bills(lastBillId, lastProposeDate);
-            var resp = BaseResponse.generateSuccessResponse(Collections.singletonList(result));
+            var result = billService.getNext3Bills(page, pageable);
+            var resp = BaseResponse.generateSuccessResponse(result);
             return new ResponseEntity<>(resp, HttpStatus.OK);
         } catch (Exception e) {
             var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
