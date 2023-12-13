@@ -21,4 +21,8 @@ public interface BillProposerRepository extends JpaRepository<BillProposer, Long
             "WHERE bp.isRepresent = false AND bp.bill.id IN :billIds " +
             "ORDER BY bp.bill.id, bp.congressman.name")
     List<Object[]> findCongressmanNamesByBillIdList(@Param("billIds") List<String> billIds);
+
+    @Query("SELECT bp.bill.id FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.isRepresent = true")
+    List<String> findRepresentativeBillIdsByCongressmanId(@Param("congressmanId") String congressmanId);
+
 }

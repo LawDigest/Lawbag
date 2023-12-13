@@ -28,6 +28,9 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     List<Bill> findByRepresentProposerId(String congressmanId);
 
     @Query("SELECT b FROM Bill b WHERE b.representProposer.id = :congressmanId OR EXISTS (SELECT bp FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.bill = b)")
-    List<Bill> findAllBillsByCongressmanId(@Param("congressmanId") String congressmanId);
+    Slice<Bill> findAllBillsByCongressmanId(@Param("congressmanId") String congressmanId, Pageable pageable);
+
+//    @Query("SELECT b FROM Bill b WHERE b.representProposer.id = :congressmanId OR EXISTS (SELECT bp FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.bill = b)")
+//    List<Bill> findAllBillsByCongressmanId(@Param("congressmanId") String congressmanId);
 
 }

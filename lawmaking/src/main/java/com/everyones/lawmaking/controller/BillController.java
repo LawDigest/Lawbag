@@ -7,6 +7,7 @@ import com.everyones.lawmaking.service.BillService;
 import com.everyones.lawmaking.service.CongressmanService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,10 +43,28 @@ public class BillController {
         }
     }
     @GetMapping("/mainfeed/{id}")
-    public ResponseEntity<CongressmanDto> getCongressman(@PathVariable String id) {
-        CongressmanDto congressmanDto = congressmanService.getCongressmanDetails(id);
-        return ResponseEntity.ok(congressmanDto);
+    public ResponseEntity<MainFeedBillResponse> getCongressman(
+            @PathVariable String id,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        MainFeedBillResponse response = congressmanService.getCongressmanDetails(id, pageable);
+        return ResponseEntity.ok(response);
     }
+//    @GetMapping("/mainfeed/{id}")
+//    public ResponseEntity<MainFeedBillResponse> getCongressman(
+//            @PathVariable String id,
+//            @RequestParam("page") int page,
+//            @RequestParam("size") int size) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        MainFeedBillResponse congressmanDto = congressmanService.getCongressmanDetails(id, pageable);
+//        return ResponseEntity.ok(congressmanDto);
+//    }
+//    @GetMapping("/mainfeed/{id}")
+//    public ResponseEntity<CongressmanDto> getCongressman(@PathVariable String id) {
+//        CongressmanDto congressmanDto = congressmanService.getCongressmanDetails(id);
+//        return ResponseEntity.ok(congressmanDto);
+//    }
 
 
 }
