@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -22,5 +23,14 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "ORDER BY b.proposeDate DESC, b.id DESC")
     List<BillDto> findNextThreeBills(Pageable pageable);
 
+
+
+    List<Bill> findByRepresentProposerId(String congressmanId);
+
+    @Query("SELECT b FROM Bill b WHERE b.representProposer.id = :congressmanId OR EXISTS (SELECT bp FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.bill = b)")
+    Slice<Bill> findAllBillsByCongressmanId(@Param("congressmanId") String congressmanId, Pageable pageable);
+
+//    @Query("SELECT b FROM Bill b WHERE b.representProposer.id = :congressmanId OR EXISTS (SELECT bp FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.bill = b)")
+//    List<Bill> findAllBillsByCongressmanId(@Param("congressmanId") String congressmanId);
 
 }

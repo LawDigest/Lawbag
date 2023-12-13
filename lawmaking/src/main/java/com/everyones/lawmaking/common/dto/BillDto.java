@@ -26,6 +26,7 @@ public class BillDto {
     private LocalDate proposeDate;
     private int view;
     private int like;
+    private boolean isRepresent; // 추가된 필드
 
     public BillDto(String billId, String name, String representProposer, String summary, LocalDate proposeDate) {
         this.billId = billId;
@@ -37,6 +38,9 @@ public class BillDto {
         this.like = 0;
     }
 
+    public void setIsRepresent(boolean isRepresent) {
+        this.isRepresent = isRepresent;
+    }
 
 
 }

@@ -29,6 +29,8 @@ public class Bill {
     @Column(name = "bill_name")
     private String billName;
 
+    @Column(name = "proposers")
+    private String proposers;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "represent_proposer_id")
