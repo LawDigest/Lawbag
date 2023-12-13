@@ -85,17 +85,17 @@ public class CongressmanService {
 //                .collect(Collectors.toList());
 //        return convertToCongressmanDto(congressman, billDtos);
 //    }
-    private BillDto convertToBillDto(Bill bill) {
-        return BillDto.builder()
-                .billId(bill.getId())
-                .billName(bill.getBillName()) // 여기를 수정함
-                .representProposer(bill.getRepresentProposer().getName())
-                .summary(bill.getSummary()) // 여기를 수정함
-                .proposeDate(bill.getProposeDate()) // 여기를 수정함
-                .view(0) // 기본값 설정
-                .like(0) // 기본값 설정
-                .build();
-    }
+//    private BillDto convertToBillDto(Bill bill) {
+//        return BillDto.builder()
+//                .billId(bill.getId())
+//                .billName(bill.getBillName()) // 여기를 수정함
+//                .representProposer(bill.getRepresentProposer().getName())
+//                .summary(bill.getSummary()) // 여기를 수정함
+//                .proposeDate(bill.getProposeDate()) // 여기를 수정함
+//                .view(0) // 기본값 설정
+//                .like(0) // 기본값 설정
+//                .build();
+//    }
 
     // Service 단에서 값을 일일이 넣어주지 말고, 따로 Dto 내부에 congressman, bills 인자로 갖는 static builder 만들어서 처리해주세요.
     private CongressmanDto convertToCongressmanDto(Congressman congressman, List<BillDto> bills) {
