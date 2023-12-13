@@ -25,13 +25,20 @@ public interface BillProposerRepository extends JpaRepository<BillProposer, Long
 //            "ORDER BY bp.bill.id, bp.congressman.name")
 //    List<Object[]> findCongressmanNamesByBillIdList(@Param("billIds") List<String> billIds);
 
-    @Query("SELECT bp.bill.id AS billId, " +
-            "       bp.party.id AS partyId, " +
-            "       bp.party.name AS partyName " +
+    @Query("SELECT DISTINCT c.id AS congressmanId, " +
+            "                c.name AS congressmanName " +
             "FROM BillProposer bp " +
-            "INNER JOIN bp.party p " +
+            "JOIN Congressman c ON bp.congressman.id = c.id " +
+            "WHERE bp.bill.id = :billId AND bp.isRepresent = false")
+    List<String[]> findPartyByBill(@Param("billId") String billId);
+    @Query("SELECT bp.bill.id AS billId, " +
+            "       p.id AS partyId, " +
+            "       p.name AS partyName " +
+            "FROM BillProposer bp " +
+            "INNER JOIN bp.bill b " +
+            "INNER JOIN b.party p " +
             "WHERE bp.bill.id IN :billIds ")
-    List<Object[]> findPartyByBill(@Param("billIds") List<String> billIds);
+    List<Object[]> findPartyByBills(@Param("billIds") List<String> billIds);
 
     @Query("SELECT bp.bill.id FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.isRepresent = true")
     List<String> findRepresentativeBillIdsByCongressmanId(@Param("congressmanId") String congressmanId);

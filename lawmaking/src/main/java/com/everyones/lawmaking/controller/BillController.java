@@ -56,6 +56,19 @@ public class BillController {
         }
     }
 
+    @GetMapping("/detail/{bill_id}")
+    public ResponseEntity<Map<String, Object>> getBillWtihDeatail(
+            @PathVariable("bill_id") String billId) {
+        try {
+            var result = billService.getBillWtihDeatail(billId);
+            var resp = BaseResponse.generateSuccessResponse(result);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (Exception e) {
+            var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
+            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 //    @GetMapping("/mainfeed/{id}")
 //    public ResponseEntity<MainFeedBillResponse> getCongressman(
 //            @PathVariable String id,
