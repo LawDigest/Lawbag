@@ -51,16 +51,29 @@ public class BillService {
 
     public Object getBillWtihDeatail(String billId) {
         var bill = billRepository.findBillDetailByBillId(billId);
-        var publicProposersAndIds = billProposerRepository.findPartyByBill(billId);
-        List<String> publicProposers = publicProposersAndIds.stream()
+        var publicIdsAndProposersAndParty = billProposerRepository.findPartyByBill(billId);
+
+        List<String> publicProposerIds = publicIdsAndProposersAndParty.stream()
+                .map(congressman -> congressman[0])
+                .collect(Collectors.toList());
+
+        List<String> publicProposers = publicIdsAndProposersAndParty.stream()
                 .map(congressman -> congressman[1].length() > 3 ? congressman[1].substring(0, 3) : congressman[1])
                 .collect(Collectors.toList());
 
-        List<String> publicProposerIds = publicProposersAndIds.stream()
-                .map(congressman -> congressman[0])
-                .collect(Collectors.toList());
+        var proposerPartyCountMap = bill.getProposerPartyCountMap();
+        var proposerPartyIdMap = bill.getProposerPartyIdMap();
+        publicIdsAndProposersAndParty.stream()
+                .forEach(entry -> {
+                    String partyName = entry[2];
+                    long partyId = Long.parseLong(entry[3]);
+                    proposerPartyCountMap.merge(partyName, 1, Integer::sum);
+                    proposerPartyIdMap.put(partyName, partyId);
+                });
+
         bill.setPublicProposerList(publicProposers);
         bill.setPublicProposerIdList(publicProposerIds);
+        bill.setProposerPartyCountMap(proposerPartyCountMap);
         return bill;
     }
 
