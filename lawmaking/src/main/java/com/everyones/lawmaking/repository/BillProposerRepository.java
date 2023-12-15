@@ -1,7 +1,10 @@
 package com.everyones.lawmaking.repository;
 
+import com.everyones.lawmaking.common.dto.CongressDetailBillDto;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.domain.entity.BillProposer;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -9,21 +12,10 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface BillProposerRepository extends JpaRepository<BillProposer, Long> {
-    List<BillProposer> findByBill(Bill bill);
 
     List<BillProposer> findByBillId(String billId);
-
-    // BillIdList에 있는 각 BillId에 대응하는 Congressman 이름을 리스트로 묶어서 가져오기
-//    @Query("SELECT bp.bill.id AS billId, " +
-//            "       bp.congressman.name AS congressmanName, " +
-//            "       bp.party.id AS partyId, " +
-//            "       bp.party.name AS partyName " +
-//            "FROM BillProposer bp " +
-//            "INNER JOIN bp.congressman c " +
-//            "INNER JOIN bp.party p " +
-//            "WHERE bp.isRepresent = false AND bp.bill.id IN :billIds " +
-//            "ORDER BY bp.bill.id, bp.congressman.name")
-//    List<Object[]> findCongressmanNamesByBillIdList(@Param("billIds") List<String> billIds);
+    // In BillProposerRepository interface
+    Page<BillProposer> findRepresentativeByCongressmanId(String congressmanId, Pageable pageable);
 
     @Query("SELECT DISTINCT c.id AS congressmanId, " +
             "                c.name AS congressmanName, " +

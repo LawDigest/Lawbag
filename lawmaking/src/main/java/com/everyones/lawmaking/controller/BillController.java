@@ -24,7 +24,7 @@ import java.util.Map;
 @RequestMapping("/v1/bill")
 public class BillController {
     private final BillService billService;
-    private final CongressmanService congressmanService;
+
     @GetMapping("/mainfeed")
 
     public ResponseEntity<Map<String, Object>> getNext3Bills(
@@ -69,15 +69,7 @@ public class BillController {
         }
     }
 
-//    @GetMapping("/mainfeed/{id}")
-//    public ResponseEntity<MainFeedBillResponse> getCongressman(
-//            @PathVariable String id,
-//            @RequestParam("page") int page,
-//            @RequestParam("size") int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        MainFeedBillResponse response = congressmanService.getCongressmanDetails(id, pageable);
-//        return ResponseEntity.ok(response);
-//    }
+
 //    @GetMapping("/mainfeed/{id}")
 //    public ResponseEntity<MainFeedBillResponse> getCongressman(
 //            @PathVariable String id,
