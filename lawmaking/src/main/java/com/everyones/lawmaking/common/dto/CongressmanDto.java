@@ -6,26 +6,13 @@ import lombok.*;
 import java.util.List;
 @Data
 @Builder
-//@AllArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 public class CongressmanDto {
     private String id;
     private String name;
 
-    public CongressmanDto(String id, String name, String partyName, String partyImageUrl, String electSort, String district, String commits, String elected, String homepage, int representCount, int publicCount, List<CongressDetailBillDto> representativeBills) {
-        this.id = id;
-        this.name = name;
-        this.partyName = partyName;
-        this.partyImageUrl = partyImageUrl;
-        this.electSort = electSort;
-        this.district = district;
-        this.commits = commits;
-        this.elected = elected;
-        this.homepage = homepage;
-        this.representCount = representCount;
-        this.publicCount = publicCount;
-        this.representativeBills = representativeBills;
-    }
+
 
     private String partyName; // Retrieved from Party entity using party_id
     private String partyImageUrl; // Retrieved from Party entity using party_id
