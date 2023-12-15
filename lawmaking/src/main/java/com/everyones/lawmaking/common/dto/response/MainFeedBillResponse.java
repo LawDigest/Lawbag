@@ -20,7 +20,4 @@ public class MainFeedBillResponse {
     private PaginationResponse paginationResponse;
 
     private List<BillDto> Bills;
-
-
-
 }
