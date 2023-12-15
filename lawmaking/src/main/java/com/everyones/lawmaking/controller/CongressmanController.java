@@ -21,7 +21,9 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name="Congressman Controller", description = "의원 상세 페이지")
 public class CongressmanController {
     private final CongressmanService congressmanService;
-    @GetMapping("/detail/{congressman_id}")
+
+    // commits, 최신순 정렬 해결 필요
+    @GetMapping("/detail/{congressman_id}/represent")
     public ResponseEntity<CongressmanDetailResponse> getCongressmanDetails(
             @PathVariable("congressman_id") String congressmanId,
             @RequestParam("page") int page,
@@ -30,4 +32,31 @@ public class CongressmanController {
         CongressmanDetailResponse response = congressmanService.getCongressmanDetails(congressmanId, pageable);
         return ResponseEntity.ok(response);
     }
+    @GetMapping("/detail/{congressman_id}/public")
+    public ResponseEntity<CongressmanDetailResponse> getCongressmanCoSponsorshipDetails(
+            @PathVariable("congressman_id") String congressmanId,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        CongressmanDetailResponse response = congressmanService.getCongressmanCoSponsorshipDetails(congressmanId, pageable);
+        return ResponseEntity.ok(response);
+    }
 }
+//15줄부터 28줄에 적용되어있는 생성자는 CongressmanDto의 모든 필드를 인자로 넘겨주는 생성자입니다. 위에 주석 표시한 @AllArgsConstructor와 같은 기능으로, 해당 부분을 지우고 @AllArgsConstructor를 쓰는게 더 깔끔해보입니다.
+// return CongressDetailBillDto.builder()
+//         .billId(bill.getId())
+//         .billName(bill.getBillName())
+//         .proposeDate(bill.getProposeDate())
+//         .proposers(bill.getProposers())
+//         .summary(bill.getSummary())
+//         .gptSummary(bill.getGptSummary())
+//         .representProposer(representativeProposer.getCongressman().getName())
+//         .representProposerId(representativeProposer.getCongressman().getId())
+//         .representProposerParty(representativeProposer.getCongressman().getParty().getName())
+//         .representProposerPartyId(representativeProposer.getCongressman().getParty().getId())
+//         .representProposerImgUrl(representativeProposer.getCongressman().getParty().getPartyImageUrl())
+//         .partyList(partyNames)
+//         .partyIdList(partyIds)
+//         .build();
+//         위 부분을 dto 안에 static builder로 선언하여 생성자 주입하는 방식이 좋아보입니다. 근데 사실 일단 작동하는 코드니까 이부분은 그냥 냅두셔도 될 것 같습니다. 고생하셨씁니다.
+//
