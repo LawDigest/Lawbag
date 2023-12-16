@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CongressmanDetailResponse {

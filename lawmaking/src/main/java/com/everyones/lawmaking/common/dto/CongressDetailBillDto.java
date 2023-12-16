@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor  // 전체 생성자 추가
+
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CongressDetailBillDto {
 

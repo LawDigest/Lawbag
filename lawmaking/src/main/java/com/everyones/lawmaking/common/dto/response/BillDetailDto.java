@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,9 +45,9 @@ public class BillDetailDto {
 
     private List<String> publicProposerIdList;
 
-    private Map<String, Integer> proposerPartyCountMap = new ConcurrentHashMap<>();
+    private List<Map<String, Object>> proposerPartyCountList = new ArrayList<>();
 
-    private Map<String, Long> proposerPartyIdMap = new ConcurrentHashMap<>();
+    private List<Map<String, Object>> proposerPartyIdList = new ArrayList<>();
 
     private int view = 0;
 
@@ -64,7 +65,15 @@ public class BillDetailDto {
         this.representProposerPartyId = representProposerPartyId;
         this.stage = stage;
         this.proposers = proposers;
-        this.proposerPartyCountMap.put(representProposerParty, 1);
-        this.proposerPartyIdMap.put(representProposerParty, representProposerPartyId);
+
+        var proposerPartyCountMap = new ConcurrentHashMap<String, Object>();
+        proposerPartyCountMap.put("name", representProposerParty);
+        proposerPartyCountMap.put("count", 1);
+        this.proposerPartyCountList.add(proposerPartyCountMap);
+
+        var proposerPartyIdMap = new ConcurrentHashMap<String, Object>();
+        proposerPartyIdMap.put("name", representProposerParty);
+        proposerPartyIdMap.put("party_id", representProposerPartyId);
+        this.proposerPartyIdList.add(proposerPartyIdMap);
     }
 }
