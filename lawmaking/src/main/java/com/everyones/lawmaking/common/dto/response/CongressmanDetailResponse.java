@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 @Builder
 @Getter
 @NoArgsConstructor
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class CongressmanDetailResponse {
     private CongressmanDto congressman;
     private boolean isLastPage;
