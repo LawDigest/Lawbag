@@ -1,6 +1,8 @@
 package com.everyones.lawmaking.common.dto;
 
 import com.everyones.lawmaking.domain.entity.Congressman;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.util.List;
@@ -8,6 +10,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
 public class CongressmanDto {
     private String id;
     private String name;
