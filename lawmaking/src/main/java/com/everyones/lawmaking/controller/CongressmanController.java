@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 //의원 자세히 보기 api
 //특정 의원이 대표 발의 법안 api
 //특정 의원이 공동 발의 법안 api
@@ -22,21 +24,21 @@ import org.springframework.web.bind.annotation.*;
 public class CongressmanController {
     private final CongressmanService congressmanService;
     @GetMapping("/detail")
-    public ResponseEntity<CongressmanDetailResponse> getCongressmanBillsDetails(
+    public ResponseEntity<Map<String, Object>> getCongressmanBillsDetails(
             @RequestParam("congressman_id") String congressmanId,
             @RequestParam("stage") String stage, // "represent" or "public"
             @RequestParam("page") int page,
             @RequestParam("size") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        CongressmanDetailResponse response;
+        Map<String, Object> response;
 
         if ("대표".equals(stage)) {
             response = congressmanService.getCongressmanDetails(congressmanId, pageable);
         } else if ("공동".equals(stage)) {
             response = congressmanService.getCongressmanCoSponsorshipDetails(congressmanId, pageable);
         } else {
-            // Handle invalid type value
+            // 유효하지 않은 stage 값 처리
             return ResponseEntity.badRequest().body(null);
         }
 

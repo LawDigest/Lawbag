@@ -8,20 +8,18 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 import org.springframework.data.domain.Page;
 
-@Builder
+import java.util.List;
+
 @Getter
+@Setter
 @NoArgsConstructor
-@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
+
+@AllArgsConstructor
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CongressmanDetailResponse {
     private CongressmanDto congressman;
-    private boolean isLastPage;
-    private int pageNumber;
-
-    public CongressmanDetailResponse(CongressmanDto congressman, boolean isLastPage, int pageNumber) {
-        this.congressman = congressman;
-        this.isLastPage = isLastPage;
-        this.pageNumber = pageNumber;
-    }
+    private PaginationResponse paginationResponse;
+    private List<CongressDetailBillDto> bills;
 }
 
 

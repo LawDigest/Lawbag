@@ -5,7 +5,6 @@ import com.everyones.lawmaking.domain.entity.BillProposer;
 import com.everyones.lawmaking.repository.BillProposerRepository;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
@@ -19,7 +18,8 @@ import java.util.stream.Collectors;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor  // 전체 생성자 추가
-@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
+
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CongressDetailBillDto {
 
 
