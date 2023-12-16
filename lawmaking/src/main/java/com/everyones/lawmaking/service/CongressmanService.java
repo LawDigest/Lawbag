@@ -115,5 +115,63 @@ public class CongressmanService {
                 .findFirst()
                 .orElseThrow(() -> new RuntimeException("Representative proposer not found"));
     }
+////////////////////////////////////////////////////////////////////////////////////////////
+    public CongressmanDetailResponse getCongressmanCoSponsorshipDetails(String congressmanId, Pageable pageable) {
+        Congressman congressman = congressmanRepository.findByIdWithParty(congressmanId)
+                .orElseThrow(() -> new RuntimeException("Congressman not found"));
+        CongressmanDto congressmanDto = buildCongressmanDto(congressman);
+
+        Page<BillProposer> coSponsorshipProposersPage = billProposerRepository.findCoSponsorshipsByCongressmanId(congressmanId, pageable);
+
+        List<String> billIds = coSponsorshipProposersPage.getContent().stream()
+                .map(bp -> bp.getBill().getId())
+                .collect(Collectors.toList());
+
+        List<CongressDetailBillDto> detailedBills = buildDetailedBillDtos(billIds, false); // false indicates co-sponsorship
+
+        congressmanDto.setRepresentativeBills(detailedBills);
+
+        return new CongressmanDetailResponse(
+                congressmanDto,
+                coSponsorshipProposersPage.isLast(),
+                coSponsorshipProposersPage.getNumber()
+        );
+    }
+
+    private List<CongressDetailBillDto> buildDetailedBillDtos(List<String> billIds, boolean isRepresent) {
+        List<CongressDetailBillDto> detailedBills = new ArrayList<>();
+        for (String billId : billIds) {
+            Bill bill = billRepository.findById(billId)
+                    .orElseThrow(() -> new RuntimeException("Bill not found"));
+            List<BillProposer> proposers = billProposerRepository.findByBillIdAndIsRepresent(billId, isRepresent);
+            detailedBills.add(buildDetailedBillDto(bill, proposers));
+        }
+        return detailedBills;
+    }
+
+    private CongressDetailBillDto buildDetailedBillDto(Bill bill, List<BillProposer> proposers) {
+        // Extract party names and IDs for all proposers
+        List<String> partyNames = proposers.stream()
+                .map(proposer -> proposer.getCongressman().getParty().getName())
+                .distinct()
+                .collect(Collectors.toList());
+        List<Long> partyIds = proposers.stream()
+                .map(proposer -> proposer.getCongressman().getParty().getId())
+                .distinct()
+                .collect(Collectors.toList());
+
+        // Construct the CongressDetailBillDto object with co-sponsors
+        return CongressDetailBillDto.builder()
+                .billId(bill.getId())
+                .billName(bill.getBillName())
+                .proposeDate(bill.getProposeDate())
+                .proposers(bill.getProposers())
+                .summary(bill.getSummary())
+                .gptSummary(bill.getGptSummary())
+                .partyList(partyNames)
+                .partyIdList(partyIds)
+                .build(); // Ensure all the necessary fields are set, you may need to adjust depending on the data structure
+    }
+
 }
 
