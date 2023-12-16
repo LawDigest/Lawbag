@@ -1,8 +1,10 @@
 package com.everyones.lawmaking.service;
 
+import com.everyones.lawmaking.common.dto.BaseResponse;
 import com.everyones.lawmaking.common.dto.CongressDetailBillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
 import com.everyones.lawmaking.common.dto.response.CongressmanDetailResponse;
+import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.domain.entity.BillProposer;
 import com.everyones.lawmaking.domain.entity.Congressman;
@@ -17,7 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 
@@ -28,7 +32,7 @@ public class CongressmanService {
     private final BillProposerRepository billProposerRepository;
     private final BillRepository billRepository;
 
-    public CongressmanDetailResponse getCongressmanDetails(String congressmanId, Pageable pageable) {
+    public Map<String, Object> getCongressmanDetails(String congressmanId, Pageable pageable) {
         Congressman congressman = congressmanRepository.findByIdWithParty(congressmanId)
                 .orElseThrow(() -> new RuntimeException("Congressman not found"));
 
@@ -40,14 +44,17 @@ public class CongressmanService {
                 .collect(Collectors.toList());
 
         List<CongressDetailBillDto> detailedBills = buildDetailedBillDtos(billIds);
+        // PaginationResponse 객체 생성
+        PaginationResponse paginationResponse = new PaginationResponse(representativeProposersPage.isLast(), representativeProposersPage.getNumber());
 
-        congressmanDto.setRepresentativeBills(detailedBills);
+        // API 응답 데이터 구조 조립
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("pagination_response", paginationResponse);
+        responseData.put("congressman", congressmanDto);
+        responseData.put("bills", detailedBills);
 
-        return new CongressmanDetailResponse(
-                congressmanDto,
-                representativeProposersPage.isLast(),
-                representativeProposersPage.getNumber()
-        );
+        // BaseResponse 포함하여 반환
+        return BaseResponse.generateSuccessResponse(responseData);
     }
 
     private List<CongressDetailBillDto> buildDetailedBillDtos(List<String> billIds) {
@@ -116,7 +123,7 @@ public class CongressmanService {
                 .orElseThrow(() -> new RuntimeException("Representative proposer not found"));
     }
 ////////////////////////////////////////////////////////////////////////////////////////////
-    public CongressmanDetailResponse getCongressmanCoSponsorshipDetails(String congressmanId, Pageable pageable) {
+    public Map<String, Object> getCongressmanCoSponsorshipDetails(String congressmanId, Pageable pageable) {
         Congressman congressman = congressmanRepository.findByIdWithParty(congressmanId)
                 .orElseThrow(() -> new RuntimeException("Congressman not found"));
         CongressmanDto congressmanDto = buildCongressmanDto(congressman);
@@ -127,15 +134,21 @@ public class CongressmanService {
                 .map(bp -> bp.getBill().getId())
                 .collect(Collectors.toList());
 
-        List<CongressDetailBillDto> detailedBills = buildDetailedBillDtos(billIds, false); // false indicates co-sponsorship
+        List<CongressDetailBillDto> detailedBills = buildDetailedBillDtos(billIds, false); // false for co-sponsorship
 
-        congressmanDto.setRepresentativeBills(detailedBills);
+            // 기존 로직으로 CongressmanDto와 bills 목록을 가져옴
 
-        return new CongressmanDetailResponse(
-                congressmanDto,
-                coSponsorshipProposersPage.isLast(),
-                coSponsorshipProposersPage.getNumber()
-        );
+            // PaginationResponse 객체 생성
+        PaginationResponse paginationResponse = new PaginationResponse(coSponsorshipProposersPage.isLast(), coSponsorshipProposersPage.getNumber());
+
+        // API 응답 데이터 구조 조립
+        Map<String, Object> responseData = new HashMap<>();
+        responseData.put("pagination_response", paginationResponse);
+        responseData.put("congressman", congressmanDto);
+        responseData.put("bills", detailedBills);
+
+        // BaseResponse 포함하여 반환
+        return BaseResponse.generateSuccessResponse(responseData);
     }
 
     private List<CongressDetailBillDto> buildDetailedBillDtos(List<String> billIds, boolean isRepresent) {

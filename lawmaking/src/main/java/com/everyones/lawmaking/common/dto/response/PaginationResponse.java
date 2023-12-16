@@ -1,16 +1,17 @@
 package com.everyones.lawmaking.common.dto.response;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
-@Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
+@Builder
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PaginationResponse {
-    private boolean isLastPage = false;
+    private boolean isLastPage;
     private int pageNumber;
-
 }

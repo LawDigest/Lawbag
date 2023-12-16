@@ -2,6 +2,7 @@ package com.everyones.lawmaking.common.dto.response;
 
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -17,7 +18,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @NoArgsConstructor
 @Getter
 @Setter
-@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
+
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BillDetailDto {
     private String id;
     private String name;
