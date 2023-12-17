@@ -98,17 +98,20 @@ public class CongressmanService {
                 .map(proposer -> proposer.getCongressman().getParty().getName())
                 .distinct()
                 .collect(Collectors.toList());
-
+        partyNames.remove("무소속");
+        partyNames.remove("전직 국회의원");
         List<Long> partyIds = proposers.stream()
                 .map(proposer -> proposer.getCongressman().getParty().getId())
                 .distinct()
                 .collect(Collectors.toList());
-
+        partyIds.remove(Long.valueOf(4));
+        partyIds.remove(Long.valueOf(9));
         // Fetch party image URLs
         List<String> partyImageUrls = partyRepository.findAllByIds(partyIds).stream()
                 .map(Party::getPartyImageUrl)
                 .collect(Collectors.toList());
-
+        partyImageUrls.remove("/정당_사진/무소속.jpg");
+        partyImageUrls.remove("/정당_사진/전직 국회의원.jpg");
         // Initialize representative proposer details
         String representProposerName = null;
         String representProposerId = null;
@@ -126,10 +129,10 @@ public class CongressmanService {
             representProposerImgUrl = representativeProposer.getCongressman().getCongressmanImageUrl();
             representProposerPartyImgUrl = representativeProposer.getCongressman().getParty().getPartyImageUrl();
 
-            // Check and add the party image URL if it's not already in the list
-            if (!partyImageUrls.contains(representProposerPartyImgUrl)) {
-                partyImageUrls.add(0, representProposerPartyImgUrl);
-            }
+//            // Check and add the party image URL if it's not already in the list
+//            if (!partyImageUrls.contains(representProposerPartyImgUrl)) {
+//                partyImageUrls.add(0, representProposerPartyImgUrl);
+//            }
         }
 
         // Build and return the DTO
@@ -236,16 +239,21 @@ public class CongressmanService {
                 .map(proposer -> proposer.getCongressman().getParty().getName())
                 .distinct()
                 .collect(Collectors.toList());
-
+        partyNames.remove("무소속");
+        partyNames.remove("전직 국회의원");
         List<Long> partyIds = proposers.stream()
                 .map(proposer -> proposer.getCongressman().getParty().getId())
                 .distinct()
                 .collect(Collectors.toList());
+        partyIds.remove(Long.valueOf(4));
+        partyIds.remove(Long.valueOf(9));
 
         // Fetch party image URLs
         List<String> partyImageUrls = partyRepository.findAllByIds(partyIds).stream()
                 .map(Party::getPartyImageUrl)
                 .collect(Collectors.toList());
+        partyImageUrls.remove("/정당_사진/무소속.jpg");
+        partyImageUrls.remove("/정당_사진/전직 국회의원.jpg");
 
         // Initialize representative proposer details
         String representProposerName = null;
