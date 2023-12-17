@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 @RestController
 public class ImageController {
 
-    private final String baseDirectory = "/home/ubuntu/Lawbag/lawmaking/src/main/resources/static";
+    private final String baseDirectory = "src/main/resources/static/";
 
     @GetMapping("{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
