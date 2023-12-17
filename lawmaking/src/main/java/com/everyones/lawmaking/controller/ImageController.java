@@ -37,8 +37,6 @@
             String extension = fileExtension[fileExtension.length - 1].toLowerCase();
 
             switch (extension) {
-                case "jpg":
-                    return MimeTypeUtils.IMAGE_JPEG_VALUE;
                 case "png":
                     return MimeTypeUtils.IMAGE_PNG_VALUE;
                 case "gif":
