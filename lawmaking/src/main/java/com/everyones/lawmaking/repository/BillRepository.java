@@ -17,25 +17,28 @@ import java.util.List;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, String> {
-    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id,  b.proposers, b.gptSummary, b.proposeDate)" +
+    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id,  b.proposers, b.gptSummary, b.proposeDate, c.congressmanImageUrl)" +
             "FROM Bill b " +
             "JOIN b.publicProposer bp " +
+            "JOIN bp.congressman c " +
             "WHERE bp.isRepresent = true " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
     List<BillDto> findNextThreeBills(Pageable pageable);
 
     // TODO: 추후 summary gptSummary로 변경
-    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id, b.proposers, b.summary, b.proposeDate)" +
+    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id, b.proposers, b.summary, b.proposeDate, c.congressmanImageUrl)" +
             "FROM Bill b " +
             "JOIN b.publicProposer bp " +
+            "JOIN bp.congressman c " +
             "WHERE bp.isRepresent = true " +
             "AND b.stage = :stage " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
     List<BillDto> findNextThreeBillsWithStage(Pageable pageable, @Param("stage")String stage);
 
-    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id, b.proposers, b.gptSummary, b.proposeDate)" +
+    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id, b.proposers, b.gptSummary, b.proposeDate, c.congressmanImageUrl)" +
             "FROM Bill b " +
             "JOIN b.publicProposer bp " +
+            "JOIN bp.congressman c " +
             "WHERE bp.isRepresent = true " +
             "AND bp.congressman.party.id = :partyId " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
@@ -49,14 +52,15 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "ORDER BY b.proposeDate DESC, b.id DESC")
     List<String> findBillIdsBillsWithPartyAndPublic(Pageable pageable, @Param("partyId") long partyId);
 
-    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id,  b.proposers, b.gptSummary, b.proposeDate)" +
+    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id,  b.proposers, b.gptSummary, b.proposeDate, c.congressmanImageUrl)" +
             "FROM BillProposer bp " +
+            "JOIN bp.congressman c " +
             "INNER JOIN bp.bill b " +
-            "INNER JOIN b.party p " +
+            "INNER JOIN bp.congressman.party p " +
             "WHERE bp.bill.id IN :billIds AND bp.isRepresent = true")
     List<BillDto> findNextThreeBillsWithBills(List<String> billIds);
 
-    @Query("SELECT new com.everyones.lawmaking.common.dto.response.BillDetailDto(b.id, b.billName, b.proposers, b.gptSummary,  b.proposeDate, b.stage, c.name, c.id, p.name, p.id)" +
+    @Query("SELECT new com.everyones.lawmaking.common.dto.response.BillDetailDto(b.id, b.billName, b.proposers, b.gptSummary,  b.proposeDate, b.stage, c.name, c.id, p.name, p.id, c.congressmanImageUrl, b.keyword)" +
             "FROM Bill b " +
             "JOIN b.publicProposer bp " +
             "JOIN bp.congressman c " +

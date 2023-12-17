@@ -1,10 +1,7 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.BillDto;
-import com.everyones.lawmaking.common.dto.response.BillDetailDto;
-import com.everyones.lawmaking.common.dto.response.PartyBillDto;
-import com.everyones.lawmaking.common.dto.response.PartyDetailDto;
-import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.repository.BillRepository;
 import com.everyones.lawmaking.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +17,7 @@ public class PartyService {
     private final BillRepository billRepository;
     private final BillService billService;
 
-    public PartyDetailResponse getPartyDetail(Pageable pageable, long partyId, String stage) {
+    public PartyDetailResponse getPartyDetail(int page, Pageable pageable, long partyId, String stage) {
         PartyDetailDto partyDetails = partyRepository.findPartyDetailById(partyId);
         List<BillDto> bills = null;
         if (stage.equals("represent")) {
@@ -33,6 +30,10 @@ public class PartyService {
         return PartyDetailResponse.builder()
                 .partyDetail(partyDetails)
                 .bills(bills)
+                .paginationResponse(PaginationResponse.builder()
+                        .pageNumber(page)
+                        .isLastPage(false)
+                        .build())
                 .build();
     }
     public List<BillDto> getPartyDetailWithRepresentBills(Pageable pageable, long partyId) {

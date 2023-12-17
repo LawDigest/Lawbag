@@ -18,4 +18,6 @@ public class PartyDetailResponse {
 
     private List<BillDto> bills;
 
+    private PaginationResponse paginationResponse;
+
 }

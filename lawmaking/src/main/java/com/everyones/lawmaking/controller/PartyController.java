@@ -22,7 +22,7 @@ public class PartyController {
     Pageable pageable) {
         {
             try {
-                var result = partyService.getPartyDetail(pageable, partyId, stage);
+                var result = partyService.getPartyDetail(page, pageable, partyId, stage);
                 var resp = BaseResponse.generateSuccessResponse(result);
                 return new ResponseEntity<>(resp, HttpStatus.OK);
             } catch (Exception e) {
