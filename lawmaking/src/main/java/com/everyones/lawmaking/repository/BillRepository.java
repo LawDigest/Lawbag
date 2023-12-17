@@ -41,6 +41,9 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "WHERE bp.isRepresent = true AND b.id = :billId " +
             "AND p.id = c.party.id")
     BillDetailDto findBillDetailByBillId(@Param("billId") String billId);
+    List<Bill> findBySummaryContaining(String keyword);
+
+
 
 //    @Query("select new com.everyones.lawmaking.common.dto(b.id, b.billName, b.gptSummary, b.proposeDate, b.stage, c.name,  c.congressmanId) " +
 //    "FROM Bill b " +

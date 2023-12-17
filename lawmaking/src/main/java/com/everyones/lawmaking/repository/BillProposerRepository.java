@@ -17,6 +17,12 @@ public interface BillProposerRepository extends JpaRepository<BillProposer, Long
     // In BillProposerRepository interface
     Page<BillProposer> findRepresentativeByCongressmanId(String congressmanId, Pageable pageable);
 
+    List<BillProposer> findByBillIdAndIsRepresent(String billId, boolean isRepresent);
+
+    @Query("SELECT bp FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.isRepresent = false")
+    Page<BillProposer> findCoSponsorshipsByCongressmanId(@Param("congressmanId") String congressmanId, Pageable pageable);
+
+
     @Query("SELECT DISTINCT c.id AS congressmanId, " +
             "                c.name AS congressmanName, " +
             "                 p.name AS partyName, " +
@@ -37,5 +43,6 @@ public interface BillProposerRepository extends JpaRepository<BillProposer, Long
 
     @Query("SELECT bp.bill.id FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.isRepresent = true")
     List<String> findRepresentativeBillIdsByCongressmanId(@Param("congressmanId") String congressmanId);
+
 
 }

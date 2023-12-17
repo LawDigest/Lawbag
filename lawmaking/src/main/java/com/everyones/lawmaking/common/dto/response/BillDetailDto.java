@@ -2,11 +2,13 @@ package com.everyones.lawmaking.common.dto.response;
 
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,7 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 @NoArgsConstructor
 @Getter
 @Setter
-@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
+
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BillDetailDto {
     private String id;
     private String name;
@@ -42,9 +45,9 @@ public class BillDetailDto {
 
     private List<String> publicProposerIdList;
 
-    private Map<String, Integer> proposerPartyCountMap = new ConcurrentHashMap<>();
+    private List<Map<String, Object>> proposerPartyCountList = new ArrayList<>();
 
-    private Map<String, Long> proposerPartyIdMap = new ConcurrentHashMap<>();
+    private List<Map<String, Object>> proposerPartyIdList = new ArrayList<>();
 
     private int view = 0;
 
@@ -62,7 +65,15 @@ public class BillDetailDto {
         this.representProposerPartyId = representProposerPartyId;
         this.stage = stage;
         this.proposers = proposers;
-        this.proposerPartyCountMap.put(representProposerParty, 1);
-        this.proposerPartyIdMap.put(representProposerParty, representProposerPartyId);
+
+        var proposerPartyCountMap = new ConcurrentHashMap<String, Object>();
+        proposerPartyCountMap.put("name", representProposerParty);
+        proposerPartyCountMap.put("count", 1);
+        this.proposerPartyCountList.add(proposerPartyCountMap);
+
+        var proposerPartyIdMap = new ConcurrentHashMap<String, Object>();
+        proposerPartyIdMap.put("name", representProposerParty);
+        proposerPartyIdMap.put("party_id", representProposerPartyId);
+        this.proposerPartyIdList.add(proposerPartyIdMap);
     }
 }

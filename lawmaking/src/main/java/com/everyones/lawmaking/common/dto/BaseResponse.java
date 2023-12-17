@@ -1,9 +1,13 @@
 package com.everyones.lawmaking.common.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BaseResponse {
     public static Map<String, Object> generateSuccessResponse(Object data) {
         return generateErrorResponse(true, 200, "", data);

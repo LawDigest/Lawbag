@@ -2,6 +2,7 @@ package com.everyones.lawmaking.common.dto;
 
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
@@ -15,7 +16,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonNaming(value = PropertyNamingStrategy.SnakeCaseStrategy.class)
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 //TODO: 추후 의원 이미지 및 정당 이미지 주소 넣어야됨.
 public class BillDto {
     private String billId;
