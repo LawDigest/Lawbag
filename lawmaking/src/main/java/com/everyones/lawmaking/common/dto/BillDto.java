@@ -26,9 +26,11 @@ public class BillDto {
     private String representProposerParty;
     private long representProposerPartyId;
     private String representProposerImgUrl;
+    private String representProposerPartyImgUrl;
     private String proposers;
     private List<String> partyList;
     private List<Long> partyIdList;
+    private List<String> partyImageUrls;
     private String summary;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate proposeDate;
@@ -36,7 +38,7 @@ public class BillDto {
     private int like;
 
     // Repository에서 데이터 가져오기 위한 생성자
-    public BillDto(String billId, String name, String representProposer, String representProposerId, String representProposerParty, Long representProposerPartyId, String proposers, String summary, LocalDate proposeDate, String representProposerImageUrl) {
+    public BillDto(String billId, String name, String representProposer, String representProposerId, String representProposerParty, Long representProposerPartyId, String proposers, String summary, LocalDate proposeDate, String representProposerImageUrl, String representProposerPartyImgUrl) {
         this.billId = billId;
         this.billName = name;
         this.representProposer = representProposer.substring(0, 3);
@@ -49,6 +51,7 @@ public class BillDto {
         this.proposeDate = proposeDate;
         this.view = 0;
         this.like = 0;
+        this.representProposerPartyImgUrl = representProposerPartyImgUrl;
     }
 
 

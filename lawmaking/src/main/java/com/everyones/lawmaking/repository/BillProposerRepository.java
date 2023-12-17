@@ -34,7 +34,8 @@ public interface BillProposerRepository extends JpaRepository<BillProposer, Long
     List<String[]> findPartyByBill(@Param("billId") String billId);
     @Query("SELECT bp.bill.id AS billId, " +
             "       p.id AS partyId, " +
-            "       p.name AS partyName " +
+            "       p.name AS partyName, " +
+            "       p.partyImageUrl AS partyImageUrl " +
             "FROM BillProposer bp " +
             "JOIN bp.bill b " +
             "JOIN bp.congressman.party p " +

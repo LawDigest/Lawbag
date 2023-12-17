@@ -117,12 +117,19 @@ public class BillService {
                 partyList.stream()
                         .collect(Collectors.groupingBy(row -> (String) row[0],
                                 Collectors.mapping(row -> (String) row[2], Collectors.toList())));
+        Map<String, List<String>> partyImgMap =
+                partyList.stream()
+                        .collect(Collectors.groupingBy(row -> (String) row[0],
+                                Collectors.mapping(row -> (String) row[3], Collectors.toList())));
         bills.stream().forEach(billDto -> {
             String billId = billDto.getBillId();
             List<Long> partyIdList = sortByFrequency(partyIdMap.getOrDefault(billId, Collections.emptyList()));
             List<String> partyNameList = sortByFrequency(partyNameMap.getOrDefault(billId, Collections.emptyList()));
+            List<String> partyImgUrls = sortByFrequency(partyImgMap.getOrDefault(billId, Collections.emptyList()));
             billDto.setPartyIdList(partyIdList);
-            billDto.setPartyList(partyNameList);});
+            billDto.setPartyList(partyNameList);
+            billDto.setPartyImageUrls(partyImgUrls);});
+
         return bills;
     }
 
