@@ -71,16 +71,38 @@ public class CongressmanService {
     }
 
 
-    private CongressDetailBillDto buildDetailedBillDto(Bill bill, BillProposer representativeProposer, List<BillProposer> proposers) {
-        // Extract party names and IDs for all proposers
+    private CongressDetailBillDto buildDetailedpulbicBillDto(Bill bill, BillProposer representativeProposer, List<BillProposer> proposers) {
+        // Extract party names and IDs
         List<String> partyNames = proposers.stream()
                 .map(proposer -> proposer.getCongressman().getParty().getName())
                 .distinct()
                 .collect(Collectors.toList());
+
         List<Long> partyIds = proposers.stream()
                 .map(proposer -> proposer.getCongressman().getParty().getId())
                 .distinct()
                 .collect(Collectors.toList());
+
+        // Fetch party image URLs
+        List<String> partyImageUrls = partyRepository.findAllByIds(partyIds).stream()
+                .map(Party::getPartyImageUrl)
+                .collect(Collectors.toList());
+
+        // Initialize representative proposer details
+        String representProposerName = null;
+        String representProposerId = null;
+        String representProposerParty = null;
+        Long representProposerPartyId = null;
+        String representProposerImgUrl = null; // Initialize as null
+
+        // Assign details if representative proposer is not null
+        if (representativeProposer != null) {
+            representProposerName = representativeProposer.getCongressman().getName();
+            representProposerId = representativeProposer.getCongressman().getId();
+            representProposerParty = representativeProposer.getCongressman().getParty().getName();
+            representProposerPartyId = representativeProposer.getCongressman().getParty().getId();
+            representProposerImgUrl = representativeProposer.getCongressman().getCongressmanImageUrl(); // Fetch the URL here
+        }
 
         // Construct the CongressDetailBillDto object
         return CongressDetailBillDto.builder()
@@ -92,11 +114,13 @@ public class CongressmanService {
                 .gptSummary(bill.getGptSummary())
                 .representProposer(representativeProposer.getCongressman().getName())
                 .representProposerId(representativeProposer.getCongressman().getId())
+                .representProposerImgUrl(representProposerImgUrl)
                 .representProposerParty(representativeProposer.getCongressman().getParty().getName())
                 .representProposerPartyId(representativeProposer.getCongressman().getParty().getId())
-                .representProposerImgUrl(representativeProposer.getCongressman().getParty().getPartyImageUrl())
+                .representProposerPartyImgUrl(representativeProposer.getCongressman().getParty().getPartyImageUrl())
                 .partyList(partyNames)
                 .partyIdList(partyIds)
+                .partyImageUrls(partyImageUrls)
                 .build(); // Ensure all the necessary fields are set
     }
 
@@ -181,59 +205,67 @@ public class CongressmanService {
         return BaseResponse.generateSuccessResponse(responseData);
     }
 
-    private List<CongressDetailBillDto> buildDetailedPublicBillDtos(List<String> billIds, List<String> representativeBillIds) {
-        List<CongressDetailBillDto> detailedBills = new ArrayList<>();
-        for (String billId : billIds) {
-            Bill bill = billRepository.findById(billId)
-                    .orElseThrow(() -> new RuntimeException("Bill not found"));
-            List<BillProposer> proposers = billProposerRepository.findByBillId(billId);
-
-            // 대표 제안자 찾기
-            BillProposer representativeProposer = proposers.stream()
-                    .filter(bp -> representativeBillIds.contains(bp.getBill().getId()) && bp.isRepresent())
-                    .findFirst()
-                    .orElse(null);
-
-            detailedBills.add(buildDetailedpulbicBillDto(bill, representativeProposer, proposers));
-        }
-        return detailedBills;
-    }
+//    private List<CongressDetailBillDto> buildDetailedPublicBillDtos(List<String> billIds, List<String> representativeBillIds) {
+//        List<CongressDetailBillDto> detailedBills = new ArrayList<>();
+//        for (String billId : billIds) {
+//            Bill bill = billRepository.findById(billId)
+//                    .orElseThrow(() -> new RuntimeException("Bill not found"));
+//            List<BillProposer> proposers = billProposerRepository.findByBillId(billId);
+//
+//            // 대표 제안자 찾기
+//            BillProposer representativeProposer = proposers.stream()
+//                    .filter(bp -> representativeBillIds.contains(bp.getBill().getId()) && bp.isRepresent())
+//                    .findFirst()
+//                    .orElse(null);
+//
+//            detailedBills.add(buildDetailedpulbicBillDto(bill, representativeProposer, proposers));
+//        }
+//        return detailedBills;
+//    }
 
 
     // CongressmanService 클래스 내의 메소드
-    private CongressDetailBillDto buildDetailedpulbicBillDto(Bill bill, BillProposer representativeProposer, List<BillProposer> proposers) {
-        // Extract party names for all proposers
+    private CongressDetailBillDto buildDetailedBillDto(Bill bill, BillProposer representativeProposer, List<BillProposer> proposers) {
+        // Extract party names and IDs
         List<String> partyNames = proposers.stream()
                 .map(proposer -> proposer.getCongressman().getParty().getName())
                 .distinct()
                 .collect(Collectors.toList());
 
-        // Extract party IDs for all proposers
         List<Long> partyIds = proposers.stream()
                 .map(proposer -> proposer.getCongressman().getParty().getId())
                 .distinct()
                 .collect(Collectors.toList());
 
-        // 정당 ID를 기반으로 모든 정당의 이미지 URL 조회
+        // Fetch party image URLs
         List<String> partyImageUrls = partyRepository.findAllByIds(partyIds).stream()
                 .map(Party::getPartyImageUrl)
                 .collect(Collectors.toList());
 
-        // Check if representative proposer's party image URL is in the list
+        // Initialize representative proposer details
+        String representProposerName = null;
+        String representProposerId = null;
+        String representProposerParty = null;
+        Long representProposerPartyId = null;
+        String representProposerImgUrl = null;
+        String representProposerPartyImgUrl = null;
+
+        // Assign details if representative proposer is not null
         if (representativeProposer != null) {
-            String imageUrl = representativeProposer.getCongressman().getParty().getPartyImageUrl();
-            if (imageUrl != null && !partyImageUrls.contains(imageUrl)) {
-                partyImageUrls.add(0, imageUrl); // Add at the beginning of the list
+            representProposerName = representativeProposer.getCongressman().getName();
+            representProposerId = representativeProposer.getCongressman().getId();
+            representProposerParty = representativeProposer.getCongressman().getParty().getName();
+            representProposerPartyId = representativeProposer.getCongressman().getParty().getId();
+            representProposerImgUrl = representativeProposer.getCongressman().getCongressmanImageUrl();
+            representProposerPartyImgUrl = representativeProposer.getCongressman().getParty().getPartyImageUrl();
+
+            // Check and add the party image URL if it's not already in the list
+            if (!partyImageUrls.contains(representProposerPartyImgUrl)) {
+                partyImageUrls.add(0, representProposerPartyImgUrl);
             }
         }
-        // Check if representative proposer's party image URL is in the list
-        String representProposerPartyImageUrl = null;
-        if (representativeProposer != null) {
-            representProposerPartyImageUrl = representativeProposer.getCongressman().getParty().getPartyImageUrl();
-            if (!partyImageUrls.contains(representProposerPartyImageUrl)) {
-                partyImageUrls.add(0, representProposerPartyImageUrl); // Add at the beginning of the list
-            }
-        }
+
+        // Build and return the DTO
         return CongressDetailBillDto.builder()
                 .billId(bill.getId())
                 .billName(bill.getBillName())
@@ -243,9 +275,15 @@ public class CongressmanService {
                 .gptSummary(bill.getGptSummary())
                 .partyList(partyNames)
                 .partyIdList(partyIds)
-                .representProposerPartyImgUrl(representProposerPartyImageUrl)
+                .representProposer(representProposerName)
+                .representProposerId(representProposerId)
+                .representProposerParty(representProposerParty)
+                .representProposerPartyId(representProposerPartyId)
+                .representProposerImgUrl(representProposerImgUrl)
+                .representProposerPartyImgUrl(representProposerPartyImgUrl)
                 .partyImageUrls(partyImageUrls)
                 .build();
     }
+
 }
 
