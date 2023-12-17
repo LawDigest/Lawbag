@@ -17,7 +17,7 @@ public class ImageController {
 
     private final String baseDirectory = "src/main/resources/static";
 
-    @GetMapping("{filename:.+}")
+    @GetMapping("/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         try {
             Path file = Paths.get(baseDirectory).resolve(filename);
