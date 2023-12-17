@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.repository;
 
+import com.everyones.lawmaking.common.dto.response.PartyBillDto;
 import com.everyones.lawmaking.common.dto.response.PartyDetailDto;
 import com.everyones.lawmaking.domain.entity.Party;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,5 +27,6 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
     List<Party> findAllByIds(List<Long> ids);
     @Query("SELECT p FROM Party p WHERE p.id = :id")
     Optional<Party> findById(Long id);
+
 
 }
