@@ -1,40 +1,52 @@
-package com.everyones.lawmaking.controller;
+    package com.everyones.lawmaking.controller;
 
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.core.io.Resource;
+    import org.springframework.core.io.ResourceLoader;
+    import org.springframework.http.MediaType;
+    import org.springframework.http.ResponseEntity;
+    import org.springframework.util.MimeType;
+    import org.springframework.util.MimeTypeUtils;
+    import org.springframework.web.bind.annotation.GetMapping;
+    import org.springframework.web.bind.annotation.PathVariable;
+    import org.springframework.web.bind.annotation.RestController;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+    @RestController
+    public class ImageController {
 
-@RestController
-public class ImageController {
+        @Autowired
+        private ResourceLoader resourceLoader;
 
-    private final String baseDirectory = "src/main/resources/static/";
-
-    @GetMapping("{filename:.+}")
-    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
-        try {
-            Path file = Paths.get(baseDirectory).resolve(filename);
-            Resource resource = new UrlResource(file.toUri());
-            if (resource.exists() || resource.isReadable()) {
-                return ResponseEntity
-                        .ok()
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .body(resource);
-            } else {
-                // Handle the file not found case
+        @GetMapping("/images/{filename:.+}")
+        public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+            Resource resource = resourceLoader.getResource("classpath:/static/" + filename);
+            if (!resource.exists() || !resource.isReadable()) {
                 return ResponseEntity.notFound().build();
             }
-        } catch (Exception e) {
-            // Handle the exception case, such as file not found
-            return ResponseEntity.badRequest().build();
+
+            // Determine content type
+            String contentType = getContentType(filename);
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.valueOf(contentType))
+                    .body(resource);
+        }
+
+        private String getContentType(String filename) {
+            String[] fileExtension = filename.split("\\.");
+            String extension = fileExtension[fileExtension.length - 1].toLowerCase();
+
+            switch (extension) {
+                case "jpg":
+                    return MimeTypeUtils.IMAGE_JPEG_VALUE;
+                case "png":
+                    return MimeTypeUtils.IMAGE_PNG_VALUE;
+                case "gif":
+                    return MimeTypeUtils.IMAGE_GIF_VALUE;
+    //            case "bmp":
+    //                return MimeTypeUtils.IMAGE_BMP_VALUE;
+                default:
+                    return MimeTypeUtils.IMAGE_JPEG_VALUE;
+            }
         }
     }
-}
-
