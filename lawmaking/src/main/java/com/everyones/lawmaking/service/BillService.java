@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import static com.everyones.lawmaking.domain.entity.QCongressman.congressman;
+//import static com.everyones.lawmaking.domain.entity.QCongressman.congressman;
 
 @RequiredArgsConstructor
 @Service
