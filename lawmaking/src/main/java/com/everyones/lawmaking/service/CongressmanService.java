@@ -3,7 +3,6 @@ package com.everyones.lawmaking.service;
 import com.everyones.lawmaking.common.dto.BaseResponse;
 import com.everyones.lawmaking.common.dto.CongressDetailBillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
-import com.everyones.lawmaking.common.dto.response.CongressmanDetailResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.domain.entity.BillProposer;
@@ -148,9 +147,11 @@ public class CongressmanService {
 //        List<String> representativeBillIds = billProposerRepository.findRepresentativeBillIdsByCongressmanId(congressmanId);
         Page<BillProposer> coSponsorshipProposersPage = billProposerRepository.findCoSponsorshipsByCongressmanId(congressmanId, pageable);
         // Fetch co-sponsorship bills
+        // Fetch co-sponsorship bills
         List<String> billIds = coSponsorshipProposersPage.getContent().stream()
                 .map(bp -> bp.getBill().getId())
                 .collect(Collectors.toList());
+
         List<CongressDetailBillDto> detailedBills = new ArrayList<>();
         for (String billId : billIds) {
             Bill bill = billRepository.findById(billId)
@@ -163,7 +164,7 @@ public class CongressmanService {
                     .findFirst()
                     .orElse(null);
 
-            detailedBills.add(buildDetailedBillDto(bill, representativeProposer, proposers));
+            detailedBills.add(buildDetailedpulbicBillDto(bill, representativeProposer, proposers));
         }
             // 기존 로직으로 CongressmanDto와 bills 목록을 가져옴
 
