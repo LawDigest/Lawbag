@@ -14,7 +14,7 @@ import java.util.List;
 @Setter
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PartyDetailResponse {
-    private PartyDetailDto partyDetailDto;
+    private PartyDetailDto partyDetail;
 
     private List<BillDto> bills;
 
