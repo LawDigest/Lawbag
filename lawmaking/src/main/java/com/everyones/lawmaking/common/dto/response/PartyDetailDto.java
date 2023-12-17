@@ -29,7 +29,7 @@ public class PartyDetailDto {
 
     private String websiteUrl;
 
-    public PartyDetailDto(long partyId, String partyName, String partyImgUrl, long propotionalRepresentativeCount, long districtRepresentativeCount) {
+    public PartyDetailDto(long partyId, String partyName, String partyImgUrl, long districtRepresentativeCount, long propotionalRepresentativeCount) {
         this.partyId = partyId;
         this.partyName= partyName;
         this.partyImgUrl= partyImgUrl;
