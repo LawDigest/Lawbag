@@ -42,8 +42,10 @@ public class PartyService {
     }
 
     public List<BillDto> getPartyDetailWithPublicBills(Pageable pageable, long partyId) {
-        var billIds = billRepository.findBillsWIthPartyAndPublic(pageable, partyId);
-        return null;
+        var billIds = billRepository.findBillIdsBillsWithPartyAndPublic(pageable, partyId);
+        var bills = billRepository.findNextThreeBillsWithBills(billIds);
+        billService.setPartyInBillDto(bills);
+        return bills;
     }
 
 

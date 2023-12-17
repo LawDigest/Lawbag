@@ -43,11 +43,18 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     @Query("SELECT distinct b.id " +
             "FROM Bill b " +
-            "JOIN b.publicProposer bp " +
-            "WHERE bp.isRepresent = false " +
+            "JOIN b.publicProposer bp ON b.id = bp.bill.id " +
+            "where bp.isRepresent = false " +
             "AND bp.congressman.party.id = :partyId " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
-    List<String> findBillsWIthPartyAndPublic(Pageable pageable, @Param("partyId") long partyId);
+    List<String> findBillIdsBillsWithPartyAndPublic(Pageable pageable, @Param("partyId") long partyId);
+
+    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id,  b.proposers, b.gptSummary, b.proposeDate)" +
+            "FROM BillProposer bp " +
+            "INNER JOIN bp.bill b " +
+            "INNER JOIN b.party p " +
+            "WHERE bp.bill.id IN :billIds AND bp.isRepresent = true")
+    List<BillDto> findNextThreeBillsWithBills(List<String> billIds);
 
     @Query("SELECT new com.everyones.lawmaking.common.dto.response.BillDetailDto(b.id, b.billName, b.proposers, b.gptSummary,  b.proposeDate, b.stage, c.name, c.id, p.name, p.id)" +
             "FROM Bill b " +
