@@ -31,7 +31,7 @@ public class PartyService {
 
 
         return PartyDetailResponse.builder()
-                .partyDetailDto(partyDetails)
+                .partyDetail(partyDetails)
                 .bills(bills)
                 .build();
     }
