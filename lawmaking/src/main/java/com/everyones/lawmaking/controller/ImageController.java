@@ -13,7 +13,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/v1/image")
 public class ImageController {
 
     private final String baseDirectory = "src/main/resources/static";
