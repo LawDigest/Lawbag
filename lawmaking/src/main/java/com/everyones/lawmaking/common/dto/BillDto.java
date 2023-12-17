@@ -25,7 +25,7 @@ public class BillDto {
     private String representProposerId;
     private String representProposerParty;
     private long representProposerPartyId;
-    private String representProposerImgUrl = "";
+    private String representProposerImgUrl;
     private String proposers;
     private List<String> partyList;
     private List<Long> partyIdList;
@@ -36,12 +36,12 @@ public class BillDto {
     private int like;
 
     // Repository에서 데이터 가져오기 위한 생성자
-    public BillDto(String billId, String name, String representProposer, String representProposerId, String representProposerParty, Long representProposerPartyId, String proposers, String summary, LocalDate proposeDate) {
+    public BillDto(String billId, String name, String representProposer, String representProposerId, String representProposerParty, Long representProposerPartyId, String proposers, String summary, LocalDate proposeDate, String representProposerImageUrl) {
         this.billId = billId;
         this.billName = name;
         this.representProposer = representProposer.substring(0, 3);
         this.representProposerId = representProposerId;
-//        this.representProposerImageUrl = representProposerImageUrl;
+        this.representProposerImgUrl = representProposerImageUrl;
         this.representProposerParty = representProposerParty;
         this. representProposerPartyId = representProposerPartyId;
         this.proposers = proposers;

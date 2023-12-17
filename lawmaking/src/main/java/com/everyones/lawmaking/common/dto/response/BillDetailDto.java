@@ -8,10 +8,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Builder
@@ -37,6 +34,8 @@ public class BillDetailDto {
 
     private String representProposerId;
 
+    private String representProposerImgUrl;
+
     private String representProposerParty; // 추가
 
     private Long representProposerPartyId; // 추가
@@ -53,14 +52,17 @@ public class BillDetailDto {
 
     private int like = 0;
 
+    private List<String> keywords;
+
     public BillDetailDto(String id, String name, String proposers, String gpt_summary, LocalDate proposeDate, String stage,
-                         String representProposer, String representProposerId, String representProposerParty, Long representProposerPartyId) {
+                         String representProposer, String representProposerId, String representProposerParty, Long representProposerPartyId, String congressmanImageUrl, String keyword) {
         this.id = id;
         this.name = name;
         this.gptSummary = gpt_summary;
         this.proposeDate = proposeDate;
         this.representProposer = representProposer;
         this.representProposerId = representProposerId;
+        this.representProposerImgUrl = congressmanImageUrl;
         this.representProposerParty = representProposerParty;
         this.representProposerPartyId = representProposerPartyId;
         this.stage = stage;
@@ -75,5 +77,7 @@ public class BillDetailDto {
         proposerPartyIdMap.put("name", representProposerParty);
         proposerPartyIdMap.put("party_id", representProposerPartyId);
         this.proposerPartyIdList.add(proposerPartyIdMap);
+
+        this.keywords = new ArrayList<>(Arrays.asList(keyword.split(",")));
     }
 }
