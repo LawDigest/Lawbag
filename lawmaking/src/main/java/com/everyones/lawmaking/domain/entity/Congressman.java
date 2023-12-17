@@ -46,4 +46,7 @@ public class Congressman {
 
     @Column(name = "public_count")
     private int publicCount;
+
+    @Column(name = "congressman_image_url")
+    private String congressmanImageUrl;
 }

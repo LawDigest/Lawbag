@@ -25,22 +25,7 @@ public class CongressmanDto {
     private String homepage;
     private int representCount;
     private int publicCount;
+    private String congressmanImageUrl;
     private List<CongressDetailBillDto> representativeBills;
-    // List of bills the congressman is a representative proposer of
-    // CongressmanDto 생성 메소드
-//    private CongressmanDto buildCongressmanDto(Congressman congressman) {
-//        return CongressmanDto.builder()
-//                .id(congressman.getId())
-//                .name(congressman.getName())
-//                .partyName(congressman.getParty().getName())
-//                .partyImageUrl(congressman.getParty().getPartyImageUrl())
-//                .electSort(congressman.getElectSort())
-//                .district(congressman.getDistrict())
-//                .commits(congressman.getCommits())
-//                .elected(congressman.getElected())
-//                .homepage(congressman.getHomepage())
-//                .representCount(congressman.getRepresentCount())
-//                .publicCount(congressman.getPublicCount())
-//                .build();
-//    }
+
 }

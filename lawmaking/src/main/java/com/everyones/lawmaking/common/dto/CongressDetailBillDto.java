@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 @Data
 @Builder
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor  // 전체 생성자 추가
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -32,28 +34,10 @@ public class CongressDetailBillDto {
     private String representProposer;
     private String representProposerId;
     private String representProposerParty;
+    private String representProposerPartyImgUrl;
     private long representProposerPartyId;
     private String representProposerImgUrl;
     private List<String> partyList;
     private List<Long> partyIdList;
-
-    public CongressDetailBillDto(String billId, String billName,
-                                 LocalDate proposeDate, String proposers,
-                                 String summary, String gptSummary,
-                                 String representProposer, String representProposerId,
-                                 String representProposerParty, long representProposerPartyId,
-                                 String representProposerImgUrl) {
-        this.billId = billId;
-        this.billName = billName;
-        this.proposeDate = proposeDate;
-        this.proposers = proposers;
-        this.summary = summary;
-        this.gptSummary = gptSummary;
-        this.representProposer = representProposer;
-        this.representProposerId = representProposerId;
-        this.representProposerParty = representProposerParty;
-        this.representProposerPartyId = representProposerPartyId;
-        this.representProposerImgUrl = representProposerImgUrl;
-
-    }
+    private List<String> partyImageUrls;
 }

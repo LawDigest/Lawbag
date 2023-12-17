@@ -44,4 +44,5 @@ public interface BillProposerRepository extends JpaRepository<BillProposer, Long
     @Query("SELECT bp.bill.id FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.isRepresent = true")
     List<String> findRepresentativeBillIdsByCongressmanId(@Param("congressmanId") String congressmanId);
 
+
 }

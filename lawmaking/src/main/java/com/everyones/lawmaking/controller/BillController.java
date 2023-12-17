@@ -1,22 +1,16 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.BaseResponse;
-import com.everyones.lawmaking.common.dto.CongressmanDto;
-import com.everyones.lawmaking.common.dto.response.MainFeedBillResponse;
+import com.everyones.lawmaking.common.dto.BillSearchDto;
 import com.everyones.lawmaking.service.BillService;
-import com.everyones.lawmaking.service.CongressmanService;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -69,6 +63,14 @@ public class BillController {
         }
     }
 
+    @GetMapping("/search/summary")
+    public ResponseEntity<List<BillSearchDto>> searchBills(@RequestParam String keyword) {
+        List<BillSearchDto> results = billService.searchBillsBySummary(keyword);
+        if (results.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(results);
+    }
 
 //    @GetMapping("/mainfeed/{id}")
 //    public ResponseEntity<MainFeedBillResponse> getCongressman(
