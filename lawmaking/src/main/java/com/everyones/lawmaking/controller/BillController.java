@@ -64,14 +64,36 @@ public class BillController {
     }
 
     @GetMapping("/search/summary")
-    public ResponseEntity<List<BillSearchDto>> searchBills(@RequestParam String keyword) {
-        List<BillSearchDto> results = billService.searchBillsBySummary(keyword);
-        if (results.isEmpty()) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<Map<String, Object>> searchBills(
+            @RequestParam(name = "page", required = true) int page,
+            @RequestParam(name = "size", required = true) int size,
+            @RequestParam(name = "summaryquestion", required = true) String summaryquestion,
+            Pageable pageable) {
+        try{
+            var result = billService.searchBillsBySummary(page, pageable, summaryquestion);
+            var resp = BaseResponse.generateSuccessResponse(result);
+            return new ResponseEntity<>(resp, HttpStatus.OK);
+        } catch (Exception e) {
+            var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
+            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity.ok(results);
-    }
 
+    }
+//    public ResponseEntity<Map<String, Object>> getNext3BillsWithStage(
+//            @RequestParam(name = "page", required = true) int page,
+//            @RequestParam(name = "size", required = true) int size,
+//            @RequestParam(name = "stage", required = true) String stage,
+//            Pageable pageable) {
+//        try {
+//            var result = billService.getNext3BillsWithStage(page, pageable, stage);
+//            var resp = BaseResponse.generateSuccessResponse(result);
+//            return new ResponseEntity<>(resp, HttpStatus.OK);
+//        } catch (Exception e) {
+//            var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
+//            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+//
 //    @GetMapping("/mainfeed/{id}")
 //    public ResponseEntity<MainFeedBillResponse> getCongressman(
 //            @PathVariable String id,

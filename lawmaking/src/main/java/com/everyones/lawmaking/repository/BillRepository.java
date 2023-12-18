@@ -3,6 +3,7 @@ package com.everyones.lawmaking.repository;
 import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.response.BillDetailDto;
 import com.everyones.lawmaking.domain.entity.Bill;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -71,7 +72,15 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "WHERE bp.isRepresent = true AND b.id = :billId " +
             "AND p.id = c.party.id")
     BillDetailDto findBillDetailByBillId(@Param("billId") String billId);
-    List<Bill> findBySummaryContaining(String keyword);
+    @Query("SELECT new com.everyones.lawmaking.common.dto.BillDto(b.id, b.billName, bp.congressman.name, bp.congressman.id, bp.congressman.party.name, bp.congressman.party.id, b.proposers, b.summary, b.proposeDate, c.congressmanImageUrl, p.partyImageUrl)" +
+            "FROM Bill b " +
+            "JOIN b.publicProposer bp " +
+            "JOIN bp.congressman c " +
+            "JOIN bp.congressman.party p " +
+            "WHERE bp.isRepresent = true " +
+            "AND b.summary LIKE %:summaryquestion% " +
+            "ORDER BY b.proposeDate DESC, b.id DESC")
+    List<BillDto> findBySummaryContaining(Pageable pageable, @Param("summaryquestion") String summaryquestion);
 
 
 
