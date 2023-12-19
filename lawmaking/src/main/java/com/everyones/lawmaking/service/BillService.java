@@ -11,6 +11,7 @@ import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -146,13 +147,28 @@ public class BillService {
     }
 
     //검색 기능 초안
-    @Autowired
-    private BillRepository billsearchRepository;
-
-    public List<BillSearchDto> searchBillsBySummary(String keyword) {
-        return billsearchRepository.findBySummaryContaining(keyword).stream()
-                .map(bill -> new BillSearchDto(bill.getId(), bill.getSummary()))
-                .collect(Collectors.toList());
+    public MainFeedBillResponse searchBillsBySummary(int page, Pageable pageable, String summaryquestion) {
+        var answer = billRepository.findBySummaryContaining(pageable, summaryquestion);
+        answer = setPartyInBillDto(answer);
+        var paginationResponse = PaginationResponse.builder().pageNumber(page).isLastPage(false).build();
+        return MainFeedBillResponse.builder()
+                .Bills(answer)
+                .paginationResponse(paginationResponse)
+                .build();
     }
+    }
+//    public MainFeedBillResponse getNext3BillsWithStage(int page, Pageable pageable, String stage) {
+//        var bills = billRepository.findNextThreeBillsWithStage(pageable, stage);
+//        bills = setPartyInBillDto(bills);
+//        var paginationResponse = PaginationResponse.builder().pageNumber(page).isLastPage(false).build();
+//        return MainFeedBillResponse.builder()
+//                .Bills(bills)
+//                .paginationResponse(paginationResponse)
+//                .build();
+//    }
+//    public MainFeedBillResponse getNext3BillsWithStage(int page, Pageable pageable, String stage) {
+//        var bills = billRepository.findNextThreeBillsWithStage(pageable, stage);
+//        bills = setPartyInBillDto(bills);
 
-}
+
+//}
