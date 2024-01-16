@@ -2,6 +2,7 @@ package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.BillSearchDto;
+import com.everyones.lawmaking.common.dto.response.BillDetailDto;
 import com.everyones.lawmaking.common.dto.response.MainFeedBillResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
@@ -55,7 +56,7 @@ public class BillService {
                 .build();
     }
 
-    public Object getBillWtihDeatail(String billId) {
+    public BillDetailDto getBillWtihDeatail(String billId) {
         var bill = billRepository.findBillDetailByBillId(billId);
         var publicIdsAndProposersAndParty = billProposerRepository.findPartyByBill(billId);
 

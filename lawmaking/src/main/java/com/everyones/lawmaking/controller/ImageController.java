@@ -4,27 +4,13 @@ package com.everyones.lawmaking.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.MimeType;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 
 @RestController
@@ -44,11 +30,17 @@ public class ImageController {
 
         // Determine content type
         String contentType = getContentType(filename);
-
+        /**
+         TODO
+         컨텐츠 타입 헤더 설정하는 메서드가 포함되어있는데, 우리가 구현한 BaseResponse에도 적용하려면 어떻게 해야할지 고민
+         다른 프로젝트에서는 굳이 ContentType을 설정해주지 않긴 헀는데, 설정 안하면 예외 상황 발생할 것 같음.
+         어차피 이미지 관련 리팩토링할 때 제대로 로직 변경하면 될 듯
+        */
         return ResponseEntity.ok()
                 .contentType(MediaType.valueOf(contentType))
                 .body(resource);
     }
+
 
     private String getContentType(String filename) {
         String[] fileExtension = filename.split("\\.");
