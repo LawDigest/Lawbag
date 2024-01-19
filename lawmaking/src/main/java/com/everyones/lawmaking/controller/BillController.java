@@ -1,16 +1,15 @@
 package com.everyones.lawmaking.controller;
 
-import com.everyones.lawmaking.common.dto.BaseResponse;
-import com.everyones.lawmaking.common.dto.BillSearchDto;
+import com.everyones.lawmaking.common.dto.response.BillDetailDto;
+import com.everyones.lawmaking.global.BaseResponse;
+import com.everyones.lawmaking.common.dto.response.MainFeedBillResponse;
 import com.everyones.lawmaking.service.BillService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -21,93 +20,46 @@ public class BillController {
 
     @GetMapping("/mainfeed")
 
-    public ResponseEntity<Map<String, Object>> getNext3Bills(
+    public BaseResponse<MainFeedBillResponse> getNext3Bills(
             @RequestParam(name = "page", required = true) int page,
             @RequestParam(name = "size", required = true) int size,
             Pageable pageable) {
-        try {
-            var result = billService.getNext3Bills(page, pageable);
-            var resp = BaseResponse.generateSuccessResponse(result);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-        } catch (Exception e) {
-            var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
-            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        var result = billService.getNext3Bills(page, pageable);
+        return BaseResponse.ok(result);
+
     }
     @GetMapping("/mainfeed/stage")
-    public ResponseEntity<Map<String, Object>> getNext3BillsWithStage(
+    public BaseResponse<MainFeedBillResponse> getNext3BillsWithStage(
             @RequestParam(name = "page", required = true) int page,
             @RequestParam(name = "size", required = true) int size,
             @RequestParam(name = "stage", required = true) String stage,
             Pageable pageable) {
-        try {
-            var result = billService.getNext3BillsWithStage(page, pageable, stage);
-            var resp = BaseResponse.generateSuccessResponse(result);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-        } catch (Exception e) {
-            var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
-            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        var result = billService.getNext3BillsWithStage(page, pageable, stage);
+        return BaseResponse.ok(result);
+
     }
 
     @GetMapping("/detail/{bill_id}")
-    public ResponseEntity<Map<String, Object>> getBillWtihDeatail(
+    public BaseResponse<BillDetailDto> getBillWtihDeatail(
             @PathVariable("bill_id") String billId) {
-        try {
-            var result = billService.getBillWtihDeatail(billId);
-            var resp = BaseResponse.generateSuccessResponse(result);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-        } catch (Exception e) {
-            var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
-            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+        var result = billService.getBillWtihDeatail(billId);
+        return BaseResponse.ok(result);
+
     }
 
     @GetMapping("/search/summary")
-    public ResponseEntity<Map<String, Object>> searchBills(
+    public BaseResponse<MainFeedBillResponse> searchBills(
             @RequestParam(name = "page", required = true) int page,
             @RequestParam(name = "size", required = true) int size,
             @RequestParam(name = "summaryquestion", required = true) String summaryquestion,
             Pageable pageable) {
-        try{
-            var result = billService.searchBillsBySummary(page, pageable, summaryquestion);
-            var resp = BaseResponse.generateSuccessResponse(result);
-            return new ResponseEntity<>(resp, HttpStatus.OK);
-        } catch (Exception e) {
-            var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
-            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+
+        var result = billService.searchBillsBySummary(page, pageable, summaryquestion);
+        return BaseResponse.ok(result);
 
     }
-//    public ResponseEntity<Map<String, Object>> getNext3BillsWithStage(
-//            @RequestParam(name = "page", required = true) int page,
-//            @RequestParam(name = "size", required = true) int size,
-//            @RequestParam(name = "stage", required = true) String stage,
-//            Pageable pageable) {
-//        try {
-//            var result = billService.getNext3BillsWithStage(page, pageable, stage);
-//            var resp = BaseResponse.generateSuccessResponse(result);
-//            return new ResponseEntity<>(resp, HttpStatus.OK);
-//        } catch (Exception e) {
-//            var resp = BaseResponse.generateErrorResponse(false, 500, e.getMessage(), null);
-//            return new ResponseEntity<>(resp, HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
-//
-//    @GetMapping("/mainfeed/{id}")
-//    public ResponseEntity<MainFeedBillResponse> getCongressman(
-//            @PathVariable String id,
-//            @RequestParam("page") int page,
-//            @RequestParam("size") int size) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        MainFeedBillResponse congressmanDto = congressmanService.getCongressmanDetails(id, pageable);
-//        return ResponseEntity.ok(congressmanDto);
-//    }
-//    @GetMapping("/mainfeed/{id}")
-//    public ResponseEntity<CongressmanDto> getCongressman(@PathVariable String id) {
-//        CongressmanDto congressmanDto = congressmanService.getCongressmanDetails(id);
-//        return ResponseEntity.ok(congressmanDto);
-//    }
 
 
 }

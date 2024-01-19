@@ -1,6 +1,6 @@
 package com.everyones.lawmaking.service;
 
-import com.everyones.lawmaking.common.dto.BaseResponse;
+import com.everyones.lawmaking.global.BaseResponse;
 import com.everyones.lawmaking.common.dto.CongressDetailBillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
@@ -59,7 +59,7 @@ public class CongressmanService {
         responseData.put("congressman", congressmanDto);
         responseData.put("bills", detailedBills);
 
-        return BaseResponse.generateSuccessResponse(responseData);
+        return responseData;
     }
     private BillProposer getRepresentativeProposer(List<BillProposer> proposers) {
         return proposers.stream()
@@ -231,7 +231,7 @@ public class CongressmanService {
         responseData.put("bills", detailedBills);
 
         // BaseResponse 포함하여 반환
-        return BaseResponse.generateSuccessResponse(responseData);
+        return responseData;
     }
     private CongressDetailBillDto buildDetailedpulbicBillDto(Bill bill, BillProposer representativeProposer, List<BillProposer> proposers) {
         // Extract party names and IDs
