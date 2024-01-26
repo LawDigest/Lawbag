@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.controller;
 
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "정당, 의원 이미지 관련 API", description = "리팩토링과 함께 삭제될 예정")
 public class ImageController {
 
     private final ResourceLoader resourceLoader;
