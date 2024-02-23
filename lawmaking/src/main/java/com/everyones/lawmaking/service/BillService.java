@@ -1,18 +1,16 @@
 package com.everyones.lawmaking.service;
 
-import com.everyones.lawmaking.common.dto.BillDto;
-import com.everyones.lawmaking.common.dto.BillSearchDto;
+import com.everyones.lawmaking.common.dto.*;
 import com.everyones.lawmaking.common.dto.response.BillDetailDto;
 import com.everyones.lawmaking.common.dto.response.MainFeedBillResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
+import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.repository.BillProposerRepository;
 import com.everyones.lawmaking.repository.BillRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -135,6 +133,8 @@ public class BillService {
         return bills;
     }
 
+
+    // TODO: 수정 필요
     // 리스트 중복제거 정렬 함수
     private static <T> List<T> sortByFrequency(List<T> list) {
         return list.stream()
@@ -147,29 +147,59 @@ public class BillService {
                 .collect(Collectors.toList());
     }
 
-    //검색 기능 초안
-    public MainFeedBillResponse searchBillsBySummary(int page, Pageable pageable, String summaryquestion) {
-        var answer = billRepository.findBySummaryContaining(pageable, summaryquestion);
-        answer = setPartyInBillDto(answer);
-        var paginationResponse = PaginationResponse.builder().pageNumber(page).isLastPage(false).build();
-        return MainFeedBillResponse.builder()
-                .Bills(answer)
-                .paginationResponse(paginationResponse)
+    public List<CongressmanBillDto> getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
+        var billIdList = billRepository.findByRepresentativeProposer(congressmanId, pageable)
+                .stream()
+                .map(Bill::getId)
+                .collect(Collectors.toList());
+
+        if (billIdList.isEmpty()) {
+            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+        }
+
+        var billList = billRepository.findBillInfoByIdList(billIdList);
+
+        return billList.stream()
+                .map(bill -> getBillInfoFromBill(bill))
+                .collect(Collectors.toList());
+    }
+
+    public List<CongressmanBillDto> getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
+        var billIdList = billRepository.findBillByPublicProposer(congressmanId, pageable)
+                .stream()
+                .map(Bill::getId)
+                .collect(Collectors.toList());
+
+        if (billIdList.isEmpty()) {
+            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+        }
+
+        var billList = billRepository.findBillInfoByIdList(billIdList);
+
+        return billList.stream()
+                .map(bill -> getBillInfoFromBill(bill))
+                .collect(Collectors.toList());
+    }
+
+
+    private CongressmanBillDto getBillInfoFromBill(Bill bill) {
+        var billInfoDto = BillInfoDto.fromBill(bill);
+        var representativeProposer = bill.getRepresentativeProposer();
+        var publicProposers = bill.getPublicProposer();
+
+        var publicProposerDtoList = publicProposers.stream()
+                .map(PublicProposerDto::fromPublicProposer)
+                .collect(Collectors.toList());
+        var representativeProposerDto = RepresentativeProposerDto.fromRepresentativeProposer(representativeProposer);
+
+
+        return CongressmanBillDto.builder()
+                .billInfoDto(billInfoDto)
+                .representativeProposerDto(representativeProposerDto)
+                .publicProposerDtoList(publicProposerDtoList)
                 .build();
     }
-    }
-//    public MainFeedBillResponse getNext3BillsWithStage(int page, Pageable pageable, String stage) {
-//        var bills = billRepository.findNextThreeBillsWithStage(pageable, stage);
-//        bills = setPartyInBillDto(bills);
-//        var paginationResponse = PaginationResponse.builder().pageNumber(page).isLastPage(false).build();
-//        return MainFeedBillResponse.builder()
-//                .Bills(bills)
-//                .paginationResponse(paginationResponse)
-//                .build();
-//    }
-//    public MainFeedBillResponse getNext3BillsWithStage(int page, Pageable pageable, String stage) {
-//        var bills = billRepository.findNextThreeBillsWithStage(pageable, stage);
-//        bills = setPartyInBillDto(bills);
 
 
-//}
+}
+

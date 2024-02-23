@@ -1,12 +1,12 @@
 package com.everyones.lawmaking.common.dto.response;
 
-import com.everyones.lawmaking.common.dto.CongressDetailBillDto;
-import com.everyones.lawmaking.common.dto.CongressmanDto;
+import com.everyones.lawmaking.common.dto.CongressmanBillDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import lombok.*;
-import org.springframework.data.domain.Page;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -17,9 +17,8 @@ import java.util.List;
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class CongressmanDetailResponse {
-    private CongressmanDto congressman;
     private PaginationResponse paginationResponse;
-    private List<CongressDetailBillDto> bills;
+    private List<CongressmanBillDto> bills;
 }
 
 

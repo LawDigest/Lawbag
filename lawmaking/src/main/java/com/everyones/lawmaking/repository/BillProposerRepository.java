@@ -1,7 +1,5 @@
 package com.everyones.lawmaking.repository;
 
-import com.everyones.lawmaking.common.dto.CongressDetailBillDto;
-import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.domain.entity.BillProposer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +12,10 @@ import java.util.List;
 public interface BillProposerRepository extends JpaRepository<BillProposer, Long> {
 
     List<BillProposer> findByBillId(String billId);
-    // In BillProposerRepository interface
+
+    @Query("SELECT bp FROM BillProposer bp WHERE bp.congressman.id = :congressmanId AND bp.isRepresent = true")
+    Page<BillProposer> findRepresentativeByCongressman(String congressmanId, Pageable pageable);
+
     Page<BillProposer> findRepresentativeByCongressmanId(String congressmanId, Pageable pageable);
 
     List<BillProposer> findByBillIdAndIsRepresent(String billId, boolean isRepresent);
