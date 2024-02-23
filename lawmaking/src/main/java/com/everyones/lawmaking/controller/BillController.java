@@ -14,8 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
 @RequiredArgsConstructor
@@ -100,18 +100,6 @@ public class BillController {
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @PathVariable("bill_id") String billId) {
         var result = billService.getBillWtihDeatail(billId);
-        return BaseResponse.ok(result);
-
-    }
-    @Operation(summary = "테스트 결과 작동하지 않습니다. 추후 삭제예정")
-    @GetMapping("/search/summary")
-    public BaseResponse<MainFeedBillResponse> searchBills(
-            @RequestParam(name = "page", required = true) int page,
-            @RequestParam(name = "size", required = true) int size,
-            @RequestParam(name = "summaryquestion", required = true) String summaryquestion,
-            Pageable pageable) {
-
-        var result = billService.searchBillsBySummary(page, pageable, summaryquestion);
         return BaseResponse.ok(result);
 
     }
