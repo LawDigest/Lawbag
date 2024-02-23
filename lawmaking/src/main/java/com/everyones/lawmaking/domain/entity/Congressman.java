@@ -27,6 +27,9 @@ public class Congressman {
     @OneToMany(mappedBy = "congressman")
     private List<BillProposer> billPublicProposer = new ArrayList<>();
 
+    @OneToMany(mappedBy = "congressman")
+    private List<RepresentativeProposer> representativeProposer;
+
     @Column(name = "elect_sort")
     private String electSort;
 

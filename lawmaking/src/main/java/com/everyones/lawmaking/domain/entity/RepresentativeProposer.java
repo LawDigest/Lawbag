@@ -1,0 +1,25 @@
+package com.everyones.lawmaking.domain.entity;
+
+import jakarta.persistence.*;
+import lombok.*;
+@Entity
+@Builder
+@Getter
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class RepresentativeProposer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "representative_proposer_id")
+    private long id;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bill_id")
+    private Bill bill;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "congressman_id")
+    private Congressman congressman;
+
+}
