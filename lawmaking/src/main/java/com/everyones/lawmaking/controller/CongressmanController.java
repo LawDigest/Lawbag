@@ -1,7 +1,7 @@
 package com.everyones.lawmaking.controller;
 
 
-import com.everyones.lawmaking.common.dto.CongressmanBillDto;
+import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
@@ -31,8 +31,6 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @Tag(name="의원 관련 조회 API", description = "의원 관련 데이터를 가져오는 API입니다.")
 public class CongressmanController {
     private final Facade facade;
-    private final CongressmanService congressmanService;
-
 
     @Operation(summary = "의원 상세 조회", description = "의원 상세페이지에 들어갈 데이터를 가져옵니다.")
     @ApiResponses(value = {
@@ -53,7 +51,7 @@ public class CongressmanController {
             @RequestParam("congressman_id")
             String congressmanId) {
 
-        var CongressmanDto = congressmanService.getCongressman(congressmanId);
+        var CongressmanDto = facade.getCongressman(congressmanId);
 
         return BaseResponse.ok(CongressmanDto);
 
@@ -74,7 +72,7 @@ public class CongressmanController {
             ),
     })
     @GetMapping("/bill_info")
-    public BaseResponse<CongressmanBillDto> getCongressmanBills(
+    public BaseResponse<BillDto> getCongressmanBills(
             @Parameter(example = "04T3751T", description = "의원 Id")
             @RequestParam("congressman_id") String congressmanId,
             @Parameter(example = "true", description = "해당 의원의 법안 대표 발의 기준, 공동 발의 기준 여부")

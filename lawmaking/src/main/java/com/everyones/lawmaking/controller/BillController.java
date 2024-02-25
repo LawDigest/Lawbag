@@ -1,7 +1,9 @@
 package com.everyones.lawmaking.controller;
 
+import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.response.BillDetailDto;
 import com.everyones.lawmaking.common.dto.response.MainFeedBillResponse;
+import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import com.everyones.lawmaking.service.BillService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,6 +18,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
 @RequiredArgsConstructor
@@ -23,7 +27,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RequestMapping("/v1/bill")
 @Tag(name = "법안 API", description = "법안 조회 API")
 public class BillController {
-    private final BillService billService;
+    private final Facade facade;
 
     @Operation(summary = "메인피드 조회", description = "메인피드에 들어갈 데이터를 가져옵니다.")
     @ApiResponses(value = {
@@ -39,7 +43,7 @@ public class BillController {
             ),
     })
     @GetMapping("/mainfeed")
-    public BaseResponse<MainFeedBillResponse> getNext3Bills(
+    public BaseResponse<List<BillDto>> getNext3Bills(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page", required = true)
             int page,
@@ -47,7 +51,7 @@ public class BillController {
             int size
             ) {
         var pageable = PageRequest.of(page, size);
-        var result = billService.getNext3Bills(page, pageable);
+        var result = facade.getBillsFromMainFeed(pageable);
         return BaseResponse.ok(result);
 
     }
@@ -66,7 +70,7 @@ public class BillController {
             ),
     })
     @GetMapping("/mainfeed/stage")
-    public BaseResponse<MainFeedBillResponse> getNext3BillsWithStage(
+    public BaseResponse<List<BillDto>> getNext3BillsWithStage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page", required = true) int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
@@ -77,7 +81,7 @@ public class BillController {
             @RequestParam(name = "stage", required = true) String stage
             ) {
         var pageable = PageRequest.of(page, size);
-        var result = billService.getNext3BillsWithStage(page, pageable, stage);
+        var result = facade.getBillsByStage(pageable, stage);
         return BaseResponse.ok(result);
 
     }
@@ -96,10 +100,10 @@ public class BillController {
             ),
     })
     @GetMapping("/detail/{bill_id}")
-    public BaseResponse<BillDetailDto> getBillWtihDeatail(
+    public BaseResponse<BillDto> getBillWtihDeatail(
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @PathVariable("bill_id") String billId) {
-        var result = billService.getBillWtihDeatail(billId);
+        var result = facade.getBillByBillId(billId);
         return BaseResponse.ok(result);
 
     }
