@@ -4,7 +4,6 @@ import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
 import com.everyones.lawmaking.service.BillService;
 import com.everyones.lawmaking.service.CongressmanService;
-import com.everyones.lawmaking.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class Facade {
-    private final PartyService partySerivce;
+//    private final PartyService partySerivce;
     private final BillService billService;
     private final CongressmanService congressmanService;
 
@@ -26,6 +25,10 @@ public class Facade {
 
     public List<BillDto> getBillsByStage(Pageable pageable, String stage) {
         return billService.getBillsByStage(pageable, stage);
+    }
+
+    public BillDto getBillByBillId(String billId) {
+        return billService.getBillWithDetail(billId);
     }
 
     // Congressman 대표 발의 가져오기

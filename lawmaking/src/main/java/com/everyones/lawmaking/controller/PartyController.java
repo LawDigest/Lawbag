@@ -19,8 +19,7 @@ public class PartyController {
     private final PartyService partyService;
 
     @GetMapping("/detail/{party_id}")
-    public BaseResponse<PartyDetailResponse>
-    getPartyDetail(@Parameter(example = "1", description = "정당 id")
+    public BaseResponse<PartyDetailResponse> getPartyDetail(@Parameter(example = "1", description = "정당 id")
                    @PathVariable("party_id") long partyId,
                    @Parameter(example = "대표", description = "공동대표발의안 또는 대표발의 의안 조회 여부")
                    @Schema(type = "string", allowableValues = {"대표", "공통"})
