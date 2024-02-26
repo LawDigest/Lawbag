@@ -2,8 +2,10 @@ package com.everyones.lawmaking.facade;
 
 import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
+import com.everyones.lawmaking.common.dto.response.PartyDetailDto;
 import com.everyones.lawmaking.service.BillService;
 import com.everyones.lawmaking.service.CongressmanService;
+import com.everyones.lawmaking.service.PartyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class Facade {
-//    private final PartyService partySerivce;
+    private final PartyService partyService;
     private final BillService billService;
     private final CongressmanService congressmanService;
 
@@ -43,6 +45,20 @@ public class Facade {
     public CongressmanDto getCongressman(String congressmanId) {
         return congressmanService.getCongressman(congressmanId);
     }
+
+    public PartyDetailDto getPartyById(long partyId) {
+        return partyService.getPartyById(partyId);
+    }
+
+    public List<BillDto> getRepresentativeBillsByParty(Pageable pageable, long partyId) {
+        return billService.getRepresentativeBillsByParty(pageable, partyId);
+    }
+
+    public List<BillDto> getPublicBillsByParty(Pageable pageable, long partyId) {
+        return billService.getPublicBillsByParty(pageable, partyId);
+    }
+
+
 
 
 

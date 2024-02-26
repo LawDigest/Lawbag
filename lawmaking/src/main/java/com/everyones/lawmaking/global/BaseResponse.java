@@ -3,11 +3,9 @@ package com.everyones.lawmaking.global;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.SuperBuilder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Getter
