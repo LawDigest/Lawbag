@@ -1,11 +1,8 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.BillDto;
-import com.everyones.lawmaking.common.dto.response.BillDetailDto;
-import com.everyones.lawmaking.common.dto.response.MainFeedBillResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
-import com.everyones.lawmaking.service.BillService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -45,7 +42,7 @@ public class BillController {
     @GetMapping("/mainfeed")
     public BaseResponse<List<BillDto>> getNext3Bills(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
-            @RequestParam(name = "page", required = true)
+            @RequestParam(name = "page")
             int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
             int size
@@ -72,13 +69,13 @@ public class BillController {
     @GetMapping("/mainfeed/stage")
     public BaseResponse<List<BillDto>> getNext3BillsWithStage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
-            @RequestParam(name = "page", required = true) int page,
+            @RequestParam(name = "page") int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
-            @RequestParam(name = "size", required = true) int size,
+            @RequestParam(name = "size") int size,
             @Parameter(example = "공포", description = "법안의 단계 현황을 나타냅니다.")
             @Schema(type = "string", allowableValues = {"접수",
                     "공포","위원회 심사","본회의 심의"})
-            @RequestParam(name = "stage", required = true) String stage
+            @RequestParam(name = "stage") String stage
             ) {
         var pageable = PageRequest.of(page, size);
         var result = facade.getBillsByStage(pageable, stage);

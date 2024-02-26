@@ -1,6 +1,5 @@
 package com.everyones.lawmaking.repository;
 
-import com.everyones.lawmaking.common.dto.response.BillDetailDto;
 import com.everyones.lawmaking.domain.entity.Bill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -23,23 +22,6 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "ORDER BY b.proposeDate DESC, b.id DESC ")
     Slice<Bill> findDefaultBillsByStage(Pageable pageable, @Param("stage") String stage);
 
-    @Query("SELECT new com.everyones.lawmaking.common.dto.response.BillDetailDto(b.id, b.billName, b.proposers, b.gptSummary,  b.proposeDate, b.stage, c.name, c.id, p.name, p.id, c.congressmanImageUrl, b.keyword)" +
-            "FROM Bill b " +
-            "JOIN b.publicProposer bp " +
-            "JOIN bp.congressman c " +
-            "JOIN c.party p " +
-            "WHERE bp.isRepresent = true AND b.id = :billId " +
-            "AND p.id = c.party.id")
-    BillDetailDto findBillDetailByBillId(@Param("billId") String billId);
-
-    @Query("SELECT b FROM Bill b " +
-           "JOIN FETCH b.publicProposer bp " +
-           "JOIN FETCH b.representativeProposer rp " +
-           "JOIN FETCH bp.congressman c " +
-           "JOIN FETCH c.party p " +
-           "WHERE b.id = :billId " )
-    Optional<Bill> findBillDetailById(@Param("billId") String billId);
-
 
     @Query("SELECT b FROM Bill b " +
             "JOIN FETCH b.representativeProposer rp " +
@@ -51,6 +33,20 @@ public interface BillRepository extends JpaRepository<Bill, String> {
            "WHERE b.id = rp.bill.id " +
            "AND rp.congressman.id = :congressmanId ")
     Slice<Bill> findByRepresentativeProposer(String congressmanId, Pageable pageable);
+
+    @Query("SELECT b FROM Bill b " +
+            "JOIN FETCH b.representativeProposer rp " +
+            "JOIN rp.congressman c " +
+            "JOIN c.party p " +
+            "WHERE b.id = rp.bill.id " +
+            "AND p.id = :partyId ")
+    Slice<Bill> findRepresentativeBillsByParty(Pageable pageable, @Param("partyId") long partyId);
+
+    @Query("SELECT b FROM Bill b " +
+           "JOIN FETCH b.representativeProposer rp " +
+            "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.party.id = :partyId) " +
+            "ORDER BY b.proposeDate DESC, b.id DESC")
+    Slice<Bill> findPublicBillsByParty(Pageable pageable, @Param("partyId") long partyId);
 
 
     @Query("SELECT b FROM Bill b " +

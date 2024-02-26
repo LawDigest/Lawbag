@@ -1,6 +1,5 @@
 package com.everyones.lawmaking.repository;
 
-import com.everyones.lawmaking.common.dto.response.PartyBillDto;
 import com.everyones.lawmaking.common.dto.response.PartyDetailDto;
 import com.everyones.lawmaking.domain.entity.Party;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -8,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 @Repository
 public interface PartyRepository extends JpaRepository<Party, Long> {
@@ -20,13 +18,8 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
             "FROM Party p " +
             "JOIN Congressman c ON p.id = c.party.id " +
             "WHERE p.id = :partyId")
-    PartyDetailDto findPartyDetailById(@Param("partyId") long partyId);
-    @Query("SELECT p FROM Party p WHERE p.name = :name")
-    Party findByName(String name);
-    @Query("SELECT p FROM Party p WHERE p.id IN :ids")
-    List<Party> findAllByIds(List<Long> ids);
-    @Query("SELECT p FROM Party p WHERE p.id = :id")
-    Optional<Party> findById(Long id);
+    Optional<PartyDetailDto> findPartyDetailById(@Param("partyId") long partyId);
+
 
 
 }
