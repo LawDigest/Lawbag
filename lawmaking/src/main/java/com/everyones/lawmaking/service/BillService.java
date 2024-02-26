@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -60,54 +61,14 @@ public class BillService {
         return billInfoList;
     }
 
-    public BillDetailDto getBillWtihDeatail(String billId) {
-        var bill = billRepository.findBillDetailByBillId(billId);
-        var publicIdsAndProposersAndParty = billProposerRepository.findPartyByBill(billId);
+    public BillDto getBillWithDetail(String billId) {
+        var bill = billRepository.findBillInfoById(billId)
+                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+        var billDto = getBillInfoFromBill(bill);
 
-        List<String> publicProposerIds = publicIdsAndProposersAndParty.stream()
-                .map(congressman -> congressman[0])
-                .toList();
-
-        List<String> publicProposers = publicIdsAndProposersAndParty.stream()
-                .map(congressman -> congressman[1].length() > 3 ? congressman[1].substring(0, 3) : congressman[1])
-                .toList();
-
-        var proposerPartyCountList = bill.getProposerPartyCountList();
-        var proposerPartyIdList = bill.getProposerPartyIdList();
-        var publicIdsAndProposersAndPartyCount = publicIdsAndProposersAndParty.size();
-        for (int i = 0; i < publicIdsAndProposersAndPartyCount; i++) {
-            String partyName = publicIdsAndProposersAndParty.get(i)[2];
-            int partyId = Integer.parseInt(publicIdsAndProposersAndParty.get(i)[3]);
-
-            boolean partyExists = false;
-            for (Map<String, Object> partyMap : proposerPartyCountList) {
-                if (partyMap.get("name").equals(partyName)) {
-                    partyMap.put("count", (int) partyMap.get("count") + 1);
-                    partyExists = true;
-                    break;
-                }
-            }
-            if (!partyExists) {
-                Map<String, Object> newPartyMap = new ConcurrentHashMap<>();
-                newPartyMap.put("name", partyName);
-                newPartyMap.put("count", 1);
-                proposerPartyCountList.add(newPartyMap);
-                Map<String, Object> newPartyIdMap = new ConcurrentHashMap<>();
-                newPartyIdMap.put("name", partyName);
-                newPartyIdMap.put("party_id", partyId);
-                proposerPartyIdList.add(newPartyIdMap);
-            }
-
-        }
-
-
-        bill.setPublicProposerList(publicProposers);
-        bill.setPublicProposerIdList(publicProposerIds);
-        bill.setProposerPartyCountList(proposerPartyCountList);
-        bill.setProposerPartyIdList(proposerPartyIdList);
-
-        return bill;
+        return billDto;
     }
+
 
 
     public List<BillDto> getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
