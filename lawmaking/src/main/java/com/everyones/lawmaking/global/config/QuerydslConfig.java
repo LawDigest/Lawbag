@@ -1,4 +1,4 @@
-package com.everyones.lawmaking.config;
+package com.everyones.lawmaking.global.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
