@@ -41,6 +41,7 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
     private final CorsConfig corsConfig;
     private final UserRepository userRepository;
 
+    // 회원가입이랑 로그인 필요한 요청에 대해서만 시큐리티 필터를 타기
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -50,21 +51,19 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
                 .cors((cors) -> cors
                         .configurationSource(corsConfig.corsConfigurationSource()))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .requestMatchers("/**").hasAnyAuthority(Role.MEMBER.getCode())
-                .requestMatchers("/**/admin/**").hasAnyAuthority(Role.ADMIN.getCode())
-                .anyRequest().authenticated())
+                        .requestMatchers("/v1/**").hasAnyAuthority(Role.MEMBER.getCode())
+                        .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                                .authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                                .accessDeniedHandler(tokenAccessDeniedHandler))
+                        .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                        .accessDeniedHandler(tokenAccessDeniedHandler))
 
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(authorization -> authorization
                                 .baseUri("/oauth2/authorization")
                                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                         )
-                        .redirectionEndpoint(redirection-> redirection
+                        .redirectionEndpoint(redirection -> redirection
                                 .baseUri("/*/oauth2/code/*")
                         )
                         .userInfoEndpoint(userInfo -> userInfo
