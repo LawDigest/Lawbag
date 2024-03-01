@@ -11,9 +11,9 @@ import java.util.List;
 public class CorsConfig implements WebMvcConfigurer {
 
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource corsConfigSource = new UrlBasedCorsConfigurationSource();
+        var corsConfigSource = new UrlBasedCorsConfigurationSource();
 
-        CorsConfiguration corsConfig = new CorsConfiguration();
+        var corsConfig = new CorsConfiguration();
         corsConfig.setAllowedHeaders(List.of("*"));
         corsConfig.setAllowedMethods(List.of("*"));
         corsConfig.setAllowedOrigins(List.of("*"));

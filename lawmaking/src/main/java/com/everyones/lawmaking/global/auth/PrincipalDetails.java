@@ -42,7 +42,7 @@ public class PrincipalDetails implements OAuth2User {
 
 
     public static PrincipalDetails create(AuthInfo authInfo, Map<String, Object> attributes) {
-        PrincipalDetails userPrincipal = new PrincipalDetails(
+        var userPrincipal = new PrincipalDetails(
                 authInfo.getSocialId(),
                 authInfo.getProvider(),
                 Role.MEMBER,
