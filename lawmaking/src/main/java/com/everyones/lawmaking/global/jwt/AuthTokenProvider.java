@@ -2,7 +2,6 @@ package com.everyones.lawmaking.global.jwt;
 
 
 import com.everyones.lawmaking.global.config.AppProperties;
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -53,20 +53,23 @@ public class AuthTokenProvider {
 
         if (authToken.validate()) {
 
-            Claims claims = authToken.getTokenClaims();
+            var claims = authToken.getTokenClaims();
             Collection<? extends GrantedAuthority> authorities =
                     Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 
-            log.debug("claims subject := [{}]", claims.getSubject());
-            UserDetails principal = new User(claims.getSubject(), null, authorities);
+            UserDetails principal = new User(claims.getSubject(), "null", authorities);
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+        // 토큰이 검증이 되지 않았을 경우는 게스트를 가진 권한을 부여하게 된다.
         } else {
-            log.info("TokenValidFailedException");
+            var guestAuthority = new SimpleGrantedAuthority("ROLE_GUEST");
+            Collection<? extends GrantedAuthority> authorities = Collections.singleton(guestAuthority);
+            UserDetails principal = new User("anonymous", "null", authorities);
+
+            return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         }
-        return null;
     }
 
 }
