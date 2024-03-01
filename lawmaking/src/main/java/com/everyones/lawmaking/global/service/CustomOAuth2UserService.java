@@ -2,6 +2,7 @@ package com.everyones.lawmaking.global.service;
 
 import com.everyones.lawmaking.domain.entity.AuthInfo;
 import com.everyones.lawmaking.domain.entity.Provider;
+import com.everyones.lawmaking.domain.entity.Role;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.global.auth.PrincipalDetails;
 import com.everyones.lawmaking.global.auth.socialInfo.OAuth2UserInfo;
@@ -36,10 +37,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         try {
             return this.process(userRequest, user);
         } catch (AuthenticationException ex) {
-            log.error(ex.getMessage());
             throw ex;
         } catch (Exception ex) {
-            log.error(ex.getMessage());
             throw new InternalAuthenticationServiceException(ex.getMessage());
         }
     }
@@ -47,16 +46,11 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private OAuth2User process(OAuth2UserRequest userRequest, OAuth2User user) {
 
         var provider = Provider.valueOf(userRequest.getClientRegistration().getRegistrationId().toUpperCase());
-        log.info(String.valueOf(user.getAttributes()));
-        log.info(String.valueOf(user));
 
         // 소셜로그인에서 사용자 정보를 가져왔음
         var userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider, user.getAttributes());
 
-        log.info(String.valueOf(provider));
-
         var userSocialId = userInfo.getId();
-
         // 저장된 AuthInfo 찾아서 값이 있으면 우리가 찾는 사용자인지 확인
         var savedAuthInfo = authInfoRepository.findBySocialIdAndProvider(userSocialId, provider)
                 .orElseGet(() -> createAuthAndUser(userInfo,provider));
@@ -72,11 +66,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .socialId(userInfo.getId())
                 .provider(provider)
                 .build();
+        authInfoRepository.save(authInfo);
         // User에 데이터 저장
         User user = User.builder()
                 .authInfo(authInfo)
                 .email(userInfo.getEmail())
                 .name(userInfo.getName())
+                .role(Role.MEMBER)
                 .build();
         userRepository.saveAndFlush(user);
 
