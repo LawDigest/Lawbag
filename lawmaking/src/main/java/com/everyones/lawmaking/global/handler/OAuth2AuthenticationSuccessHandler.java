@@ -19,15 +19,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.core.oidc.user.OidcUser;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 
 import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
@@ -43,21 +42,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        log.debug("CustomOAuth2UserService에서 db에 소셜 로그인 user 정보 저장하고 success handler로 들어옴");
         String targetUrl = determineTargetUrl(request, response, authentication);
-        log.debug("targetUrl : {}", targetUrl);
 
         if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
+            logger.info("Response has already been committed. Unable to redirect to " + targetUrl);
             return;
         }
-
         clearAuthenticationAttributes(request, response);
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        var redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
+        Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
 
         if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
@@ -65,47 +61,52 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         }
 
         String targetUrl = redirectUri.orElse(getDefaultTargetUrl());
-        log.debug("determineTargetUrl method targetUrl : {}", targetUrl);
 
-        OAuth2AuthenticationToken authToken = (OAuth2AuthenticationToken) authentication;
+        var authToken = (OAuth2AuthenticationToken) authentication;
         Provider provider = Provider.valueOf(authToken.getAuthorizedClientRegistrationId().toUpperCase());
 
-        OidcUser user = ((OidcUser) authentication.getPrincipal());
-        OAuth2UserInfo userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider, user.getAttributes());
-        Collection<? extends GrantedAuthority> authorities = ((OidcUser) authentication.getPrincipal()).getAuthorities();
+        var user = (OAuth2User) authentication.getPrincipal();
+        var userInfo = OAuth2UserInfoFactory.getOAuth2UserInfo(provider, user.getAttributes());
+        Collection<? extends GrantedAuthority> authorities = ((OAuth2User) authentication.getPrincipal()).getAuthorities();
 
-        Role roleType = hasAuthority(authorities, Role.ADMIN.getCode()) ? Role.ADMIN : Role.MEMBER;
+        var refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
-        Date now = new Date();
+        var cookieMaxAge = (int) refreshTokenExpiry / 60;
+        Map<String, AuthToken> userToken = userTokenToCookie(userInfo, authorities);
+
+        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, userToken.get("refreshToken").getToken(), cookieMaxAge);
+        return UriComponentsBuilder.fromUriString(targetUrl)
+                .queryParam("token", userToken.get("accessToken").getToken())
+                .build().toUriString();
+    }
+
+    protected  Map<String,AuthToken> userTokenToCookie(OAuth2UserInfo userInfo,Collection<? extends GrantedAuthority> authorities) {
+
+        Map<String,AuthToken> authTokenMap = new HashMap<String,AuthToken>();
+        // access 토큰 설정
+        var now = new Date();
+        var role = hasAuthority(authorities, Role.ADMIN.getCode()) ? Role.ADMIN : Role.MEMBER;
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userInfo.getId(),
-                roleType.getCode(),
+                role.getCode(),
                 new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
         );
 
         // refresh 토큰 설정
-        long refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+        var refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
         AuthToken refreshToken = tokenProvider.createAuthToken(
                 userInfo.getId(),
                 new Date(now.getTime() + refreshTokenExpiry)
         );
 
-        log.debug("accessToken : {}", accessToken.getToken());
-        log.debug("refreshToken : {}", refreshToken.getToken());
-
-        // Refresh토큰 REDIS에 저장
+        authTokenMap.put("accessToken", accessToken);
+        authTokenMap.put("refreshToken", refreshToken);
 
 
-        int cookieMaxAge = (int) refreshTokenExpiry / 60;
+        return authTokenMap;
 
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, refreshToken.getToken(), cookieMaxAge);
-
-
-        return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", accessToken.getToken())
-                .build().toUriString();
     }
 
     protected void clearAuthenticationAttributes(HttpServletRequest request, HttpServletResponse response) {
@@ -127,14 +128,14 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private boolean isAuthorizedRedirectUri(String uri) {
-        URI clientRedirectUri = URI.create(uri);
+        var clientRedirectUri = URI.create(uri);
 
         return appProperties.getOauth2().getAuthorizedRedirectUris()
                 .stream()
                 .anyMatch(authorizedRedirectUri -> {
                     // Only validate host and port. Let the clients use different paths if they want to
                     URI authorizedURI = URI.create(authorizedRedirectUri);
-                    return authorizedURI.getHost().equalsIgnoreCase(clientRedirectUri.getHost())
+                    return authorizedURI.getHost().matches(clientRedirectUri.getHost())
                             && authorizedURI.getPort() == clientRedirectUri.getPort();
                 });
     }
