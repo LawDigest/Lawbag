@@ -14,10 +14,10 @@ import java.io.IOException;
 public class TokenAccessDeniedHandler implements AccessDeniedHandler {
 
 
+
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-            response.sendError(500,accessDeniedException.getMessage());
-
+        response.sendRedirect("/v1/forbidden");
     }
 }
 
