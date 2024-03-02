@@ -39,15 +39,15 @@ jobs:
         uses: gradle/gradle-build-action@v2
 
       - name: Make gradlew executable
-        run: chmod +x ./gradlew
+        run: chmod +x ./lawmaking/gradlew
 
       - name: Execute Gradle build
-        run: ./gradlew build -x test
+        run: ./lawmaking/gradlew build -x test
         
       - name: Docker build & push to prod
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/lawmaking-back /lawmaking/.
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/lawmaking-back ./lawmaking/.
           docker push ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
 
 
