@@ -65,7 +65,7 @@ jobs:
             docker ps -q --filter "name=lawmaking-back" | grep -q . && docker stop lawmaking-back && docker rm lawmaking-back | true
             docker pull ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker run -d -p 8080:8080 --name=lawmaking-back ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
-            
+            docker rmi -f $(docker images -f "dangling=true" -q) || true
           
             
         
