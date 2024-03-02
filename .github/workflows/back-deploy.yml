@@ -1,0 +1,71 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will build a package using Gradle and then publish it to GitHub packages when a release is created
+# For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#Publishing-using-gradle
+
+name: Build and deploy isegyechart-api
+
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Deploy ENV: STAGE'
+        required: true
+        default: 'STAGE'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up JDK 17 and build cache
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+          cache-dependency-path: | # optional
+            sub-project/*.gradle*
+            sub-project/**/gradle-wrapper.properties
+            
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Execute Gradle build
+        run: ./gradlew build -x test
+        
+      - name: Docker build & push to prod
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          docker build -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/lawmaking-back /lawmaking/.
+          docker push ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
+
+
+      ## deploy to production
+      - name: Deploy to prod
+        uses: appleboy/ssh-action@master
+        id: deploy-prod
+        with:
+          host: 52.79.63.140
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            docker ps -q --filter "name=lawmaking-back" | grep -q . && docker stop lawmaking-back && docker rm lawmaking-back | true
+            docker pull ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
+            docker run -d -p 8080:8080 --name=lawmaking-back ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
+            docker rmi -f $(docker images -f "dangling=true" -q) || true
+          
+            
+        
