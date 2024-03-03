@@ -14,10 +14,10 @@ import java.io.IOException;
 public class TokenAccessDeniedHandler implements AccessDeniedHandler {
 
 
-
+    // ToDo 추후 @Controller Advice 함께 전역으로 처리
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
-        response.sendRedirect("/v1/forbidden");
+        response.sendError(HttpServletResponse.SC_FORBIDDEN);
     }
 }
 

@@ -9,6 +9,7 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 
 import java.io.IOException;
 
+// ToDo 추후 @Controller Advice 함께 전역으로 처리
 @Slf4j
 public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
@@ -17,6 +18,7 @@ public class RestAuthenticationEntryPoint implements AuthenticationEntryPoint {
             HttpServletResponse response,
             AuthenticationException authException
     ) throws IOException, ServletException {
-        response.sendRedirect("/v1/login");
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                authException.getLocalizedMessage());
     }
 }
