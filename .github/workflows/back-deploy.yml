@@ -65,17 +65,17 @@ jobs:
             docker ps -q --filter "name=lawmaking-back" | grep -q . && docker stop lawmaking-back && docker rm lawmaking-back | true
             docker pull ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker run -d -p 8080:8080 --name=lawmaking-back \
-             -e "ACTIVE=${secrets.ACTIVE}" \
-             -e "DB_HOSTNAME=${secrets.DB_HOSTNAME}" \
-             -e "DB_NAME=${secrets.DB_NAME}" \
-             -e "DB_USERNAME=${secrets.DB_USERNAME}" \
-             -e "DB_PASSWORD=${secrets.DB_PASSWORD}" \
-             -e "KAKAO_CLIENT_ID=${secrets.KAKAO_CLIENT_ID}" \
-             -e "KAKAO_CLIENT_SECRET=${secrets.KAKAO_CLIENT_SECRET}" \
-             -e "KAKAO_USER_NAME_ATTRIBUTE=${secrets.KAKAO_USER_NAME_ATTRIBUTE}" \
-             -e "TOKEN_EXPIRY=${secrets.TOKEN_EXPIRY}" \
-             -e "REFRESH_TOKEN_EXPIRY=${secrets.REFRESH_TOKEN_EXPIRY}" \
-             -e "TOKEN_SECRET=${secrets.TOKEN_SECRET}" \
+             -e "ACTIVE=${{ secrets.ACTIVE }}" \
+             -e "DB_HOSTNAME=${{ secrets.DB_HOSTNAME }}" \
+             -e "DB_NAME=${{ secrets.DB_NAME }}" \
+             -e "DB_USERNAME=${{ secrets.DB_USERNAME }}" \
+             -e "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
+             -e "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" \
+             -e "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" \
+             -e "KAKAO_USER_NAME_ATTRIBUTE=${{ secrets.KAKAO_USER_NAME_ATTRIBUTE }}" \
+             -e "TOKEN_EXPIRY=${{ secrets.TOKEN_EXPIRY }}" \
+             -e "REFRESH_TOKEN_EXPIRY=${{ secrets.REFRESH_TOKEN_EXPIRY }}" \
+             -e "TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}" \
             ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker rmi -f $(docker images -f "dangling=true" -q) || true
           
