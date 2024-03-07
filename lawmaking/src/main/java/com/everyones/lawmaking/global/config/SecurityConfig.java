@@ -52,7 +52,7 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer ì
                         .configurationSource(corsConfig.corsConfigurationSource()))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers("/v1/**").hasAnyAuthority(Role.MEMBER.getCode())
+                        .requestMatchers("/v1/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(new RestAuthenticationEntryPoint())
