@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,8 +15,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
@@ -40,7 +39,7 @@ public class BillController {
             ),
     })
     @GetMapping("/mainfeed")
-    public BaseResponse<List<BillDto>> getNext3Bills(
+    public BaseResponse<BillListResponse> getNext3Bills(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page")
             int page,
@@ -67,7 +66,7 @@ public class BillController {
             ),
     })
     @GetMapping("/mainfeed/stage")
-    public BaseResponse<List<BillDto>> getNext3BillsWithStage(
+    public BaseResponse<BillListResponse> getNext3BillsWithStage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page") int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")

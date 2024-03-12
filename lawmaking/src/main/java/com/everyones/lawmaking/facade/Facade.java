@@ -2,6 +2,7 @@ package com.everyones.lawmaking.facade;
 
 import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
+import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.PartyDetailDto;
 import com.everyones.lawmaking.service.BillService;
 import com.everyones.lawmaking.service.CongressmanService;
@@ -21,11 +22,11 @@ public class Facade {
     private final BillService billService;
     private final CongressmanService congressmanService;
 
-    public List<BillDto> getBillsFromMainFeed(Pageable pageable) {
+    public BillListResponse getBillsFromMainFeed(Pageable pageable) {
         return billService.getBillsByDefault(pageable);
     }
 
-    public List<BillDto> getBillsByStage(Pageable pageable, String stage) {
+    public BillListResponse getBillsByStage(Pageable pageable, String stage) {
         return billService.getBillsByStage(pageable, stage);
     }
 
@@ -34,11 +35,11 @@ public class Facade {
     }
 
     // Congressman 대표 발의 가져오기
-    public List<BillDto> getBillsFromRepresentativeProposer(String congressmanId, Pageable pageable) {
+    public BillListResponse getBillsFromRepresentativeProposer(String congressmanId, Pageable pageable) {
         return billService.getBillInfoFromRepresentativeProposer(congressmanId, pageable);
     }
 
-    public List<BillDto> getBillsFromPublicProposer(String congressmanId, Pageable pageable) {
+    public BillListResponse getBillsFromPublicProposer(String congressmanId, Pageable pageable) {
         return billService.getBillInfoFromPublicProposer(congressmanId, pageable);
     }
 
@@ -50,11 +51,11 @@ public class Facade {
         return partyService.getPartyById(partyId);
     }
 
-    public List<BillDto> getRepresentativeBillsByParty(Pageable pageable, long partyId) {
+    public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId) {
         return billService.getRepresentativeBillsByParty(pageable, partyId);
     }
 
-    public List<BillDto> getPublicBillsByParty(Pageable pageable, long partyId) {
+    public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId) {
         return billService.getPublicBillsByParty(pageable, partyId);
     }
 

@@ -4,6 +4,7 @@ import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.BillInfoDto;
 import com.everyones.lawmaking.common.dto.PublicProposerDto;
 import com.everyones.lawmaking.common.dto.RepresentativeProposerDto;
+import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.CustomException;
@@ -29,9 +30,10 @@ public class BillService {
     private final BillRepository billRepository;
     private final BillProposerRepository billProposerRepository;
 
-    public List<BillDto> getBillsByDefault(Pageable pageable) {
+    public BillListResponse getBillsByDefault(Pageable pageable) {
         // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
         var billSlice = billRepository.findDefaultBillsByPage(pageable);
+
         var billIdList = billSlice.stream()
                 .map(Bill::getId)
                 .toList();
@@ -40,13 +42,16 @@ public class BillService {
                 .map(this::getBillInfoFromBill)
                 .toList();
         var pagination = PaginationResponse.fromSlice(billSlice);
-
-        return billInfoList;
+        return BillListResponse.builder()
+                .paginationResponse(pagination)
+                .billList(billInfoList)
+                .build();
 
     }
 
-    public List<BillDto> getBillsByStage(Pageable pageable, String stage) {
+    public BillListResponse getBillsByStage(Pageable pageable, String stage) {
         var billSlice = billRepository.findDefaultBillsByStage(pageable, stage);
+
         var billIdList = billSlice.stream()
                 .map(Bill::getId)
                 .toList();
@@ -56,7 +61,10 @@ public class BillService {
                 .toList();
         var pagination = PaginationResponse.fromSlice(billSlice);
 
-        return billInfoList;
+        return BillListResponse.builder()
+                .paginationResponse(pagination)
+                .billList(billInfoList)
+                .build();
     }
 
     public BillDto getBillWithDetail(String billId) {
@@ -68,7 +76,7 @@ public class BillService {
 
 
 
-    public List<BillDto> getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
+    public BillListResponse getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findByRepresentativeProposer(congressmanId, pageable);
 
         if (!billSlice.hasContent()) {
@@ -83,30 +91,40 @@ public class BillService {
                 .toList();
 
         var billList = billRepository.findBillInfoByIdList(billIdList);
-
-        return billList.stream()
+        var billInfoList = billList.stream()
                 .map(this::getBillInfoFromBill)
                 .toList();
+        return BillListResponse.builder()
+                .paginationResponse(pagination)
+                .billList(billInfoList)
+                .build();
     }
 
-    public List<BillDto> getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
-        var billIdList = billRepository.findBillByPublicProposer(congressmanId, pageable)
-                .stream()
+    public BillListResponse getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
+        var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable);
+
+        if (billSlice.isEmpty()) {
+            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+        }
+        var billIdList = billSlice.stream()
                 .map(Bill::getId)
                 .collect(Collectors.toList());
 
-        if (billIdList.isEmpty()) {
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
-        }
 
         var billList = billRepository.findBillInfoByIdList(billIdList);
 
-        return billList.stream()
+        var pagination = PaginationResponse.fromSlice(billSlice);
+
+        var billInfoList =  billList.stream()
                 .map(this::getBillInfoFromBill)
                 .toList();
+        return BillListResponse.builder()
+                .paginationResponse(pagination)
+                .billList(billInfoList)
+                .build();
     }
 
-    public List<BillDto> getRepresentativeBillsByParty(Pageable pageable, long partyId) {
+    public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findRepresentativeBillsByParty(pageable, partyId);
 
         if (!billSlice.hasContent()) {
@@ -120,13 +138,17 @@ public class BillService {
                 .map(Bill::getId)
                 .toList();
         var billList = billRepository.findBillInfoByIdList(billIdList);
-
-        return billList.stream()
+        var billInfoList = billList.stream()
                 .map(this::getBillInfoFromBill)
                 .toList();
+
+        return BillListResponse.builder()
+                .paginationResponse(pagination)
+                .billList(billInfoList)
+                .build();
     }
 
-    public List<BillDto> getPublicBillsByParty(Pageable pageable, long partyId) {
+    public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findPublicBillsByParty(pageable, partyId);
 
         if (!billSlice.hasContent()) {
@@ -140,11 +162,14 @@ public class BillService {
                 .map(Bill::getId)
                 .toList();
         var billList = billRepository.findBillInfoByIdList(billIdList);
-
-        return billList.stream()
+        var billInfoList = billList.stream()
                 .map(this::getBillInfoFromBill)
                 .toList();
 
+        return BillListResponse.builder()
+                .paginationResponse(pagination)
+                .billList(billInfoList)
+                .build();
     }
 
 
@@ -162,6 +187,7 @@ public class BillService {
         var publicProposerDtoList = publicProposers.stream()
                 .map(PublicProposerDto::fromPublicProposer)
                 .toList();
+
         var representativeProposerDto = RepresentativeProposerDto.fromRepresentativeProposer(representativeProposer);
 
         return BillDto.builder()

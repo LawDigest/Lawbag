@@ -1,11 +1,10 @@
 package com.everyones.lawmaking.controller;
 
 
-import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
+import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
-import com.everyones.lawmaking.service.CongressmanService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -72,7 +71,7 @@ public class CongressmanController {
             ),
     })
     @GetMapping("/bill_info")
-    public BaseResponse<BillDto> getCongressmanBills(
+    public BaseResponse<BillListResponse> getCongressmanBills(
             @Parameter(example = "04T3751T", description = "의원 Id")
             @RequestParam("congressman_id") String congressmanId,
             @Parameter(example = "true", description = "해당 의원의 법안 대표 발의 기준, 공동 발의 기준 여부")
