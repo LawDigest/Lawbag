@@ -16,9 +16,9 @@ public class PublicProposerDto {
     private String publicProposerName;
     private String publicProposerImgUrl;
 
-    private long partyId;
-    private String partyName;
-    private String partyImageUrl;
+    private long publicProposerPartyId;
+    private String publicProposerPartyName;
+    private String publicProposerPartyImageUrl;
 
     public static PublicProposerDto fromPublicProposer(BillProposer billProposer) {
         var congressman = billProposer.getCongressman();
@@ -27,9 +27,9 @@ public class PublicProposerDto {
                 .publicProposerId(congressman.getId())
                 .publicProposerName(congressman.getName())
                 .publicProposerImgUrl(congressman.getCongressmanImageUrl())
-                .partyId(party.getId())
-                .partyName(party.getName())
-                .partyImageUrl(party.getPartyImageUrl())
+                .publicProposerPartyId(party.getId())
+                .publicProposerPartyName(party.getName())
+                .publicProposerPartyImageUrl(party.getPartyImageUrl())
                 .build();
     }
 }

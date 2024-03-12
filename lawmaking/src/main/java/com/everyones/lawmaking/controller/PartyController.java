@@ -1,7 +1,7 @@
 package com.everyones.lawmaking.controller;
 
+import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.PartyDetailDto;
-import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import com.everyones.lawmaking.service.PartyService;
@@ -15,7 +15,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
@@ -61,14 +64,14 @@ public class PartyController {
             ),
     })
     @GetMapping("/bill")
-    public BaseResponse<PartyDetailResponse> getBillsByParty(@Parameter(example = "1", description = "정당 id")
+    public BaseResponse<BillListResponse> getBillsByParty(@Parameter(example = "1", description = "정당 id")
                    @RequestParam("party_id") long partyId,
-                   @Parameter(example = "대표", description = "공동대표발의안 또는 대표발의 의안 조회 여부")
+                                                          @Parameter(example = "대표", description = "공동대표발의안 또는 대표발의 의안 조회 여부")
                    @Schema(type = "Boolean", allowableValues = {"true", "false"})
                    @RequestParam("is_represent") Boolean isRepresent,
-                   @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
+                                                          @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
                    @RequestParam(name = "page", required = true) int page,
-                   @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
+                                                          @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
                    @RequestParam(name = "size", required = true) int size) {
         var pageable = PageRequest.of(page, size);
         var response = (isRepresent == true) ? facade.getRepresentativeBillsByParty(pageable, partyId)
