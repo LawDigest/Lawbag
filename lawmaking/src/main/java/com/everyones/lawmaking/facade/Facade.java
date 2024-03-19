@@ -2,11 +2,10 @@ package com.everyones.lawmaking.facade;
 
 import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.CongressmanDto;
+import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.PartyDetailDto;
-import com.everyones.lawmaking.service.BillService;
-import com.everyones.lawmaking.service.CongressmanService;
-import com.everyones.lawmaking.service.PartyService;
+import com.everyones.lawmaking.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,6 +20,8 @@ public class Facade {
     private final PartyService partyService;
     private final BillService billService;
     private final CongressmanService congressmanService;
+    private final LikeService likeService;
+    private final UserService userService;
 
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
         return billService.getBillsByDefault(pageable);
@@ -59,6 +60,15 @@ public class Facade {
         return billService.getPublicBillsByParty(pageable, partyId);
     }
 
+
+    @Transactional
+    public BillLikeResponse likeBill(long userId, String billId) {
+        // 해당하는 userId와 billId가 있는 지 확인 없으면 하위 모듈에서 에러 발생
+        var bill = billService.getBillEntityById(billId);
+        var user = userService.getUserId(userId);
+        return likeService.likeBill(user, bill);
+
+    }
 
 
 

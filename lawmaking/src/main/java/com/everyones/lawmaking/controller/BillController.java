@@ -1,11 +1,14 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
+import com.everyones.lawmaking.global.auth.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.headers.Header;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -14,6 +17,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.repository.query.Param;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
@@ -101,6 +107,35 @@ public class BillController {
             @PathVariable("bill_id") String billId) {
         var result = facade.getBillByBillId(billId);
         return BaseResponse.ok(result);
+
+    }
+
+    @Operation(summary = "법안 좋아요", description = "법안 좋아요 기능")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    /*
+    TODO: patch와 post기능이 둘 다 있는데, Post로 정의하는 것이 맞는가에 대한 고민
+    like 관련을 따로 Controller를 파는게 맞는가에 대한 고민이 있다.
+    */
+    @PostMapping("/like")
+    public BaseResponse<BillLikeResponse> likeBill(
+            Authentication authentication,
+            @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
+            @RequestParam("bill_id") String billId
+    ) {
+        var userDetails = (PrincipalDetails) authentication.getPrincipal();
+        var userId = userDetails.getUserId();
+        var result = facade.likeBill(userId, billId);
 
     }
 

@@ -23,7 +23,6 @@ public class User extends BaseEntity  {
     @JoinColumn(name = "auth_info_id")
     private AuthInfo authInfo;
 
-
     @NotNull
     private String email;
 

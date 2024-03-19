@@ -9,7 +9,6 @@ import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
-import com.everyones.lawmaking.repository.BillProposerRepository;
 import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +16,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-
-
 @RequiredArgsConstructor
 @Service
 @Slf4j
 @Transactional(readOnly = true)
 public class BillService {
     private final BillRepository billRepository;
-    private final BillProposerRepository billProposerRepository;
+
+    public Bill getBillEntityById(String billId) {
+        return billRepository.findById(billId)
+                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+    }
 
     public BillListResponse getBillsByDefault(Pageable pageable) {
         // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
@@ -108,7 +106,7 @@ public class BillService {
         }
         var billIdList = billSlice.stream()
                 .map(Bill::getId)
-                .collect(Collectors.toList());
+                .toList();
 
 
         var billList = billRepository.findBillInfoByIdList(billIdList);
