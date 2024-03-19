@@ -3,6 +3,7 @@ package com.everyones.lawmaking.global.auth;
 import com.everyones.lawmaking.domain.entity.AuthInfo;
 import com.everyones.lawmaking.domain.entity.Provider;
 import com.everyones.lawmaking.domain.entity.Role;
+import com.everyones.lawmaking.domain.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import java.util.Map;
 public class PrincipalDetails implements OAuth2User {
     private final String socialId;
     private final Provider providerType;
+    private final Long userId;
     private final Role role;
     private final Collection<GrantedAuthority> authorities;
     private Map<String, Object> attributes;
@@ -40,11 +42,15 @@ public class PrincipalDetails implements OAuth2User {
         return socialId;
     }
 
+    public Long getId() {
+        return userId;}
 
-    public static PrincipalDetails create(AuthInfo authInfo, Map<String, Object> attributes) {
+
+    public static PrincipalDetails create(AuthInfo authInfo,User user, Map<String, Object> attributes) {
         var userPrincipal = new PrincipalDetails(
                 authInfo.getSocialId(),
                 authInfo.getProvider(),
+                user.getId(),
                 Role.MEMBER,
                 Collections.singletonList(new SimpleGrantedAuthority(Role.MEMBER.getCode()))
         );
