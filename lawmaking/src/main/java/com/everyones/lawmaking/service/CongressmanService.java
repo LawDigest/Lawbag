@@ -18,10 +18,21 @@ import org.springframework.transaction.annotation.Transactional;
 public class CongressmanService {
     private final CongressmanRepository congressmanRepository;
 
-    public CongressmanDto getCongressman(String congressmanId) {
-        Congressman congressman = congressmanRepository.findByIdWithParty(congressmanId)
+    public Congressman findCongressman(String congressmanId) {
+        return congressmanRepository.findByIdWithParty(congressmanId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 의원이 존재하지 않습니다."));
+    }
+
+    public CongressmanDto getCongressman(String congressmanId) {
+        var congressman = findCongressman(congressmanId);
         return CongressmanDto.fromCongressman(congressman);
+    }
+
+    @Transactional
+    public void updateCongressmanLikeCount(Congressman congressman, boolean likeChecked) {
+        var likeCount = likeChecked ? congressman.getLikeCount() + 1 : congressman.getLikeCount() - 1;
+        congressman.setLikeCount(likeCount);
+        congressmanRepository.save(congressman);
     }
 
 }

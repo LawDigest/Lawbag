@@ -1,8 +1,11 @@
 package com.everyones.lawmaking.domain.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,10 +13,11 @@ import java.util.List;
 
 
 @Entity
-@Getter
+@Data
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Bill {
     @Id
     @Column(name = "bill_id")
@@ -60,5 +64,11 @@ public class Bill {
 
     @Column(name = "bill_pdf_url")
     private String billPdfUrl; // PDF 파일의 경로 또는 식별자
+
+    @ColumnDefault("0")
+    private int viewCount;
+
+    @ColumnDefault("0")
+    private int likeCount;
 
 }

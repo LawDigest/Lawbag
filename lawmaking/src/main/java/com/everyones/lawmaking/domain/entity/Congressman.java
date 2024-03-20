@@ -1,18 +1,22 @@
 package com.everyones.lawmaking.domain.entity;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
-@Getter
+@Data
 @Builder
 @ToString
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Congressman {
     @Id
     @Column(name = "congressman_id")
@@ -52,4 +56,7 @@ public class Congressman {
 
     @Column(name = "congressman_image_url")
     private String congressmanImageUrl;
+
+    @ColumnDefault("0")
+    private int likeCount;
 }

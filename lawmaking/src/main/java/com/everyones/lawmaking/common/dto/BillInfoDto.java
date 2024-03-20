@@ -22,15 +22,19 @@ public class BillInfoDto {
     private LocalDate proposeDate;
     private String summary;
     private String gptSummary;
+    private int viewCount;
+    private int billLikeCount;
 
 
-    public static BillInfoDto fromBill(Bill bill) {
+    public static BillInfoDto from(Bill bill) {
         return BillInfoDto.builder()
                 .billId(bill.getId())
                 .billName(bill.getBillName())
                 .proposeDate(bill.getProposeDate())
                 .summary(bill.getSummary())
                 .gptSummary(bill.getGptSummary())
+                .viewCount(bill.getViewCount())
+                .billLikeCount(bill.getLikeCount())
                 .build();
     }
 

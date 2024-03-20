@@ -5,11 +5,11 @@ import com.everyones.lawmaking.common.dto.BillInfoDto;
 import com.everyones.lawmaking.common.dto.PublicProposerDto;
 import com.everyones.lawmaking.common.dto.RepresentativeProposerDto;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
+import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
-import com.everyones.lawmaking.repository.BillProposerRepository;
 import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,18 +17,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
-
-
 @RequiredArgsConstructor
 @Service
 @Slf4j
 @Transactional(readOnly = true)
 public class BillService {
     private final BillRepository billRepository;
-    private final BillProposerRepository billProposerRepository;
+
+    public Bill getBillEntityById(String billId) {
+        return billRepository.findById(billId)
+                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+    }
 
     public BillListResponse getBillsByDefault(Pageable pageable) {
         // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
@@ -75,6 +74,14 @@ public class BillService {
     }
 
 
+    // TODO: 조회수 컬럼 접근에 대한 동시성 문제 해결 + 성능 이슈 업데이트 해야함.
+    public BillViewCountResponse updateViewCount(String billId) {
+        var bill = billRepository.findById(billId)
+                .orElseThrow(() -> new CustomException(ResponseCode.INVALID_QUERY_PARAMETER));
+        bill.setViewCount(bill.getViewCount()+1);
+        var updatedBill = billRepository.save(bill);
+        return BillViewCountResponse.from(updatedBill);
+    }
 
     public BillListResponse getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findByRepresentativeProposer(congressmanId, pageable);
@@ -108,7 +115,7 @@ public class BillService {
         }
         var billIdList = billSlice.stream()
                 .map(Bill::getId)
-                .collect(Collectors.toList());
+                .toList();
 
 
         var billList = billRepository.findBillInfoByIdList(billIdList);
@@ -172,11 +179,18 @@ public class BillService {
                 .build();
     }
 
+    @Transactional
+    public void updateBillLikeCount(Bill bill, boolean likeChecked) {
+        var likeCount = likeChecked ? bill.getLikeCount() + 1 : bill.getLikeCount() - 1;
+        bill.setLikeCount(likeCount);
+        billRepository.save(bill);
+    }
+
 
     private BillDto getBillInfoFromBill(Bill bill) {
 
         // Bill Entity To DTO
-        var billInfoDto = BillInfoDto.fromBill(bill);
+        var billInfoDto = BillInfoDto.from(bill);
 
         // Representative Entity
         var representativeProposer = bill.getRepresentativeProposer();
@@ -196,6 +210,9 @@ public class BillService {
                 .publicProposerDtoList(publicProposerDtoList)
                 .build();
     }
+
+
+
 
 
 

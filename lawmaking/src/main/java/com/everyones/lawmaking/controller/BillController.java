@@ -1,9 +1,12 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
+import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
+import com.everyones.lawmaking.global.auth.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +17,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
@@ -102,6 +106,61 @@ public class BillController {
         var result = facade.getBillByBillId(billId);
         return BaseResponse.ok(result);
 
+    }
+
+    @Operation(summary = "법안 조회수 증가", description = "법안 id로 조회수를 증가시킵니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PatchMapping("/view_count")
+    public BaseResponse<BillViewCountResponse> updateViewCount(
+            @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
+            @RequestParam("bill_id") String billId
+    ) {
+        var result = facade.updateViewCount(billId);
+        return BaseResponse.ok(result);
+    }
+
+    @Operation(summary = "법안 좋아요", description = "법안 좋아요 기능")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    /*
+    TODO: patch와 post기능이 둘 다 있는데, Post로 정의하는 것이 맞는가에 대한 고민
+    like 관련을 따로 Controller를 파는게 맞는가에 대한 고민이 있다.
+    */
+    @PostMapping("/bookmark")
+    public BaseResponse<BillLikeResponse> likeBill(
+            Authentication authentication,
+            @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
+            @RequestParam("bill_id") String billId,
+            @Schema(type = "boolean", allowableValues = {"true", "false"})
+            @RequestParam("likeChecked") boolean likeChecked
+
+    ) {
+        var userDetails = (PrincipalDetails) authentication.getPrincipal();
+        var userId = userDetails.getUserId();
+        var result = facade.likeBill(userId, billId, likeChecked);
+
+        return BaseResponse.ok(result);
     }
 
 
