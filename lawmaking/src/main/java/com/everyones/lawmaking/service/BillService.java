@@ -5,6 +5,7 @@ import com.everyones.lawmaking.common.dto.BillInfoDto;
 import com.everyones.lawmaking.common.dto.PublicProposerDto;
 import com.everyones.lawmaking.common.dto.RepresentativeProposerDto;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
+import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.CustomException;
@@ -73,6 +74,14 @@ public class BillService {
     }
 
 
+    // TODO: 조회수 컬럼 접근에 대한 동시성 문제 해결 + 성능 이슈 업데이트 해야함.
+    public BillViewCountResponse updateViewCount(String billId) {
+        var bill = billRepository.findById(billId)
+                .orElseThrow(() -> new CustomException(ResponseCode.INVALID_QUERY_PARAMETER));
+        bill.setViewCount(bill.getViewCount()+1);
+        var updatedBill = billRepository.save(bill);
+        return BillViewCountResponse.from(updatedBill);
+    }
 
     public BillListResponse getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findByRepresentativeProposer(congressmanId, pageable);
@@ -170,11 +179,18 @@ public class BillService {
                 .build();
     }
 
+    @Transactional
+    public void updateBillLikeCount(Bill bill, boolean likeChecked) {
+        var likeCount = likeChecked ? bill.getLikeCount() + 1 : bill.getLikeCount() - 1;
+        bill.setLikeCount(likeCount);
+        billRepository.save(bill);
+    }
+
 
     private BillDto getBillInfoFromBill(Bill bill) {
 
         // Bill Entity To DTO
-        var billInfoDto = BillInfoDto.fromBill(bill);
+        var billInfoDto = BillInfoDto.from(bill);
 
         // Representative Entity
         var representativeProposer = bill.getRepresentativeProposer();
@@ -194,6 +210,9 @@ public class BillService {
                 .publicProposerDtoList(publicProposerDtoList)
                 .build();
     }
+
+
+
 
 
 

@@ -3,8 +3,10 @@ package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.CongressmanDto;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
+import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
+import com.everyones.lawmaking.global.auth.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,10 +18,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
@@ -50,9 +50,9 @@ public class CongressmanController {
             @RequestParam("congressman_id")
             String congressmanId) {
 
-        var CongressmanDto = facade.getCongressman(congressmanId);
+        var congressmanDto = facade.getCongressman(congressmanId);
 
-        return BaseResponse.ok(CongressmanDto);
+        return BaseResponse.ok(congressmanDto);
 
     }
 
@@ -76,18 +76,44 @@ public class CongressmanController {
             @RequestParam("congressman_id") String congressmanId,
             @Parameter(example = "true", description = "해당 의원의 법안 대표 발의 기준, 공동 발의 기준 여부")
             @Schema(type = "boolean", allowableValues = {"true", "false"})
-            @RequestParam("is_represent") Boolean isRepresent,
+            @RequestParam("type") String type,
             @RequestParam("page") int page,
             @RequestParam("size") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        if (isRepresent == true) {
+        if (type.equals("true")) {
             var representativeBills = facade.getBillsFromRepresentativeProposer(congressmanId, pageable);
             return BaseResponse.ok(representativeBills);
         }
         var publicProposerBills = facade.getBillsFromPublicProposer(congressmanId, pageable);
         return BaseResponse.ok(publicProposerBills);
+    }
 
+    @Operation(summary = "의원 좋아요", description = "의원이 좋아요 클릭")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PatchMapping("/like")
+    public BaseResponse<CongressmanLikeResponse> likeCongressman(
+            Authentication authentication,
+            @Parameter(example = "04T3751T", description = "의원 Id")
+            @RequestParam("congressman_id") String congressmanId,
+            @Schema(type = "boolean", allowableValues = {"true", "false"})
+            @RequestParam("like_checked") boolean likeChecked
+    ) {
+        var user = (PrincipalDetails) authentication.getPrincipal();
+        var userId = user.getUserId();
+        var result = facade.likeCongressman(userId, congressmanId, likeChecked);
+        return BaseResponse.ok(result);
     }
 }

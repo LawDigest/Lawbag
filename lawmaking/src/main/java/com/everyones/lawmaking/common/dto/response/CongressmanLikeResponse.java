@@ -1,6 +1,6 @@
 package com.everyones.lawmaking.common.dto.response;
 
-import com.everyones.lawmaking.domain.entity.BillLike;
+import com.everyones.lawmaking.domain.entity.CongressManLike;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
@@ -12,20 +12,19 @@ import lombok.Getter;
 @AllArgsConstructor
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class BillLikeResponse {
+public class CongressmanLikeResponse {
 
     @NotNull
-    private String billId;
+    private String congressmanId;
 
     @NotNull
-    private boolean likeCheckd;
+    private boolean likeChecked;
 
-
-    public static BillLikeResponse from(BillLike billLike) {
-        return BillLikeResponse.builder()
-                .billId(billLike.getBill().getId())
-                .likeCheckd(billLike.isLikeChecked())
+    public static CongressmanLikeResponse from(CongressManLike congressmanLike){
+        return CongressmanLikeResponse.builder()
+                .congressmanId(congressmanLike.getCongressMan().getId())
+                .likeChecked(congressmanLike.isLikeChecked())
                 .build();
-
     }
+
 }

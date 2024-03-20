@@ -13,6 +13,6 @@ public interface BillLikeRepository extends JpaRepository<BillLike, Long > {
 
     @Query("select bl from BillLike bl " +
             "where bl.bill.id = :billId AND bl.user.id = :userId")
-    Optional<BillLike> findByIds(@Param("userId") long userId, @Param("billId") String billId);
+    Optional<BillLike> findByUserIdAndBillId(@Param("userId") long userId, @Param("billId") String billId);
 
 }

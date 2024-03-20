@@ -1,11 +1,8 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
-import com.everyones.lawmaking.domain.entity.Bill;
-import com.everyones.lawmaking.domain.entity.BillLike;
-import com.everyones.lawmaking.domain.entity.User;
-import com.everyones.lawmaking.global.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
+import com.everyones.lawmaking.domain.entity.*;
 import com.everyones.lawmaking.repository.BillLikeRepository;
 import com.everyones.lawmaking.repository.CongressmanLikeRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,14 +18,41 @@ public class LikeService {
     private final BillLikeRepository billLikeRepository;
     private final CongressmanLikeRepository congressmanLikeRepository;
 
-    // TODO: 반환형 점검
+    @Transactional
     public BillLikeResponse likeBill(User user, Bill bill) {
-        var billLike = billLikeRepository.findByIds(user.getId(), bill.getId());
-        var modifiedBillLike = billLike.isPresent() ? updateBillLike(billLike.get()) : createBillLike(user, bill);
+        var billLike = billLikeRepository.findByUserIdAndBillId(user.getId(), bill.getId());
 
-        return modifiedBillLike;
+        return billLike.isPresent() ? updateBillLike(billLike.get()) : createBillLike(user, bill);
     }
 
+    @Transactional
+    public CongressmanLikeResponse likeCongressman(User user, Congressman congressman) {
+        var congressmanLike = congressmanLikeRepository.findByUserIdAndCongressmanId(user.getId(), congressman.getId());
+
+        return congressmanLike.isPresent() ? updateCongressmanLike(congressmanLike.get()) : createCongressmanLike(user ,congressman);
+    }
+
+    private CongressmanLikeResponse createCongressmanLike(User user, Congressman congressman) {
+        var congressmanLike = CongressManLike.builder()
+                .congressMan(congressman)
+                .user(user)
+                .likeChecked(true)
+                .build();
+        congressmanLikeRepository.save(congressmanLike);
+
+        return CongressmanLikeResponse.from(congressmanLike);
+    }
+
+    private CongressmanLikeResponse updateCongressmanLike(CongressManLike congressmanLike) {
+        var updatedCongressmanLike = CongressManLike.builder()
+                .id(congressmanLike.getId())
+                .congressMan(congressmanLike.getCongressMan())
+                .user(congressmanLike.getUser())
+                .likeChecked(!congressmanLike.isLikeChecked())
+                .build();
+        congressmanLikeRepository.save(updatedCongressmanLike);
+        return CongressmanLikeResponse.from(updatedCongressmanLike);
+    }
 
     private BillLikeResponse createBillLike(User user, Bill bill) {
         var billLike = BillLike.builder()
@@ -52,4 +76,6 @@ public class LikeService {
         billLikeRepository.save(updatedBillLike);
         return BillLikeResponse.from(updatedBillLike);
     }
+
+
 }
