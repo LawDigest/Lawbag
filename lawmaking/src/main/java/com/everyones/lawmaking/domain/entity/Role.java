@@ -8,7 +8,7 @@ import java.util.Arrays;
 @Getter
 @AllArgsConstructor
 public enum Role {
-    MEMBER("ROLE_USER", "일반 사용자 권한"),
+    MEMBER("ROLE_MEMBER", "일반 사용자 권한"),
     ADMIN("ROLE_ADMIN", "관리자 권한"),
     GUEST("GUEST", "게스트 권한");
 
