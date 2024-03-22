@@ -74,15 +74,15 @@ public class CongressmanController {
     public BaseResponse<BillListResponse> getCongressmanBills(
             @Parameter(example = "04T3751T", description = "의원 Id")
             @RequestParam("congressman_id") String congressmanId,
-            @Parameter(example = "true", description = "해당 의원의 법안 대표 발의 기준, 공동 발의 기준 여부")
-            @Schema(type = "boolean", allowableValues = {"true", "false"})
+            @Parameter(example = "represent_proposer", description = "해당 의원의 법안 대표 발의 기준, 공동 발의 기준 여부")
+            @Schema(type = "String", allowableValues = {"represent_proposer", "public_proposer"})
             @RequestParam("type") String type,
             @RequestParam("page") int page,
             @RequestParam("size") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        if (type.equals("true")) {
+        if (type.equals("representProposer")) {
             var representativeBills = facade.getBillsFromRepresentativeProposer(congressmanId, pageable);
             return BaseResponse.ok(representativeBills);
         }
