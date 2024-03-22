@@ -49,7 +49,6 @@ public class TableEventListener {
     private static final Set<EventType> recordedEventTypes = Set.of(EventType.EXT_WRITE_ROWS, EventType.EXT_UPDATE_ROWS, EventType.EXT_DELETE_ROWS, EventType.TABLE_MAP);
     private static final Map<Long, TableMapInfo> relatedTableMapEvents = new HashMap<>();
 
-    //TODO : static 클래스 빈 객체로 생성해서 사용하기(리팩토링)
     @Data
     private static class TableMapInfo {
         private TableMapEventData tableMapEventData;
@@ -197,7 +196,6 @@ public class TableEventListener {
                                     .toList();
 
 
-                            // @TODO: 이제 테이블명과 변경된 로우 ID 매핑 후, 컬럼 값들을 파싱하고 처리하는 클래스에 넘겨주기
                             // 필요한 테이블 : bill, CongressMan
                             // 컬럼 : 의원이 새로운 법안을 발의함(bill의 bill_name), 의원이 새로 추가됨(name)
                             // 알림 보내야할 테이블이면 bill_name 혹은 의원 이름을 추출해서 알림 메시지로 보내버림
@@ -208,7 +206,6 @@ public class TableEventListener {
                             //final DeleteRowsEventData insertedData = (DeleteRowsEventData) data;
                         } else if (data instanceof UpdateRowsEventData changedData) {
 
-                            // @TODO: 이제 테이블명과 변경된 로우 ID 매핑 후, 컬럼 값들을 파싱하고 처리하는 클래스에 넘겨주기
                             // 필요한 테이블 : bill, CongressMan
                             // 컬럼 : 법안의 처리상태 변동(bill의 bill_name, stage), 의원의 정당 바뀜(이름, 바뀐정당)
 
