@@ -19,29 +19,36 @@ public class AuthToken {
 
     private static final String EMAIL_KEY = "email";
 
-    AuthToken(String id, Date expiry, Key key) {
+    private static final String AUTHENTICATION_KEY = "role";
+
+    private static final String LOCAL_USER_ID = "userId";
+
+
+
+    AuthToken(String id,String role,Long userId, Date expiry, Key key) {
         this.key = key;
-        this.token = createAuthToken(id, expiry);
+        this.token = createAccessToken(id,role,userId, expiry);
     }
 
-    AuthToken(String id, String email, Date expiry, Key key) {
+    AuthToken(String id, Date expiry, Key key) {
         this.key = key;
-        this.token = createAuthToken(id, email, expiry);
+        this.token = createRefreshToken(id, expiry);
     }
     // access Token 발급
-    private String createAuthToken(String id, Date expiry) {
+    private String createAccessToken(String id,String role,Long userId, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
+                .claim(AUTHENTICATION_KEY,role)
+                .claim(LOCAL_USER_ID,userId)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .compact();
     }
 
     // refresh Token 발급
-    private String createAuthToken(String id, String email, Date expiry) {
+    private String createRefreshToken(String id, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
-                .claim(EMAIL_KEY, email)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .compact();
@@ -49,12 +56,12 @@ public class AuthToken {
 
 
 
-    public boolean validate() {
+    public boolean validate()  {
         return this.getTokenClaims() != null;
     }
 
     // ToDo(Exception 처리해야함)
-    public Claims getTokenClaims() {
+    public Claims getTokenClaims()  {
         try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)

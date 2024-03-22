@@ -8,6 +8,7 @@ import com.everyones.lawmaking.global.config.AppProperties;
 import com.everyones.lawmaking.global.jwt.AuthToken;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
 import com.everyones.lawmaking.global.util.CookieUtil;
+import com.everyones.lawmaking.repository.AuthInfoRepository;
 import com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.everyones.lawmaking.repository.UserRepository;
 import jakarta.servlet.ServletException;
@@ -36,6 +37,7 @@ import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBased
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
     private final UserRepository userRepository;
+    private final AuthInfoRepository authInfoRepository;
     private final AuthTokenProvider tokenProvider;
     private final AppProperties appProperties;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
@@ -72,7 +74,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         var refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
         var cookieMaxAge = (int) refreshTokenExpiry / 60;
-        Map<String, AuthToken> userToken = userTokenToCookie(userInfo, authorities);
+        Map<String, AuthToken> userToken = userTokenToCookie(userInfo, authorities,provider);
 
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, userToken.get("refreshToken").getToken(), cookieMaxAge);
@@ -81,16 +83,21 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
                 .build().toUriString();
     }
 
-    protected  Map<String,AuthToken> userTokenToCookie(OAuth2UserInfo userInfo,Collection<? extends GrantedAuthority> authorities) {
+    protected  Map<String,AuthToken> userTokenToCookie(OAuth2UserInfo userInfo,Collection<? extends GrantedAuthority> authorities,Provider provider) {
 
         Map<String,AuthToken> authTokenMap = new HashMap<String,AuthToken>();
         // access 토큰 설정
         var now = new Date();
         var role = hasAuthority(authorities, Role.ADMIN.getCode()) ? Role.ADMIN : Role.MEMBER;
+        var savedAuth = authInfoRepository.findBySocialIdAndProvider(userInfo.getId(), provider)
+        .orElseThrow();
+        var savedUser = userRepository.findByAuthInfo_Id(savedAuth.getId())
+        .orElseThrow();
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userInfo.getId(),
                 role.getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry())
+                savedUser.getId(),
+                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()*1000*3600*24)
         );
 
         // refresh 토큰 설정

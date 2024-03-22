@@ -1,6 +1,5 @@
 package com.everyones.lawmaking.global.config;
 
-import com.everyones.lawmaking.domain.entity.Role;
 import com.everyones.lawmaking.global.filterException.RestAuthenticationEntryPoint;
 import com.everyones.lawmaking.global.handler.OAuth2AuthenticationFailureHandler;
 import com.everyones.lawmaking.global.handler.OAuth2AuthenticationSuccessHandler;
@@ -8,6 +7,7 @@ import com.everyones.lawmaking.global.handler.TokenAccessDeniedHandler;
 import com.everyones.lawmaking.global.handler.TokenAuthenticationFilter;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
 import com.everyones.lawmaking.global.service.CustomOAuth2UserService;
+import com.everyones.lawmaking.repository.AuthInfoRepository;
 import com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.everyones.lawmaking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +40,8 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final CorsConfig corsConfig;
     private final UserRepository userRepository;
+    private final AuthInfoRepository authInfoRepository;
+
 
     // 회원가입이랑 로그인 필요한 요청에 대해서만 시큐리티 필터를 타기
     @Bean
@@ -52,6 +54,8 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
                         .configurationSource(corsConfig.corsConfigurationSource()))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                        .requestMatchers("/v1/**/like**").hasRole("MEMBER")
+                        .requestMatchers("/v1/**/bookmark**").hasRole("MEMBER")
                         .requestMatchers("/v1/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
@@ -109,6 +113,7 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler(
                 userRepository,
+                authInfoRepository,
                 tokenProvider,
                 appProperties,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()

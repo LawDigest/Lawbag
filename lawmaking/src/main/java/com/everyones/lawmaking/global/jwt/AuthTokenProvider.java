@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AuthTokenProvider {
 
+    private static final String LOCAL_USER_ID = "userId";
     private final Key key;
     private static final String AUTHORITIES_KEY = "role";
 
@@ -41,8 +42,8 @@ public class AuthTokenProvider {
         return new AuthToken(id, expiry, key);
     }
 
-    public AuthToken createAuthToken(String id, String role, Date expiry) {
-        return new AuthToken(id, role, expiry, key);
+    public AuthToken createAuthToken(String id, String role,Long userId, Date expiry) {
+        return new AuthToken(id, role,userId, expiry, key);
     }
 
     public AuthToken convertAuthToken(String token) {
@@ -59,7 +60,7 @@ public class AuthTokenProvider {
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 
-            UserDetails principal = new User(claims.getSubject(), "null", authorities);
+            UserDetails principal = new User(claims.getSubject(), claims.get(LOCAL_USER_ID).toString(), authorities);
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         // 토큰이 검증이 되지 않았을 경우는 게스트를 가진 권한을 부여하게 된다.
