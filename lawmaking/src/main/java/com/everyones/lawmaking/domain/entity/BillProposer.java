@@ -23,7 +23,5 @@ public class BillProposer {
     @JoinColumn(name = "congressman_id")
     private Congressman congressman;
 
-    @Column(name = "is_represent")
-    private boolean isRepresent;
 
 }
