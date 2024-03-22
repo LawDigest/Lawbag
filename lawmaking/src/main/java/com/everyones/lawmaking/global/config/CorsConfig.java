@@ -18,7 +18,7 @@ public class CorsConfig implements WebMvcConfigurer {
         var corsConfig = new CorsConfiguration();
         corsConfig.setAllowedHeaders(List.of("*"));
         corsConfig.setAllowedMethods(List.of("*"));
-        corsConfig.setAllowedOrigins(List.of("http://localhost:3000", "http://52.79.63.140:3000"));
+        corsConfig.setAllowedOrigins(List.of("http://localhost:3000", "http://52.79.63.140:3000","https://law-digest-fe.vercel.app/","https://law-digest-fe.vercel.app*"));
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(3600L);
 
