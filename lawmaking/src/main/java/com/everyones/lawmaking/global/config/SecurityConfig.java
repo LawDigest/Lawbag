@@ -56,6 +56,7 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer ì
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .requestMatchers("/v1/**/like**").hasRole("MEMBER")
                         .requestMatchers("/v1/**/bookmark**").hasRole("MEMBER")
+                        .requestMatchers("/v1/**/follow**").hasRole("MEMBER")
                         .requestMatchers("/v1/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling

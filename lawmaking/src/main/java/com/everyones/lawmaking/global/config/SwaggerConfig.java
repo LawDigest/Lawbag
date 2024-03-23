@@ -29,7 +29,7 @@ public class SwaggerConfig {
     public GroupedOpenApi apiNeededAuthorization() {
         return GroupedOpenApi.builder()
                 .group("Authorization")
-                .pathsToMatch("/**/like**", "/**/bookmark**")
+                .pathsToMatch("/**/like**", "/**/bookmark**", "/**/follow**")
                 .build();
     }
 

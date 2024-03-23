@@ -1,7 +1,7 @@
 package com.everyones.lawmaking.service;
 
 
-import com.everyones.lawmaking.common.dto.CongressmanDto;
+import com.everyones.lawmaking.common.dto.response.CongressmanResponse;
 import com.everyones.lawmaking.domain.entity.Congressman;
 import com.everyones.lawmaking.repository.CongressmanRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -23,9 +23,9 @@ public class CongressmanService {
                 .orElseThrow(() -> new EntityNotFoundException("해당 의원이 존재하지 않습니다."));
     }
 
-    public CongressmanDto getCongressman(String congressmanId) {
+    public CongressmanResponse getCongressman(String congressmanId) {
         var congressman = findCongressman(congressmanId);
-        return CongressmanDto.fromCongressman(congressman);
+        return CongressmanResponse.fromCongressman(congressman);
     }
 
     @Transactional

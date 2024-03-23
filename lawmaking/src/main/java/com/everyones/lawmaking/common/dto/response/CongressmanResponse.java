@@ -1,4 +1,4 @@
-package com.everyones.lawmaking.common.dto;
+package com.everyones.lawmaking.common.dto.response;
 
 import com.everyones.lawmaking.domain.entity.Congressman;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
@@ -10,7 +10,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class CongressmanDto {
+public class CongressmanResponse {
     // Congressman 관련 필드들
     private String congressmanId;
     private String congressmanName;
@@ -29,8 +29,8 @@ public class CongressmanDto {
     private String congressmanImageUrl;
 
     @Builder
-    public static CongressmanDto fromCongressman(Congressman congressman)  {
-        return CongressmanDto.builder()
+    public static CongressmanResponse fromCongressman(Congressman congressman)  {
+        return CongressmanResponse.builder()
                 .congressmanId(congressman.getId())
                 .congressmanName(congressman.getName())
                 .partyId(congressman.getParty().getId())

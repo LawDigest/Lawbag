@@ -1,7 +1,7 @@
 package com.everyones.lawmaking.facade;
 
 import com.everyones.lawmaking.common.dto.BillDto;
-import com.everyones.lawmaking.common.dto.CongressmanDto;
+import com.everyones.lawmaking.common.dto.response.CongressmanResponse;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.service.*;
 import lombok.RequiredArgsConstructor;
@@ -50,12 +50,12 @@ public class Facade {
     }
 
     // 의원 상세 조회
-    public CongressmanDto getCongressman(String congressmanId) {
+    public CongressmanResponse getCongressman(String congressmanId) {
         return congressmanService.getCongressman(congressmanId);
     }
 
     // 정당 상세 조회
-    public PartyDetailDto getPartyById(long partyId) {
+    public PartyDetailResponse getPartyById(long partyId) {
         return partyService.getPartyById(partyId);
     }
 
@@ -83,6 +83,14 @@ public class Facade {
         var congressman = congressmanService.findCongressman(congressmanId);
         congressmanService.updateCongressmanLikeCount(congressman, likeChecked);
         return likeService.likeCongressman(user, congressman);
+    }
+
+    @Transactional
+    public PartyFollowResponse followParty(long userId, long partyId, boolean followChecked) {
+        var user = userService.getUserId(userId);
+        var party = partyService.findParty(partyId);
+        partyService.updatePartyFollowCount(party, followChecked);
+        return likeService.followParty(user, party);
     }
 
 

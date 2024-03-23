@@ -1,12 +1,11 @@
 package com.everyones.lawmaking.controller;
 
 
-import com.everyones.lawmaking.common.dto.CongressmanDto;
+import com.everyones.lawmaking.common.dto.response.CongressmanResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
-import com.everyones.lawmaking.global.auth.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
@@ -45,7 +45,7 @@ public class CongressmanController {
             ),
     })
     @GetMapping("/detail")
-    public BaseResponse<CongressmanDto> getCongressmanDetails(
+    public BaseResponse<CongressmanResponse> getCongressmanDetails(
             @Parameter(example = "04T3751T", description = "의원 Id")
             @RequestParam("congressman_id")
             String congressmanId) {
@@ -82,7 +82,7 @@ public class CongressmanController {
 
         Pageable pageable = PageRequest.of(page, size);
 
-        if (type.equals("representProposer")) {
+        if (type.equals("represent_proposer")) {
             var representativeBills = facade.getBillsFromRepresentativeProposer(congressmanId, pageable);
             return BaseResponse.ok(representativeBills);
         }
@@ -111,8 +111,8 @@ public class CongressmanController {
             @Schema(type = "boolean", allowableValues = {"true", "false"})
             @RequestParam("like_checked") boolean likeChecked
     ) {
-        var user = (PrincipalDetails) authentication.getPrincipal();
-        var userId = user.getUserId();
+        var userDetails = (UserDetails) authentication.getPrincipal();
+        var userId = Long.parseLong(userDetails.getPassword());
         var result = facade.likeCongressman(userId, congressmanId, likeChecked);
         return BaseResponse.ok(result);
     }

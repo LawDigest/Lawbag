@@ -1,6 +1,8 @@
 package com.everyones.lawmaking.service;
 
-import com.everyones.lawmaking.common.dto.response.PartyDetailDto;
+import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
+import com.everyones.lawmaking.domain.entity.Congressman;
+import com.everyones.lawmaking.domain.entity.Party;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.repository.PartyRepository;
@@ -12,10 +14,21 @@ import org.springframework.stereotype.Service;
 public class PartyService {
     private final PartyRepository partyRepository;
 
-    public PartyDetailDto getPartyById(long partyId) {
+    public Party findParty(long partyId) {
+        return partyRepository.findById(partyId)
+                .orElseThrow(() -> new CustomException(ResponseCode.BAD_REQUEST));
+    }
+
+    public PartyDetailResponse getPartyById(long partyId) {
 
         return partyRepository.findPartyDetailById(partyId)
                 .orElseThrow(() -> new CustomException(ResponseCode.BAD_REQUEST));
+    }
+
+    public void updatePartyFollowCount(Party party, boolean followChecked) {
+        var followCount = followChecked ? party.getFollowCount() + 1 : party.getFollowCount() - 1;
+        party.setFollowCount(followCount);
+        partyRepository.save(party);
     }
 
 

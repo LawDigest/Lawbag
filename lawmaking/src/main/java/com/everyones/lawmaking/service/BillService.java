@@ -1,9 +1,7 @@
 package com.everyones.lawmaking.service;
 
-import com.everyones.lawmaking.common.dto.BillDto;
-import com.everyones.lawmaking.common.dto.BillInfoDto;
-import com.everyones.lawmaking.common.dto.PublicProposerDto;
-import com.everyones.lawmaking.common.dto.RepresentativeProposerDto;
+import com.everyones.lawmaking.common.dto.*;
+import com.everyones.lawmaking.common.dto.response.BillDetailResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
@@ -38,7 +36,7 @@ public class BillService {
                 .toList();
         var billList = billRepository.findBillInfoByIdList(billIdList);
         var billInfoList = billList.stream()
-                .map(this::getBillInfoFromBill)
+                .map(this::getBillInfoFrom)
                 .toList();
         var pagination = PaginationResponse.fromSlice(billSlice);
         return BillListResponse.builder()
@@ -56,7 +54,7 @@ public class BillService {
                 .toList();
         var billList = billRepository.findBillInfoByIdList(billIdList);
         var billInfoList = billList.stream()
-                .map(this::getBillInfoFromBill)
+                .map(this::getBillInfoFrom)
                 .toList();
         var pagination = PaginationResponse.fromSlice(billSlice);
 
@@ -70,7 +68,13 @@ public class BillService {
         var bill = billRepository.findBillInfoById(billId)
                 .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
 
-        return getBillInfoFromBill(bill);
+        var billDetailResponse =  getBillDetailInfoFrom(bill);
+        var similarBills = billRepository.findSimilarBills(bill.getBillName())
+                .stream()
+                .map(SimilarBill::from)
+                .toList();
+        billDetailResponse.setSimilarBills(similarBills);
+        return billDetailResponse;
     }
 
 
@@ -99,7 +103,7 @@ public class BillService {
 
         var billList = billRepository.findBillInfoByIdList(billIdList);
         var billInfoList = billList.stream()
-                .map(this::getBillInfoFromBill)
+                .map(this::getBillInfoFrom)
                 .toList();
         return BillListResponse.builder()
                 .paginationResponse(pagination)
@@ -123,7 +127,7 @@ public class BillService {
         var pagination = PaginationResponse.fromSlice(billSlice);
 
         var billInfoList =  billList.stream()
-                .map(this::getBillInfoFromBill)
+                .map(this::getBillInfoFrom)
                 .toList();
         return BillListResponse.builder()
                 .paginationResponse(pagination)
@@ -146,7 +150,7 @@ public class BillService {
                 .toList();
         var billList = billRepository.findBillInfoByIdList(billIdList);
         var billInfoList = billList.stream()
-                .map(this::getBillInfoFromBill)
+                .map(this::getBillInfoFrom)
                 .toList();
 
         return BillListResponse.builder()
@@ -170,7 +174,7 @@ public class BillService {
                 .toList();
         var billList = billRepository.findBillInfoByIdList(billIdList);
         var billInfoList = billList.stream()
-                .map(this::getBillInfoFromBill)
+                .map(this::getBillInfoFrom)
                 .toList();
 
         return BillListResponse.builder()
@@ -186,8 +190,8 @@ public class BillService {
         billRepository.save(bill);
     }
 
-
-    private BillDto getBillInfoFromBill(Bill bill) {
+    // 메인피드 등 법안들의 리스트를 반환할 때 사용
+    private BillDto getBillInfoFrom(Bill bill) {
 
         // Bill Entity To DTO
         var billInfoDto = BillInfoDto.from(bill);
@@ -202,7 +206,7 @@ public class BillService {
                 .map(PublicProposerDto::fromPublicProposer)
                 .toList();
 
-        var representativeProposerDto = RepresentativeProposerDto.fromRepresentativeProposer(representativeProposer);
+        var representativeProposerDto = RepresentativeProposerDto.from(representativeProposer);
 
         return BillDto.builder()
                 .billInfoDto(billInfoDto)
@@ -210,6 +214,30 @@ public class BillService {
                 .publicProposerDtoList(publicProposerDtoList)
                 .build();
     }
+
+    //
+    private BillDetailResponse getBillDetailInfoFrom(Bill bill) {
+
+        // Bill Entity To DTO
+        var billInfoDto = BillDetailInfo.from(bill);
+
+        // Representative Entity
+        var representativeProposer = bill.getRepresentativeProposer();
+
+        // PublicProposer Entity
+        var publicProposers = bill.getPublicProposer();
+
+        var publicProposerDtoList = publicProposers.stream()
+                .map(PublicProposerDto::fromPublicProposer)
+                .toList();
+
+        var representativeProposerDto = RepresentativeProposerDto.from(representativeProposer);
+
+        return new BillDetailResponse(billInfoDto, representativeProposerDto, publicProposerDtoList);
+    }
+
+    // 단일 법안을 자세하게 조회할 때 사용
+
 
 
 

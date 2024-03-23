@@ -6,7 +6,6 @@ import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
-import com.everyones.lawmaking.global.auth.PrincipalDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -18,6 +17,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
@@ -156,8 +156,8 @@ public class BillController {
             @RequestParam("likeChecked") boolean likeChecked
 
     ) {
-        var userDetails = (PrincipalDetails) authentication.getPrincipal();
-        var userId = userDetails.getUserId();
+        var userDetails = (UserDetails) authentication.getPrincipal();
+        var userId = Long.parseLong(userDetails.getPassword());
         var result = facade.likeBill(userId, billId, likeChecked);
 
         return BaseResponse.ok(result);
