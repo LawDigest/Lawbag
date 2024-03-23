@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 @SuperBuilder
 @Schema(description="API 응답 최상위 오브젝트")
-public class BaseResponse<T>{
+public class BaseResponse<T> {
+
     @Schema(description = "성공 여부")
     private HttpStatus status;
     @Schema(description = "응답 코드 (HTTP 코드와 동일)", defaultValue = "200")
@@ -21,9 +22,8 @@ public class BaseResponse<T>{
     @Schema(description = "응답 본문 오브젝트")
     private T data;
 
-
-    public static <T> BaseResponse ok(T data) {
-        return BaseResponse.builder()
+    public static <T> BaseResponse<T> ok(T data) {
+        return BaseResponse.<T>builder()
                 .code(ResponseCode.OK.getCode())
                 .status(ResponseCode.OK.getStatus())
                 .message(ResponseCode.OK.getMessage())
@@ -40,4 +40,5 @@ public class BaseResponse<T>{
                 .data(data)
                 .build();
     }
+
 }
