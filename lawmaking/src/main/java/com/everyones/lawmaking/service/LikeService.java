@@ -2,9 +2,11 @@ package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
+import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
 import com.everyones.lawmaking.domain.entity.*;
 import com.everyones.lawmaking.repository.BillLikeRepository;
 import com.everyones.lawmaking.repository.CongressmanLikeRepository;
+import com.everyones.lawmaking.repository.PartyFollowRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
     private final BillLikeRepository billLikeRepository;
     private final CongressmanLikeRepository congressmanLikeRepository;
+    private final PartyFollowRepository partyFollowRepository;
 
     @Transactional
     public BillLikeResponse likeBill(User user, Bill bill) {
@@ -31,6 +34,31 @@ public class LikeService {
 
         return congressmanLike.isPresent() ? updateCongressmanLike(congressmanLike.get()) : createCongressmanLike(user ,congressman);
     }
+
+    @Transactional
+    public PartyFollowResponse followParty(User user, Party party) {
+        var partyFollow = partyFollowRepository.findByUserIdAndPartyId(user.getId(), party.getId());
+
+        return partyFollow.isPresent() ? updatePartyFollow(partyFollow.get()) : createPartyFollow(user, party);
+    }
+
+    private PartyFollowResponse createPartyFollow(User user, Party party) {
+        var partyFollow = PartyFollow.builder()
+                .party(party)
+                .user(user)
+                .followChecked(true)
+                .build();
+        partyFollowRepository.save(partyFollow);
+        return PartyFollowResponse.from(partyFollow);
+    }
+
+    private PartyFollowResponse updatePartyFollow(PartyFollow partyFollow) {
+        partyFollow.setFollowChecked(!partyFollow.isFollowChecked());
+        partyFollowRepository.save(partyFollow);
+
+        return PartyFollowResponse.from(partyFollow);
+    }
+
 
     private CongressmanLikeResponse createCongressmanLike(User user, Congressman congressman) {
         var congressmanLike = CongressManLike.builder()

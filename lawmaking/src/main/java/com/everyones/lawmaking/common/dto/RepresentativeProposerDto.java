@@ -22,7 +22,7 @@ public class RepresentativeProposerDto {
     private String partyImageUrl;
     private String partyName;
 
-    public static RepresentativeProposerDto fromRepresentativeProposer(RepresentativeProposer representativeProposer) {
+    public static RepresentativeProposerDto from(RepresentativeProposer representativeProposer) {
         return RepresentativeProposerDto.builder()
                 .representativeProposerId(representativeProposer.getCongressman().getId())
                 .representativeProposerName(representativeProposer.getCongressman().getName())
