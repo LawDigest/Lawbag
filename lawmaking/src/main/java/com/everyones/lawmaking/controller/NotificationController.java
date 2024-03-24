@@ -43,7 +43,7 @@ public class NotificationController {
                     )}
             ),
     })
-    @GetMapping("/")
+    @GetMapping("")
     public BaseResponse<List<NotificationResponse>> getNotifications(Authentication authentication) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
         var result = facade.getNotifications(Long.parseLong(user.getPassword()));

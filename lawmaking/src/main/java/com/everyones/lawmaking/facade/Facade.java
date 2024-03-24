@@ -130,7 +130,7 @@ public class Facade {
         var congressmanId = congressman.getId();
         var congressmanName = congressman.getName();
 
-        var party = congressmanService.findCongressman(raw.get(1));
+        var party = partyService.findParty(Long.parseLong(raw.get(1)));
         var partyName = party.getName();
 
         return List.of(congressmanId, partyName, congressmanName);

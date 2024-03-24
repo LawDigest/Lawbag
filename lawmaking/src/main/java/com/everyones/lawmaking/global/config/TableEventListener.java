@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -22,7 +21,6 @@ import java.util.stream.Stream;
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-@ConfigurationProperties(prefix = "binlog")
 public class TableEventListener {
     /**
      * DB host(ipv4)
@@ -55,7 +53,8 @@ public class TableEventListener {
 
     /**
      * 테이블별 (컬럼네임,컬럼 인덱스) 정보 가져오는 메서드
-     * @return Map(테이블명, Map(컬럼명, 컬럼 인덱스))
+     *
+     * @return Map(테이블명, Map ( 컬럼명, 컬럼 인덱스))
      */
     Map<String, Map<String, Integer>> fetchColumnOrdersByTable() {
         Map<String, Map<String, Integer>> columnOrdersByTable = new HashMap<>();
@@ -115,6 +114,8 @@ public class TableEventListener {
         );
 
         logClient.registerEventListener(event -> {
+            System.out.println(event);
+
             // 이벤트 타입에 따라서 Data가 없는 것도 있음.
             // 따라서 바로 event.getData를 호출하는 것은 주의
             final EventType eventType = event.getHeader().getEventType();
@@ -161,17 +162,17 @@ public class TableEventListener {
                                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
                             // 이벤트 타입, 필터된 컬럼데이터
                             filteredValuesByRows.addAll(
-                            rows.stream()
-                                    .map(row -> {
-                                        final Map<String, List<String>> filteredValues = new HashMap<>();
-                                        resultColumnsIndicesByEvent.forEach((eventName, columnIndices) -> {
-                                            final List<String> values = new ArrayList<>();
-                                            columnIndices.stream().filter(index->index>=0).forEach((index) -> values.add(row[index].toString()));
-                                            filteredValues.put(eventName, Collections.unmodifiableList(values));
-                                        });
-                                        return Collections.unmodifiableMap(filteredValues);
-                                    })
-                                    .toList());
+                                    rows.stream()
+                                            .map(row -> {
+                                                final Map<String, List<String>> filteredValues = new HashMap<>();
+                                                resultColumnsIndicesByEvent.forEach((eventName, columnIndices) -> {
+                                                    final List<String> values = new ArrayList<>();
+                                                    columnIndices.stream().filter(index -> index >= 0).forEach((index) -> values.add(row[index].toString()));
+                                                    filteredValues.put(eventName, Collections.unmodifiableList(values));
+                                                });
+                                                return Collections.unmodifiableMap(filteredValues);
+                                            })
+                                            .toList());
 
 
                             // 필요한 테이블 : bill, CongressMan
@@ -209,35 +210,35 @@ public class TableEventListener {
                                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
 
-                            List<Map.Entry<Serializable[],Serializable[]>> rows = changedData.getRows();
+                            List<Map.Entry<Serializable[], Serializable[]>> rows = changedData.getRows();
 
                             //이벤트 타입, 필터된 컬럼데이터
                             //Before Rows와 After Rows의 지정 인덱스가 바뀌었는지 변화 감지
                             //감지한 컬럼 인덱스로 컬럼 내용 변화 감지.
                             filteredValuesByRows.addAll(
-                            rows.stream()
-                                    .map(row -> {
-                                        // key와 value가 각각 before after
-                                        Serializable[] before = row.getKey();
-                                        Serializable[] after = row.getValue();
+                                    rows.stream()
+                                            .map(row -> {
+                                                // key와 value가 각각 before after
+                                                Serializable[] before = row.getKey();
+                                                Serializable[] after = row.getValue();
 
-                                        final Map<String, List<String>> filteredValues = new HashMap<>();
+                                                final Map<String, List<String>> filteredValues = new HashMap<>();
 
-                                        resultColumnsIndicesByEvent.forEach((eventName, columnIndices) -> {
-                                            // 각 행의 변화감지 인덱스를 넣어서 만약에 바뀌면 아래를 실행
-                                            int watchedColumnIndex = columnIndices.get(0);
-                                            if (!Objects.equals(before[watchedColumnIndex], after[watchedColumnIndex])) {
-                                                final List<String> values = new ArrayList<>();
-                                                columnIndices.stream()
-                                                        .skip(1)
-                                                        .filter(index -> index >= 0)
-                                                        .forEach(index -> values.add(after[index].toString()));
-                                                filteredValues.put(eventName, Collections.unmodifiableList(values));
-                                            }
-                                        });
-                                        return Collections.unmodifiableMap(filteredValues);
-                                    })
-                                    .toList());
+                                                resultColumnsIndicesByEvent.forEach((eventName, columnIndices) -> {
+                                                    // 각 행의 변화감지 인덱스를 넣어서 만약에 바뀌면 아래를 실행
+                                                    int watchedColumnIndex = columnIndices.get(0);
+                                                    if (!Objects.equals(before[watchedColumnIndex], after[watchedColumnIndex])) {
+                                                        final List<String> values = new ArrayList<>();
+                                                        columnIndices.stream()
+                                                                .skip(1)
+                                                                .filter(index -> index >= 0)
+                                                                .forEach(index -> values.add(after[index].toString()));
+                                                        filteredValues.put(eventName, Collections.unmodifiableList(values));
+                                                    }
+                                                });
+                                                return Collections.unmodifiableMap(filteredValues);
+                                            })
+                                            .toList());
                         }
                     });
                 });
@@ -252,8 +253,16 @@ public class TableEventListener {
                 }
             }
         });
-        logClient.setBlocking(false);
-        logClient.connect();
+
+        Thread thread = new Thread(() -> {
+            try {
+                logClient.connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+        thread.start();
         return logClient;
     }
 
@@ -265,7 +274,7 @@ public class TableEventListener {
                 tableMapInfo = new TableMapInfo();
             }
 
-            if (event.getHeader().getEventType().equals(EventType.TABLE_MAP) ) {
+            if (event.getHeader().getEventType().equals(EventType.TABLE_MAP)) {
                 // 테이블 매핑 정보 처리
                 tableMapInfo.setTableMapEventData(event.getData());
             } else {
@@ -278,19 +287,17 @@ public class TableEventListener {
             return tableMapInfo;
         });
     }
+
     private static Long getTableId(Event event) {
         EventData eventData = event.getData();
         Long tableId = null;
         if (eventData instanceof WriteRowsEventData) {
             tableId = ((WriteRowsEventData) eventData).getTableId();
-        }
-        else if (eventData instanceof UpdateRowsEventData) {
+        } else if (eventData instanceof UpdateRowsEventData) {
             tableId = ((UpdateRowsEventData) eventData).getTableId();
-        }
-        else if (eventData instanceof DeleteRowsEventData) {
+        } else if (eventData instanceof DeleteRowsEventData) {
             tableId = ((DeleteRowsEventData) eventData).getTableId();
-        }
-        else if (eventData instanceof TableMapEventData) {
+        } else if (eventData instanceof TableMapEventData) {
             tableId = ((TableMapEventData) eventData).getTableId();
         }
         return tableId;
