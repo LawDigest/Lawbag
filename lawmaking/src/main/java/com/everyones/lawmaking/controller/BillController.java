@@ -157,7 +157,7 @@ public class BillController {
 
     ) {
         var userDetails = (UserDetails) authentication.getPrincipal();
-        var userId = Long.parseLong(userDetails.getPassword());
+        var userId = Long.parseLong(userDetails.getUsername());
         var result = facade.likeBill(userId, billId, likeChecked);
 
         return BaseResponse.ok(result);

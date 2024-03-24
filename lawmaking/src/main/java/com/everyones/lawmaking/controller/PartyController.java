@@ -105,7 +105,7 @@ public class PartyController {
     ) {
 
         var userDetails = (UserDetails) authentication.getPrincipal();
-        var userId = Long.parseLong(userDetails.getPassword());
+        var userId = Long.parseLong(userDetails.getUsername());
         var result = facade.followParty(userId, partyId, followChecked);
         return BaseResponse.ok(result);
     }

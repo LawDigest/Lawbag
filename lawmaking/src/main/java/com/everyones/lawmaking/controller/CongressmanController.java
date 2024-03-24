@@ -112,7 +112,7 @@ public class CongressmanController {
             @RequestParam("like_checked") boolean likeChecked
     ) {
         var userDetails = (UserDetails) authentication.getPrincipal();
-        var userId = Long.parseLong(userDetails.getPassword());
+        var userId = Long.parseLong(userDetails.getUsername());
         var result = facade.likeCongressman(userId, congressmanId, likeChecked);
         return BaseResponse.ok(result);
     }
