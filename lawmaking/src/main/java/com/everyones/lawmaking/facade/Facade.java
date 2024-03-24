@@ -1,13 +1,16 @@
 package com.everyones.lawmaking.facade;
 
 import com.everyones.lawmaking.common.dto.BillDto;
-import com.everyones.lawmaking.common.dto.response.CongressmanResponse;
 import com.everyones.lawmaking.common.dto.response.*;
+import com.everyones.lawmaking.domain.entity.ColumnEventType;
+import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +21,7 @@ public class Facade {
     private final CongressmanService congressmanService;
     private final LikeService likeService;
     private final UserService userService;
+    private final NotificationService notificationService;
 
     // default로 메인피드에 띄울 법안 가져오기 현재 최신순으로 반환해줌.
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
@@ -94,7 +98,48 @@ public class Facade {
     }
 
 
+    // 알림 조회
+    public List<NotificationResponse> getNotifications(long userId){
+        return notificationService.getNotifications(userId);
+    }
 
+    // 알림 읽음 처리
+    public List<NotificationResponse> readNotifications(long userId) {
+        return notificationService.readNotifications(userId);
+    }
 
+    // 알림 데이터를 각 테이블에 해당하는 실제 데이터로 변환 (ex : bill_id
 
+    public List<String> rpInsert(List<String> raw) {
+        var congressman = congressmanService.findCongressman(raw.get(0));
+        var billRepProposer = congressman.getName();
+
+        var bill = billService.getBillEntityById(raw.get(1));
+        var billId = bill.getId();
+        var billName = bill.getBillName();
+        var billProposers = bill.getProposers();
+
+        return List.of(billId, billRepProposer, billProposers, billName);
+    }
+    public List<String> billStageUpdate(List<String> raw) {
+        return raw;
+    }
+
+    public List<String> congressmanPartyUpdate(List<String> raw) {
+        var congressman = congressmanService.findCongressman(raw.get(0));
+        var congressmanId = congressman.getId();
+        var congressmanName = congressman.getName();
+
+        var party = partyService.findParty(Long.parseLong(raw.get(1)));
+        var partyName = party.getName();
+
+        return List.of(congressmanId, partyName, congressmanName);
+    }
+
+    public List<User> getSubscribedUsers(ColumnEventType cet, String targetId) {
+        return switch (cet) {
+            case RP_INSERT, CONGRESSMAN_PARTY_UPDATE -> likeService.getUserByLikedCongressmanId(targetId);
+            case BILL_STAGE_UPDATE -> likeService.getUserByLikedBillId(targetId);
+        };
+    }
 }

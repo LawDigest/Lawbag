@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -105,5 +107,12 @@ public class LikeService {
         return BillLikeResponse.from(updatedBillLike);
     }
 
+    public List<User> getUserByLikedBillId(String billId) {
+        return billLikeRepository.findAllByBillId(billId);
+    }
+
+    public List<User> getUserByLikedCongressmanId(String congressmanId) {
+        return congressmanLikeRepository.findAllByCongressmanId(congressmanId);
+    }
 
 }
