@@ -60,7 +60,7 @@ public class AuthTokenProvider {
                             .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
 
-            UserDetails principal = new User(claims.getSubject(), claims.get(LOCAL_USER_ID).toString(), authorities);
+            UserDetails principal = new User(claims.get(LOCAL_USER_ID).toString(), "", authorities);
 
             return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
         // 토큰이 검증이 되지 않았을 경우는 게스트를 가진 권한을 부여하게 된다.

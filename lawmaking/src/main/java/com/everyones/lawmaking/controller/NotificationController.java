@@ -46,7 +46,7 @@ public class NotificationController {
     @GetMapping("")
     public BaseResponse<List<NotificationResponse>> getNotifications(Authentication authentication) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.getNotifications(Long.parseLong(user.getPassword()));
+        var result = facade.getNotifications(Long.parseLong(user.getUsername()));
         return BaseResponse.ok(result);
     }
 
@@ -66,7 +66,7 @@ public class NotificationController {
     @PutMapping("/read")
     public BaseResponse<List<NotificationResponse>> readNotification(Authentication authentication) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.readNotifications(Long.parseLong(user.getPassword()));
+        var result = facade.readNotifications(Long.parseLong(user.getUsername()));
         return BaseResponse.ok(result);
     }
 
