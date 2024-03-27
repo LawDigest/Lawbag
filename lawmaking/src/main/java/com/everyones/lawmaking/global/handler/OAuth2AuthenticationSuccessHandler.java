@@ -28,6 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URI;
 import java.util.*;
+import java.util.stream.Stream;
 
 import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
 import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
@@ -135,15 +136,17 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     }
 
     private boolean isAuthorizedRedirectUri(String uri) {
-        var clientRedirectUri = URI.create(uri);
+        var checkUri = URI.create(uri);
 
-        return appProperties.getOauth2().getAuthorizedRedirectUris()
-                .stream()
+        var clientUri = appProperties.getAuth().getClientRedirectUri();
+
+
+        return Stream.concat(appProperties.getOauth2().getAuthorizedRedirectUris()
+                .stream(), Stream.of(clientUri))
                 .anyMatch(authorizedRedirectUri -> {
-                    // Only validate host and port. Let the clients use different paths if they want to
-                    URI authorizedURI = URI.create(authorizedRedirectUri);
-                    return authorizedURI.getHost().matches(clientRedirectUri.getHost())
-                            && authorizedURI.getPort() == clientRedirectUri.getPort();
+                    URI authorizedURI = URI.create(clientUri);
+                    return authorizedURI.getHost().equals(checkUri.getHost())
+                            && authorizedURI.getPort() == checkUri.getPort();
                 });
     }
 }
