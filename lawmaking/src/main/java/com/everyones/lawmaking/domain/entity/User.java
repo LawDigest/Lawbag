@@ -29,6 +29,9 @@ public class User extends BaseEntity  {
     @NotNull
     private String name;
 
+    @NotNull
+    private String imageUrl;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private Role role;
