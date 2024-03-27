@@ -31,7 +31,7 @@ public class UserMyPageInfoResponse {
                 .userId(user.getId())
                 .userName(user.getName())
                 .userEmail(user.getEmail())
-                .userImageUrl(null)
+                .userImageUrl(user.getImageUrl())
                 .build();
     }
 }
