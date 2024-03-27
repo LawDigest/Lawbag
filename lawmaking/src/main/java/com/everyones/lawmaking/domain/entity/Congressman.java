@@ -23,16 +23,19 @@ public class Congressman {
     private String id;
 
     private String name;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
 
-    @Builder.Default
     @OneToMany(mappedBy = "congressman")
-    private List<BillProposer> billPublicProposer = new ArrayList<>();
+    private List<BillProposer> billPublicProposer;
 
     @OneToMany(mappedBy = "congressman")
     private List<RepresentativeProposer> representativeProposer;
+
+    @OneToMany(mappedBy = "congressman")
+    private List<CongressManLike> congressManLike;
 
     @Column(name = "elect_sort")
     private String electSort;

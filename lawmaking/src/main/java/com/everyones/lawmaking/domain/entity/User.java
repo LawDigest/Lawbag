@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 
 @Entity
 @Getter
@@ -22,6 +24,12 @@ public class User extends BaseEntity  {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auth_info_id")
     private AuthInfo authInfo;
+
+    @OneToMany(mappedBy = "user")
+    private List<CongressManLike> congressManLike;
+
+    @OneToMany(mappedBy = "user")
+    private List<PartyFollow> partyFollow;
 
     @NotNull
     private String email;
