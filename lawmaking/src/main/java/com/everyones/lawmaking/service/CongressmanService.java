@@ -2,6 +2,7 @@ package com.everyones.lawmaking.service;
 
 
 import com.everyones.lawmaking.common.dto.response.CongressmanResponse;
+import com.everyones.lawmaking.common.dto.response.LikingCongressmanResponse;
 import com.everyones.lawmaking.domain.entity.Congressman;
 import com.everyones.lawmaking.repository.CongressmanRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -9,6 +10,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 
 @Service
@@ -33,6 +36,14 @@ public class CongressmanService {
         var likeCount = likeChecked ? congressman.getLikeCount() + 1 : congressman.getLikeCount() - 1;
         congressman.setLikeCount(likeCount);
         congressmanRepository.save(congressman);
+    }
+
+    public List<LikingCongressmanResponse> getLikingCongressman(long userId){
+        var likingCongressman = congressmanRepository.findLikingCongressmanByUserId(userId);
+        return likingCongressman.stream()
+                .map(LikingCongressmanResponse::from)
+                .toList();
+
     }
 
 }

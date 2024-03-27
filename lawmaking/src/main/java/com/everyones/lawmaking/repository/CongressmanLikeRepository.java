@@ -14,11 +14,13 @@ import java.util.Optional;
 public interface CongressmanLikeRepository extends JpaRepository<CongressManLike, Long> {
 
     @Query("SELECT cl FROM CongressManLike cl " +
-            "WHERE cl.user.id = :userId AND cl.congressMan.id = :congressmanId")
+            "WHERE cl.user.id = :userId AND cl.congressman.id = :congressmanId")
     Optional<CongressManLike> findByUserIdAndCongressmanId(@Param("userId")long userId, @Param("congressmanId")String congressmanId);
 
     @Query("SELECT cl.user FROM CongressManLike cl " +
-            "WHERE cl.congressMan.id = :congressmanId")
+            "WHERE cl.congressman.id = :congressmanId")
     List<User> findAllByCongressmanId(@Param("congressmanId") String congressmanId);
+
+
 
 }

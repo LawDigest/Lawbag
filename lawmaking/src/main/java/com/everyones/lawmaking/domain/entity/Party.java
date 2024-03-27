@@ -22,9 +22,12 @@ public class Party extends BaseEntity{
     @Column(name = "party_id")
     private long id;
 
-    @Builder.Default
+
     @OneToMany(mappedBy = "party")
-    private List<Congressman> congressmanList = new ArrayList<>();
+    private List<Congressman> congressmanList;
+
+    @OneToMany(mappedBy = "party")
+    private List<PartyFollow> partyFollow;
 
     private String name;
 

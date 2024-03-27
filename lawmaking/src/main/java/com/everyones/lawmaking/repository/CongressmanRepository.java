@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,5 +15,9 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
     @Query("SELECT c FROM Congressman c LEFT JOIN FETCH c.party WHERE c.id = :congressmanId")
     Optional<Congressman> findByIdWithParty(@Param("congressmanId") String congressmanId);
 
+    @Query("SELECT c FROM Congressman c JOIN FETCH c.party " +
+            "JOIN c.congressManLike cl " +
+            "WHERE cl.user.id = :userId")
+    List<Congressman> findLikingCongressmanByUserId(@Param("userId") long userId);
 
 }

@@ -89,6 +89,7 @@ public class Facade {
         return likeService.likeCongressman(user, congressman);
     }
 
+    // 정당 팔로우 기능
     @Transactional
     public PartyFollowResponse followParty(long userId, long partyId, boolean followChecked) {
         var user = userService.getUserId(userId);
@@ -97,6 +98,20 @@ public class Facade {
         return likeService.followParty(user, party);
     }
 
+    // 팔로우한 의원 조회
+    public List<LikingCongressmanResponse> getLikingCongressman(long userId) {
+        return congressmanService.getLikingCongressman(userId);
+    }
+
+    // 팔로우한 정당 조회
+    public List<FollowingPartyResponse> getFollowingParty(long userId) {
+        return partyService.getFollowingParty(userId);
+    }
+
+    // 마에 페이지 유저 정보 조회
+    public UserMyPageInfoResponse getUserMyPageInfo(long userId) {
+        return userService.getUserMyPageInfo(userId);
+    }
 
     // 알림 조회
     public List<NotificationResponse> getNotifications(long userId){

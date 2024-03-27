@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.service;
 
+import com.everyones.lawmaking.common.dto.response.FollowingPartyResponse;
 import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
 import com.everyones.lawmaking.domain.entity.Congressman;
 import com.everyones.lawmaking.domain.entity.Party;
@@ -8,6 +9,8 @@ import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +26,14 @@ public class PartyService {
 
         return partyRepository.findPartyDetailById(partyId)
                 .orElseThrow(() -> new CustomException(ResponseCode.BAD_REQUEST));
+    }
+
+    public List<FollowingPartyResponse> getFollowingParty(long userId) {
+        var parties = partyRepository.findFollowingPartyByUserId(userId);
+
+        return parties.stream()
+                .map(FollowingPartyResponse::from)
+                .toList();
     }
 
     public void updatePartyFollowCount(Party party, boolean followChecked) {

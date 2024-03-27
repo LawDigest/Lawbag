@@ -23,6 +23,7 @@ public class LikeService {
     private final CongressmanLikeRepository congressmanLikeRepository;
     private final PartyFollowRepository partyFollowRepository;
 
+
     @Transactional
     public BillLikeResponse likeBill(User user, Bill bill) {
         var billLike = billLikeRepository.findByUserIdAndBillId(user.getId(), bill.getId());
@@ -64,7 +65,7 @@ public class LikeService {
 
     private CongressmanLikeResponse createCongressmanLike(User user, Congressman congressman) {
         var congressmanLike = CongressManLike.builder()
-                .congressMan(congressman)
+                .congressman(congressman)
                 .user(user)
                 .likeChecked(true)
                 .build();
@@ -76,7 +77,7 @@ public class LikeService {
     private CongressmanLikeResponse updateCongressmanLike(CongressManLike congressmanLike) {
         var updatedCongressmanLike = CongressManLike.builder()
                 .id(congressmanLike.getId())
-                .congressMan(congressmanLike.getCongressMan())
+                .congressman(congressmanLike.getCongressman())
                 .user(congressmanLike.getUser())
                 .likeChecked(!congressmanLike.isLikeChecked())
                 .build();

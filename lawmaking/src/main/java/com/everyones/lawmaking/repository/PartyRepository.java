@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 @Repository
 public interface PartyRepository extends JpaRepository<Party, Long> {
@@ -20,5 +21,8 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
             "WHERE p.id = :partyId")
     Optional<PartyDetailResponse> findPartyDetailById(@Param("partyId") long partyId);
 
-
+    @Query("SELECT p FROM Party p " +
+            "JOIN p.partyFollow pf " +
+            "WHERE pf.user.id = :userId")
+    List<Party> findFollowingPartyByUserId(@Param("userId") long userId);
 }

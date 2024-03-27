@@ -22,7 +22,7 @@ public class CongressManLike {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "congress_man_id")
-    private Congressman congressMan;
+    private Congressman congressman;
 
     @NotNull
     @Column(name = "like_checked")

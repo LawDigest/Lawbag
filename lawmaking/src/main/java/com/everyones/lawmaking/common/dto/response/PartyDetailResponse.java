@@ -22,16 +22,16 @@ public class PartyDetailResponse {
     @NotNull
     private String partyImgUrl;
     @NotNull
-    private long propotionalRepresentativeCount;
+    private int propotionalRepresentativeCount;
     @NotNull
-    private long districtRepresentativeCount;
+    private int districtRepresentativeCount;
     @NotNull
     private boolean isFollowed;
     @NotNull
     private String websiteUrl;
 
     // TODO: isFollowed의 경우, User를 거치는 경우와 안 거치는 경우를 나눠서 해야함.
-    public PartyDetailResponse(long partyId, String partyName, String partyImgUrl, long districtRepresentativeCount, long propotionalRepresentativeCount, String websiteUrl) {
+    public PartyDetailResponse(long partyId, String partyName, String partyImgUrl, int districtRepresentativeCount, int propotionalRepresentativeCount, String websiteUrl) {
         this.partyId = partyId;
         this.partyName= partyName;
         this.partyImgUrl= partyImgUrl;
