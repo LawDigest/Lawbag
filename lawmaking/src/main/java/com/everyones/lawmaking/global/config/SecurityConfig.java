@@ -78,7 +78,12 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer ì
                         .failureHandler(oAuth2AuthenticationFailureHandler()
                         )
                 )
-        ;
+                .logout((oauth2User) -> oauth2User
+                        .logoutUrl("/v1/logout")
+                        .logoutSuccessUrl("/")
+                        .deleteCookies("refreshToken")
+                );
+
 
         http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
