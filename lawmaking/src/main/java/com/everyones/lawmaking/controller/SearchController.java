@@ -80,6 +80,9 @@ public class SearchController {
             @RequestParam("search_word") String searchWord,
             @Parameter(example = "0", description = "검색 결과 페이징을 위한 페이지 넘버")
             @RequestParam("page") int page) {
+        if (searchWord.trim().length()<2){
+            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+        }
         var result = facade.searchBill(searchWord,page);
         return BaseResponse.ok(result);
 

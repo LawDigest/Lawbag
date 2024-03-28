@@ -239,10 +239,6 @@ public class BillService {
     public SearchDataResponse searchBill(String searchWord,Pageable pageable) {
         var billSlice = billRepository.findBillByKeyword(pageable,searchWord);
 
-        if (!billSlice.hasContent()) {
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
-        }
-
         var pagination = PaginationResponse.fromSlice(billSlice);
 
         var searchResponse = billSlice.stream()
