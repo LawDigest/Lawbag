@@ -16,7 +16,7 @@ public class PaginationResponse {
 
 
     public static <T> PaginationResponse fromSlice(Slice<T> sliceObject) {
-        return PaginationResponse.builder()
+        return PaginationResponse.<T>builder()
                 .isLastPage(!sliceObject.hasNext())
                 .pageNumber(sliceObject.getNumber())
                 .build();

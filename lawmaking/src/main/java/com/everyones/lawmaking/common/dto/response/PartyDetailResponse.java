@@ -31,13 +31,13 @@ public class PartyDetailResponse {
     private String websiteUrl;
 
     // TODO: isFollowed의 경우, User를 거치는 경우와 안 거치는 경우를 나눠서 해야함.
-    public PartyDetailResponse(long partyId, String partyName, String partyImgUrl, int districtRepresentativeCount, int propotionalRepresentativeCount, String websiteUrl) {
+    public PartyDetailResponse(long partyId, String partyName, String partyImgUrl, String websiteUrl, long propotionalRepresentativeCount, long districtRepresentativeCount) {
         this.partyId = partyId;
         this.partyName= partyName;
         this.partyImgUrl= partyImgUrl;
-        this.propotionalRepresentativeCount = propotionalRepresentativeCount;
-        this.districtRepresentativeCount = districtRepresentativeCount;
         this.websiteUrl = websiteUrl;
+        this.propotionalRepresentativeCount = (int) propotionalRepresentativeCount;
+        this.districtRepresentativeCount = (int) districtRepresentativeCount;
         this.isFollowed = false;
     }
 
