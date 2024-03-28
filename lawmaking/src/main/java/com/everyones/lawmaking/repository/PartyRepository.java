@@ -2,6 +2,7 @@ package com.everyones.lawmaking.repository;
 
 import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
 import com.everyones.lawmaking.domain.entity.Party;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 @Repository
 public interface PartyRepository extends JpaRepository<Party, Long> {
-//    Party findByName(String name);
+
 
     @Query("SELECT new com.everyones.lawmaking.common.dto.response.PartyDetailResponse(p.id, p.name, p.partyImageUrl, p.websiteUrl, " +
             "SUM(CASE WHEN c.electSort = '지역구' THEN 1 ELSE 0 END), " +
@@ -25,4 +26,8 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
             "JOIN p.partyFollow pf " +
             "WHERE pf.user.id = :userId")
     List<Party> findFollowingPartyByUserId(@Param("userId") long userId);
+
+    @Query("SELECT p FROM Party p " +
+            "WHERE p.name LIKE %:searchWord% ")
+    List<Party> findBySearchWord(@Param("searchWord") String searchWord);
 }

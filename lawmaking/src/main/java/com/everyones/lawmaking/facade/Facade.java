@@ -4,17 +4,23 @@ import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.User;
+import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.service.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class Facade {
     private final PartyService partyService;
     private final BillService billService;
@@ -113,6 +119,26 @@ public class Facade {
         return userService.getUserMyPageInfo(userId);
     }
 
+    // 검색 정당 및 의원 조회
+    public SearchDataResponse searchCongressmanAndParty(String searchWord, int page) {
+        Pageable pageable = PageRequest.of(page, 5);
+        var searchDataReesponse = congressmanService.searchCongressman(searchWord, pageable);
+
+        if (page == 0) {
+            var searchPartyList = partyService.searchParty(searchWord);
+            searchDataReesponse.setSearchResponse(Stream
+                    .concat(searchDataReesponse.getSearchResponse().stream(), searchPartyList.stream())
+                    .toList());
+        }
+        return searchDataReesponse;
+
+    }
+
+    // 검색 법안 조회
+//    public List<SearchResponse> searchBill(String searchWord) {
+//
+//    }
+
     // 알림 조회
     public List<NotificationResponse> getNotifications(long userId){
         return notificationService.getNotifications(userId);
@@ -136,11 +162,11 @@ public class Facade {
 
         return List.of(billId, billRepProposer, billProposers, billName);
     }
-    public List<String> billStageUpdate(List<String> raw) {
+    public List<String> updateBillStage(List<String> raw) {
         return raw;
     }
 
-    public List<String> congressmanPartyUpdate(List<String> raw) {
+    public List<String> updateCongressmanParty(List<String> raw) {
         var congressman = congressmanService.findCongressman(raw.get(0));
         var congressmanId = congressman.getId();
         var congressmanName = congressman.getName();

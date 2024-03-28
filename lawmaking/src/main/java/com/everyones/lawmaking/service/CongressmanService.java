@@ -1,17 +1,19 @@
 package com.everyones.lawmaking.service;
 
 
-import com.everyones.lawmaking.common.dto.response.CongressmanResponse;
-import com.everyones.lawmaking.common.dto.response.LikingCongressmanResponse;
+import com.everyones.lawmaking.common.dto.SearchCongressmanDto;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Congressman;
 import com.everyones.lawmaking.repository.CongressmanRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -44,6 +46,19 @@ public class CongressmanService {
                 .map(LikingCongressmanResponse::from)
                 .toList();
 
+    }
+
+    public SearchDataResponse searchCongressman(String searchWord, Pageable pageable) {
+        var congressmanList = congressmanRepository.findBySearchWord(searchWord, pageable);
+        var pagination = PaginationResponse.fromSlice(congressmanList);
+        var searchResponse =  congressmanList.stream()
+                .map(SearchCongressmanDto::from)
+                .collect(Collectors.toList());
+
+        return SearchDataResponse.builder()
+                .searchResponse(searchResponse)
+                .paginationResponse(pagination)
+                .build();
     }
 
 }

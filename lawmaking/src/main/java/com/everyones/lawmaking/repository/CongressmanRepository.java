@@ -1,6 +1,8 @@
 package com.everyones.lawmaking.repository;
 
 import com.everyones.lawmaking.domain.entity.Congressman;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,5 +21,10 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
             "JOIN c.congressManLike cl " +
             "WHERE cl.user.id = :userId")
     List<Congressman> findLikingCongressmanByUserId(@Param("userId") long userId);
+
+    @Query("SELECT c FROM Congressman c " +
+            "JOIN FETCH c.party p " +
+            "WHERE c.name LIKE %:searchWord% " )
+    Slice<Congressman> findBySearchWord(@Param("searchWord") String searchWord, Pageable pageable);
 
 }

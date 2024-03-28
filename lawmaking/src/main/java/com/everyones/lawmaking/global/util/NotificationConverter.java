@@ -57,13 +57,13 @@ public class NotificationConverter {
                 break;
             case BILL_STAGE_UPDATE:
                 // List.of("bill_id", "bill_name", "proposers", "stage")
-                processedData = facade.billStageUpdate(data);
+                processedData = facade.updateBillStage(data);
                 title = processedData.get(1) + " " + processedData.get(2);
                 content = "스크랩한 법안이 본회의에서 '"+processedData.get(3)+"'되었어요!";
                 break;
             case CONGRESSMAN_PARTY_UPDATE:
                 // List.of(congressmanId, partyName, congressmanName);
-                processedData = facade.congressmanPartyUpdate(data);
+                processedData = facade.updateCongressmanParty(data);
                 title = processedData.get(1);
                 content = "'"+processedData.get(2)+"'의원의 당적이 '"+processedData.get(1)+"'(으)로 변동했어요!";
                 break;
