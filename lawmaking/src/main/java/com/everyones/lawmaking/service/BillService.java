@@ -1,10 +1,7 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.*;
-import com.everyones.lawmaking.common.dto.response.BillDetailResponse;
-import com.everyones.lawmaking.common.dto.response.BillListResponse;
-import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
-import com.everyones.lawmaking.common.dto.response.PaginationResponse;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
@@ -238,8 +235,26 @@ public class BillService {
 
     // 단일 법안을 자세하게 조회할 때 사용
 
+    // 법원 검색
+    public SearchDataResponse searchBill(String searchWord,Pageable pageable) {
+        var billSlice = billRepository.findBillByKeyword(pageable,searchWord);
 
+        if (!billSlice.hasContent()) {
+            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+        }
 
+        var pagination = PaginationResponse.fromSlice(billSlice);
+
+        var searchResponse = billSlice.stream()
+                .map(SearchBillDto::from)
+                .toList();
+
+        return SearchDataResponse.builder()
+                .searchResponse(searchResponse)
+                .paginationResponse(pagination)
+                .build();
+
+    }
 
 
 

@@ -17,10 +17,10 @@ import lombok.Getter;
 public class SearchPartyDto implements SearchResponse {
 
     @NotNull
-    private long partyId;
+    private long id;
 
     @NotNull
-    private String partyName;
+    private String name;
 
     @NotNull
     private String partyImageUrl;
@@ -30,8 +30,8 @@ public class SearchPartyDto implements SearchResponse {
 
     public static SearchResponse from(Party party) {
         return SearchPartyDto.builder()
-                .partyId(party.getId())
-                .partyName(party.getName())
+                .id(party.getId())
+                .name(party.getName())
                 .partyImageUrl(party.getPartyImageUrl())
                 .searchType(SearchType.PARTY.name())
                 .build();
