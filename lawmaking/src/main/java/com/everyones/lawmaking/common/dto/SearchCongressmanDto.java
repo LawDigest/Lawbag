@@ -16,10 +16,10 @@ import lombok.Getter;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class SearchCongressmanDto implements SearchResponse {
     @NotNull
-    private String id;
+    private String congressId;
 
     @NotNull
-    private String name;
+    private String congressName;
 
     @NotNull
     private String congressmanImageUrl;
@@ -37,8 +37,8 @@ public class SearchCongressmanDto implements SearchResponse {
     public static SearchResponse from(Congressman congressman) {
         var party = congressman.getParty();
         return SearchCongressmanDto.builder()
-                .id(congressman.getId())
-                .name(congressman.getName())
+                .congressId(congressman.getId())
+                .congressName(congressman.getName())
                 .congressmanImageUrl(congressman.getCongressmanImageUrl())
                 .partyId(party.getId())
                 .partyName(party.getName())
