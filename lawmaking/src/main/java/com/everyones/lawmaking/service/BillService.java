@@ -241,9 +241,16 @@ public class BillService {
 
         var pagination = PaginationResponse.fromSlice(billSlice);
 
-        var searchResponse = billSlice.stream()
+
+        var billIdList = billSlice.toList();
+
+        var billList = billRepository.findBillInfoByIdList(billIdList);
+
+        var searchResponse = billList.stream()
                 .map(SearchBillDto::from)
                 .toList();
+
+
 
         return SearchDataResponse.builder()
                 .searchResponse(searchResponse)

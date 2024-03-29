@@ -76,15 +76,15 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "WHERE b.billName = :billName")
     List<Bill> findSimilarBills(@Param("billName") String billName);
 
-    @Query(value = "select *\n" +
+    @Query(value = "select bill_id\n" +
             "from\n" +
-            "(select *,match(summary) against(concat('*',:keyword,'*') in boolean mode) as summary_rel,\n" +
+            "(select bill_id ,match(summary) against(concat('*',:keyword,'*') in boolean mode) as summary_rel,\n" +
             "match(keyword) against(concat('*',:keyword,'*') in boolean mode) as keyword_rel,\n" +
             "match(bill_name) against(concat('*',:keyword,'*') in boolean mode) as bill_name_rel\n" +
             "from bill) search\n" +
             "where keyword_rel >0 or summary_rel>0 or bill_name_rel > 0\n" +
             "order by keyword_rel desc, bill_name_rel desc, summary_rel desc"
             , nativeQuery = true)
-    Slice<Bill> findBillByKeyword(Pageable pageable,@Param("keyword") String keyword);
+    Slice<String> findBillByKeyword(Pageable pageable,@Param("keyword") String keyword);
 
 }
