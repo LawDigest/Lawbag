@@ -27,4 +27,10 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
             "WHERE c.name LIKE %:searchWord% " )
     Slice<Congressman> findBySearchWord(@Param("searchWord") String searchWord, Pageable pageable);
 
+
+    @Query("SELECT c FROM Congressman c " +
+            "JOIN c.party p WHERE p.id = :partyId " +
+            "ORDER BY c.name ")
+    Slice<Congressman> findCongressmanById(@Param("partyId") long partyId, Pageable pageable);
+
 }

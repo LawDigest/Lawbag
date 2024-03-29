@@ -1,12 +1,11 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
-import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
+import com.everyones.lawmaking.common.dto.response.PartyCongressmanResponse;
 import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
 import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
-import com.everyones.lawmaking.service.PartyService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,7 +28,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @Tag(name = "정당 관련 API", description = "정당 관련 API 호출")
 public class PartyController {
     private final Facade facade;
-    private final PartyService partyService;
+
     @Operation(summary = "의원의 발의안 리스트 조회", description = "의원이 발의한 법안 데이터 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -79,6 +78,31 @@ public class PartyController {
                 : facade.getPublicBillsByParty(pageable, partyId);
 
         return BaseResponse.ok(response);
+
+    }
+
+    @Operation(summary = "정당 소속의 의원들 조회", description = "정당 소속 의원들 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @GetMapping("/congressman")
+    public BaseResponse<PartyCongressmanResponse> getPartyCongressman(@Parameter(example = "1", description = "정당 id")
+                                                          @RequestParam("party_id") long partyId,
+                                                                      @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
+                                                          @RequestParam(name = "page") int page) {
+        var pageable = PageRequest.of(page, 16);
+        var result = facade.getPartyCongressman(partyId, pageable);
+
+        return BaseResponse.ok(result);
 
     }
 
