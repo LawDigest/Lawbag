@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.service;
 
 
+import com.everyones.lawmaking.common.dto.PartyCongressmanDto;
 import com.everyones.lawmaking.common.dto.SearchCongressmanDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Congressman;
@@ -31,6 +32,15 @@ public class CongressmanService {
     public CongressmanResponse getCongressman(String congressmanId) {
         var congressman = findCongressman(congressmanId);
         return CongressmanResponse.fromCongressman(congressman);
+    }
+
+    public PartyCongressmanResponse getPartyCongressman(long partyId, Pageable pageable) {
+        var congressman = congressmanRepository.findCongressmanById(partyId, pageable);
+        var pagination = PaginationResponse.fromSlice(congressman);
+        var congresssmanList = congressman.stream()
+                .map(PartyCongressmanDto::from)
+                .toList();
+        return PartyCongressmanResponse.of(congresssmanList, pagination);
     }
 
     @Transactional

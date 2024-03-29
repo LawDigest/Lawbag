@@ -76,6 +76,10 @@ public class Facade {
         return billService.getPublicBillsByParty(pageable, partyId);
     }
 
+    public PartyCongressmanResponse getPartyCongressman(long partyId, Pageable pageable) {
+        return congressmanService.getPartyCongressman(partyId, pageable);
+    }
+
     // 법안 좋아요 기능
     public BillLikeResponse likeBill(long userId, String billId, boolean likeChecked) {
         // 해당하는 userId와 billId가 있는 지 확인 없으면 하위 모듈에서 에러 발생
