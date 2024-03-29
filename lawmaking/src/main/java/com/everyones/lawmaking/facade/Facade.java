@@ -4,8 +4,6 @@ import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.User;
-import com.everyones.lawmaking.global.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -122,22 +120,26 @@ public class Facade {
     // 검색 정당 및 의원 조회
     public SearchDataResponse searchCongressmanAndParty(String searchWord, int page) {
         Pageable pageable = PageRequest.of(page, 5);
-        var searchDataReesponse = congressmanService.searchCongressman(searchWord, pageable);
+        var searchDataResponse = congressmanService.searchCongressman(searchWord, pageable);
 
         if (page == 0) {
             var searchPartyList = partyService.searchParty(searchWord);
-            searchDataReesponse.setSearchResponse(Stream
-                    .concat(searchDataReesponse.getSearchResponse().stream(), searchPartyList.stream())
+            searchDataResponse.setSearchResponse(Stream
+                    .concat(searchDataResponse.getSearchResponse().stream(), searchPartyList.stream())
                     .toList());
         }
-        return searchDataReesponse;
+        return searchDataResponse;
 
     }
 
     // 검색 법안 조회
-//    public List<SearchResponse> searchBill(String searchWord) {
-//
-//    }
+    public SearchDataResponse searchBill(String searchWord,int page) {
+
+        Pageable pageable = PageRequest.of(page, 5);
+
+        return billService.searchBill(searchWord, pageable);
+
+    }
 
     // 알림 조회
     public List<NotificationResponse> getNotifications(long userId){
