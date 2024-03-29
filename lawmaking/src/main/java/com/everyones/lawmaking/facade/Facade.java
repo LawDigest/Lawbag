@@ -185,8 +185,8 @@ public class Facade {
 
     public List<User> getSubscribedUsers(ColumnEventType cet, String targetId) {
         return switch (cet) {
-            case RP_INSERT, CONGRESSMAN_PARTY_UPDATE -> likeService.getUserByLikedCongressmanId(targetId);
-            case BILL_STAGE_UPDATE -> likeService.getUserByLikedBillId(targetId);
+            case RP_INSERT, CONGRESSMAN_PARTY_UPDATE -> userService.getUserByLikedCongressmanId(targetId);
+            case BILL_STAGE_UPDATE -> userService.getUserByLikedBillId(targetId);
         };
     }
 }

@@ -8,6 +8,8 @@ import com.everyones.lawmaking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -21,6 +23,14 @@ public class UserService {
     public UserMyPageInfoResponse getUserMyPageInfo(long userId) {
         var user = getUserId(userId);
         return UserMyPageInfoResponse.from(user);
+    }
+
+    public List<User> getUserByLikedBillId(String billId) {
+        return userRepository.findAllByBillId(billId);
+    }
+
+    public List<User> getUserByLikedCongressmanId(String congressmanId) {
+        return userRepository.findAllByCongressmanId(congressmanId);
     }
 
 }
