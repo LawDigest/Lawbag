@@ -23,7 +23,7 @@ public class Notification extends BaseEntity {
 
     // 알림 이름(유형)
     @NotNull
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     @Column(name = "notification_name")
     private ColumnEventType notificationName;
 
