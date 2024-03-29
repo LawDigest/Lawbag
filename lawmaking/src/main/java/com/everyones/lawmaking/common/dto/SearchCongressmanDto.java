@@ -19,7 +19,7 @@ public class SearchCongressmanDto implements SearchResponse {
     private String congressmanId;
 
     @NotNull
-    private String congressName;
+    private String congressmanName;
 
     @NotNull
     private String congressmanImageUrl;
@@ -38,7 +38,7 @@ public class SearchCongressmanDto implements SearchResponse {
         var party = congressman.getParty();
         return SearchCongressmanDto.builder()
                 .congressmanId(congressman.getId())
-                .congressName(congressman.getName())
+                .congressmanName(congressman.getName())
                 .congressmanImageUrl(congressman.getCongressmanImageUrl())
                 .partyId(party.getId())
                 .partyName(party.getName())
