@@ -11,12 +11,14 @@ import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PartyService {
     private final PartyRepository partyRepository;
 
@@ -26,9 +28,9 @@ public class PartyService {
     }
 
     public PartyDetailResponse getPartyById(long partyId) {
-
-        return partyRepository.findPartyDetailById(partyId)
+        var party = partyRepository.findPartyDetailById(partyId)
                 .orElseThrow(() -> new CustomException(ResponseCode.BAD_REQUEST));
+        return PartyDetailResponse.from(party);
     }
 
     public List<FollowingPartyResponse> getFollowingParty(long userId) {
@@ -39,6 +41,7 @@ public class PartyService {
                 .toList();
     }
 
+    @Transactional
     public void updatePartyFollowCount(Party party, boolean followChecked) {
         var followCount = followChecked ? party.getFollowCount() + 1 : party.getFollowCount() - 1;
         party.setFollowCount(followCount);

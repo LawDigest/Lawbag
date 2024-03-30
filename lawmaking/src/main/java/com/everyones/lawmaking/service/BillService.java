@@ -76,6 +76,7 @@ public class BillService {
 
 
     // TODO: 조회수 컬럼 접근에 대한 동시성 문제 해결 + 성능 이슈 업데이트 해야함.
+    @Transactional
     public BillViewCountResponse updateViewCount(String billId) {
         var bill = billRepository.findById(billId)
                 .orElseThrow(() -> new CustomException(ResponseCode.INVALID_QUERY_PARAMETER));
@@ -86,10 +87,6 @@ public class BillService {
 
     public BillListResponse getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findByRepresentativeProposer(congressmanId, pageable);
-
-        if (!billSlice.hasContent()) {
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
-        }
 
         var pagination = PaginationResponse.fromSlice(billSlice);
 
@@ -111,9 +108,6 @@ public class BillService {
     public BillListResponse getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable);
 
-        if (billSlice.isEmpty()) {
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
-        }
         var billIdList = billSlice.stream()
                 .map(Bill::getId)
                 .toList();
@@ -135,10 +129,6 @@ public class BillService {
     public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findRepresentativeBillsByParty(pageable, partyId);
 
-        if (!billSlice.hasContent()) {
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
-        }
-
         var pagination = PaginationResponse.fromSlice(billSlice);
 
         var billIdList = billSlice
@@ -158,10 +148,6 @@ public class BillService {
 
     public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findPublicBillsByParty(pageable, partyId);
-
-        if (!billSlice.hasContent()) {
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
-        }
 
         var pagination = PaginationResponse.fromSlice(billSlice);
 

@@ -14,13 +14,10 @@ import java.util.Optional;
 public interface PartyRepository extends JpaRepository<Party, Long> {
 
 
-    @Query("SELECT new com.everyones.lawmaking.common.dto.response.PartyDetailResponse(p.id, p.name, p.partyImageUrl, p.websiteUrl, " +
-            "SUM(CASE WHEN c.electSort = '지역구' THEN 1 ELSE 0 END), " +
-            "SUM(CASE WHEN c.electSort = '비례대표' THEN 1 ELSE 0 END)) " +
+    @Query("SELECT p " +
             "FROM Party p " +
-            "JOIN Congressman c ON p.id = c.party.id " +
             "WHERE p.id = :partyId")
-    Optional<PartyDetailResponse> findPartyDetailById(@Param("partyId") long partyId);
+    Optional<Party> findPartyDetailById(@Param("partyId") long partyId);
 
     @Query("SELECT p FROM Party p " +
             "JOIN p.partyFollow pf " +
