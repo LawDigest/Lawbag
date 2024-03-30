@@ -62,4 +62,8 @@ public class Congressman {
 
     @ColumnDefault("0")
     private int likeCount;
+
+    @ColumnDefault("22")
+    @Column(name = "assembly_number")
+    private int assemblyNumber;
 }
