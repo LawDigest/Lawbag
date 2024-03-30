@@ -60,7 +60,7 @@ public class SearchBillDto implements SearchResponse {
     public static SearchResponse from(Bill bill) {
 
         var congressMan = bill.getRepresentativeProposer().getCongressman();
-        var party = bill.getParty();
+        var party = congressMan.getParty();
 
         return SearchBillDto.builder()
                 .id(bill.getId())
