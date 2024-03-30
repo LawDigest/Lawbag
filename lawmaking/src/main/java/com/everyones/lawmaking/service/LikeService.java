@@ -22,28 +22,28 @@ public class LikeService {
     private final PartyFollowRepository partyFollowRepository;
 
 
-    @Transactional
+
     public BillLikeResponse likeBill(User user, Bill bill) {
         var billLike = billLikeRepository.findByUserIdAndBillId(user.getId(), bill.getId());
 
         return billLike.isPresent() ? updateBillLike(billLike.get()) : createBillLike(user, bill);
     }
 
-    @Transactional
+
     public CongressmanLikeResponse likeCongressman(User user, Congressman congressman) {
         var congressmanLike = congressmanLikeRepository.findByUserIdAndCongressmanId(user.getId(), congressman.getId());
 
         return congressmanLike.isPresent() ? updateCongressmanLike(congressmanLike.get()) : createCongressmanLike(user ,congressman);
     }
 
-    @Transactional
+
     public PartyFollowResponse followParty(User user, Party party) {
         var partyFollow = partyFollowRepository.findByUserIdAndPartyId(user.getId(), party.getId());
 
         return partyFollow.isPresent() ? updatePartyFollow(partyFollow.get()) : createPartyFollow(user, party);
     }
 
-    @Transactional
+
     private PartyFollowResponse createPartyFollow(User user, Party party) {
         var partyFollow = PartyFollow.builder()
                 .party(party)
