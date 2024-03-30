@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.common.dto.response;
 
+import com.everyones.lawmaking.domain.entity.Party;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
@@ -22,23 +23,25 @@ public class PartyDetailResponse {
     @NotNull
     private String partyImgUrl;
     @NotNull
-    private int propotionalRepresentativeCount;
+    private int proportionalCongressmanCount;
     @NotNull
-    private int districtRepresentativeCount;
+    private int districtCongressmanCount;
     @NotNull
     private boolean isFollowed;
     @NotNull
     private String websiteUrl;
 
     // TODO: isFollowed의 경우, User를 거치는 경우와 안 거치는 경우를 나눠서 해야함.
-    public PartyDetailResponse(long partyId, String partyName, String partyImgUrl, String websiteUrl, long propotionalRepresentativeCount, long districtRepresentativeCount) {
-        this.partyId = partyId;
-        this.partyName= partyName;
-        this.partyImgUrl= partyImgUrl;
-        this.websiteUrl = websiteUrl;
-        this.propotionalRepresentativeCount = (int) propotionalRepresentativeCount;
-        this.districtRepresentativeCount = (int) districtRepresentativeCount;
-        this.isFollowed = false;
+    public static PartyDetailResponse from(Party party) {
+        return PartyDetailResponse.builder()
+                .partyId(party.getId())
+                .partyName(party.getName())
+                .partyImgUrl(party.getPartyImageUrl())
+                .websiteUrl(party.getWebsiteUrl())
+                .proportionalCongressmanCount(party.getProportionalCongressmanCount())
+                .districtCongressmanCount(party.getDistrictCongressmanCount())
+                .isFollowed(false)
+                .build();
     }
 
 }
