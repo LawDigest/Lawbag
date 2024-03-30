@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
+@Transactional
 public class LikeService {
     private final BillLikeRepository billLikeRepository;
     private final CongressmanLikeRepository congressmanLikeRepository;
@@ -43,6 +43,7 @@ public class LikeService {
         return partyFollow.isPresent() ? updatePartyFollow(partyFollow.get()) : createPartyFollow(user, party);
     }
 
+    @Transactional
     private PartyFollowResponse createPartyFollow(User user, Party party) {
         var partyFollow = PartyFollow.builder()
                 .party(party)
