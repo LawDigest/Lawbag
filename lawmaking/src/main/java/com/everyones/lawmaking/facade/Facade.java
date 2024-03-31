@@ -26,6 +26,7 @@ public class Facade {
     private final LikeService likeService;
     private final UserService userService;
     private final NotificationService notificationService;
+    private final PartyPromiseService partyPromiseService;
 
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
         var billListResponse = billService.getBillsByDefault(pageable);
@@ -231,4 +232,11 @@ public class Facade {
         billListResponse.setBillList(billList);
         return billListResponse;
     }
+
+    // 정당 공약 조회
+    public PartyPromiseResponse getPartyPromise(long partyId, Pageable pageable) {
+
+        return partyPromiseService.getPartyPromise(partyId, pageable);
+    }
+
 }
