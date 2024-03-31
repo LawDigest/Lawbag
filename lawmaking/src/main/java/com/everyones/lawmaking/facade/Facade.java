@@ -4,6 +4,7 @@ import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.User;
+import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,19 +27,27 @@ public class Facade {
     private final UserService userService;
     private final NotificationService notificationService;
 
-    // default로 메인피드에 띄울 법안 가져오기 현재 최신순으로 반환해줌.
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
-        return billService.getBillsByDefault(pageable);
+        var billListResponse = billService.getBillsByDefault(pageable);
+        return setBillListResponseBookMark(billListResponse);
     }
 
     // 법안의 처리 단계에 따라 법안 페이징해서 법안 반환
     public BillListResponse getBillsByStage(Pageable pageable, String stage) {
-        return billService.getBillsByStage(pageable, stage);
+        var billListResponse = billService.getBillsByStage(pageable, stage);
+        return setBillListResponseBookMark(billListResponse);
     }
 
     // 법안 아이디를 기준으로, 하나의 법안 상세 조회
     public BillDto getBillByBillId(String billId) {
-        return billService.getBillWithDetail(billId);
+        var billDto =  billService.getBillWithDetail(billId);
+        var userId = AuthenticationUtil.getUserId();
+        if (userId.isEmpty()) {
+            return billDto;
+        }
+        var isBookMark = likeService.getBillLikeChecked(billDto.getBillInfoDto().getBillId(), userId.get());
+        billDto.setIsBookMark(isBookMark);
+        return billDto;
     }
 
     // 법안 조회수 증가
@@ -48,17 +57,20 @@ public class Facade {
 
     // Congressman 대표 발의 가져오기
     public BillListResponse getBillsFromRepresentativeProposer(String congressmanId, Pageable pageable) {
-        return billService.getBillInfoFromRepresentativeProposer(congressmanId, pageable);
+        var billListResponse = billService.getBillInfoFromRepresentativeProposer(congressmanId, pageable);
+        return setBillListResponseBookMark(billListResponse);
     }
 
     // Congressman 공동 발의 법안 가져오기
     public BillListResponse getBillsFromPublicProposer(String congressmanId, Pageable pageable) {
-        return billService.getBillInfoFromPublicProposer(congressmanId, pageable);
+        var billListResponse = billService.getBillInfoFromPublicProposer(congressmanId, pageable);
+        return setBillListResponseBookMark(billListResponse);
     }
 
     // 의원 상세 조회
     public CongressmanResponse getCongressman(String congressmanId) {
         return congressmanService.getCongressman(congressmanId);
+
     }
 
     // 정당 상세 조회
@@ -68,11 +80,13 @@ public class Facade {
 
     //
     public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId) {
-        return billService.getRepresentativeBillsByParty(pageable, partyId);
+        var billListResponse = billService.getRepresentativeBillsByParty(pageable, partyId);
+        return setBillListResponseBookMark(billListResponse);
     }
 
     public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId) {
-        return billService.getPublicBillsByParty(pageable, partyId);
+        var billListResponse = billService.getPublicBillsByParty(pageable, partyId);
+        return setBillListResponseBookMark(billListResponse);
     }
 
     public PartyCongressmanResponse getPartyCongressman(long partyId, Pageable pageable) {
@@ -187,5 +201,21 @@ public class Facade {
             case RP_INSERT, CONGRESSMAN_PARTY_UPDATE -> userService.getUserByLikedCongressmanId(targetId);
             case BILL_STAGE_UPDATE -> userService.getUserByLikedBillId(targetId);
         };
+    }
+
+    private BillListResponse setBillListResponseBookMark(BillListResponse billListResponse) {
+        var userId = AuthenticationUtil.getUserId();
+        if (userId.isEmpty()) {
+            return billListResponse;
+        }
+        var billList = billListResponse.getBillList().stream()
+                .map(billDto -> {
+                    var isBookMark = likeService.getBillLikeChecked(billDto.getBillInfoDto().getBillId(), userId.get());
+                    billDto.setIsBookMark(isBookMark);
+                    return billDto;
+                })
+                .toList();
+        billListResponse.setBillList(billList);
+        return billListResponse;
     }
 }

@@ -21,7 +21,10 @@ public class LikeService {
     private final CongressmanLikeRepository congressmanLikeRepository;
     private final PartyFollowRepository partyFollowRepository;
 
-
+    public Boolean getBillLikeChecked(String billId, long userId) {
+        var billLike = billLikeRepository.findByUserIdAndBillId(userId, billId);
+        return billLike.isPresent() ? billLike.get().isLikeChecked() : false;
+    }
 
     public BillLikeResponse likeBill(User user, Bill bill) {
         var billLike = billLikeRepository.findByUserIdAndBillId(user.getId(), bill.getId());

@@ -5,12 +5,19 @@ import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -27,38 +34,13 @@ public class BillService {
     public BillListResponse getBillsByDefault(Pageable pageable) {
         // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
         var billSlice = billRepository.findDefaultBillsByPage(pageable);
-
-        var billIdList = billSlice.stream()
-                .map(Bill::getId)
-                .toList();
-        var billList = billRepository.findBillInfoByIdList(billIdList);
-        var billInfoList = billList.stream()
-                .map(this::getBillInfoFrom)
-                .toList();
-        var pagination = PaginationResponse.fromSlice(billSlice);
-        return BillListResponse.builder()
-                .paginationResponse(pagination)
-                .billList(billInfoList)
-                .build();
+        return getBillListResponse(billSlice);
 
     }
 
     public BillListResponse getBillsByStage(Pageable pageable, String stage) {
         var billSlice = billRepository.findDefaultBillsByStage(pageable, stage);
-
-        var billIdList = billSlice.stream()
-                .map(Bill::getId)
-                .toList();
-        var billList = billRepository.findBillInfoByIdList(billIdList);
-        var billInfoList = billList.stream()
-                .map(this::getBillInfoFrom)
-                .toList();
-        var pagination = PaginationResponse.fromSlice(billSlice);
-
-        return BillListResponse.builder()
-                .paginationResponse(pagination)
-                .billList(billInfoList)
-                .build();
+        return getBillListResponse(billSlice);
     }
 
     public BillDto getBillWithDetail(String billId) {
@@ -87,67 +69,29 @@ public class BillService {
 
     public BillListResponse getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findByRepresentativeProposer(congressmanId, pageable);
+        return getBillListResponse(billSlice);
 
-        var pagination = PaginationResponse.fromSlice(billSlice);
-
-        var billIdList = billSlice
-                .stream()
-                .map(Bill::getId)
-                .toList();
-
-        var billList = billRepository.findBillInfoByIdList(billIdList);
-        var billInfoList = billList.stream()
-                .map(this::getBillInfoFrom)
-                .toList();
-        return BillListResponse.builder()
-                .paginationResponse(pagination)
-                .billList(billInfoList)
-                .build();
     }
 
     public BillListResponse getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable);
+        return getBillListResponse(billSlice);
 
-        var billIdList = billSlice.stream()
-                .map(Bill::getId)
-                .toList();
-
-
-        var billList = billRepository.findBillInfoByIdList(billIdList);
-
-        var pagination = PaginationResponse.fromSlice(billSlice);
-
-        var billInfoList =  billList.stream()
-                .map(this::getBillInfoFrom)
-                .toList();
-        return BillListResponse.builder()
-                .paginationResponse(pagination)
-                .billList(billInfoList)
-                .build();
     }
 
     public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findRepresentativeBillsByParty(pageable, partyId);
+        return getBillListResponse(billSlice);
 
-        var pagination = PaginationResponse.fromSlice(billSlice);
-
-        var billIdList = billSlice
-                .stream()
-                .map(Bill::getId)
-                .toList();
-        var billList = billRepository.findBillInfoByIdList(billIdList);
-        var billInfoList = billList.stream()
-                .map(this::getBillInfoFrom)
-                .toList();
-
-        return BillListResponse.builder()
-                .paginationResponse(pagination)
-                .billList(billInfoList)
-                .build();
     }
 
     public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findPublicBillsByParty(pageable, partyId);
+        return getBillListResponse(billSlice);
+
+    }
+
+    private BillListResponse getBillListResponse(Slice<Bill> billSlice) {
 
         var pagination = PaginationResponse.fromSlice(billSlice);
 
@@ -155,7 +99,9 @@ public class BillService {
                 .stream()
                 .map(Bill::getId)
                 .toList();
-        var billList = billRepository.findBillInfoByIdList(billIdList);
+        var userId = AuthenticationUtil.getUserId();
+        List<Bill> billList = billRepository.findBillInfoByIdList(billIdList);
+
         var billInfoList = billList.stream()
                 .map(this::getBillInfoFrom)
                 .toList();
@@ -219,7 +165,7 @@ public class BillService {
         return new BillDetailResponse(billInfoDto, representativeProposerDto, publicProposerDtoList);
     }
 
-    // 단일 법안을 자세하게 조회할 때 사용
+
 
     // 법원 검색
     public SearchDataResponse searchBill(String searchWord,Pageable pageable) {

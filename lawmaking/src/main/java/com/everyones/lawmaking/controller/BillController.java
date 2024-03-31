@@ -43,7 +43,8 @@ public class BillController {
             ),
     })
     @GetMapping("/mainfeed")
-    public BaseResponse<BillListResponse> getNext3Bills(
+    public BaseResponse<BillListResponse> getBillsFromMainFeed(
+            Authentication authentication,
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page")
             int page,
@@ -70,7 +71,7 @@ public class BillController {
             ),
     })
     @GetMapping("/mainfeed/stage")
-    public BaseResponse<BillListResponse> getNext3BillsWithStage(
+    public BaseResponse<BillListResponse> getBillsByStage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page") int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
@@ -162,6 +163,8 @@ public class BillController {
 
         return BaseResponse.ok(result);
     }
+
+
 
 
 }

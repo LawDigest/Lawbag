@@ -71,6 +71,18 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     )
     List<Bill> findBillInfoByIdList(List<String> billList);
 
+
+    @Query("SELECT b FROM Bill b " +
+            "JOIN FETCH b.representativeProposer rp " +
+            "JOIN FETCH b.publicProposer bp " +
+            "JOIN FETCH rp.congressman rpc " +
+            "JOIN FETCH bp.congressman bpc " +
+            "JOIN FETCH rpc.party rpp " +
+            "JOIN FETCH bpc.party bpp " +
+            "WHERE b.id in :billList"
+    )
+    List<Bill> findBillInfoByIdList(List<String> billList, @Param("userId") long userId );
+
     // billName 인덱스 걸어줘야 할듯
     @Query("SELECT b FROM Bill b " +
             "WHERE b.billName = :billName")
