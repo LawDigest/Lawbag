@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.repository;
 
+import com.everyones.lawmaking.common.dto.PartyPromiseDto;
 import com.everyones.lawmaking.domain.entity.PartyPromise;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -13,6 +14,7 @@ public interface PartyPromiseRepository extends JpaRepository<PartyPromise, Long
 
     @Query("select pp " +
             "from PartyPromise pp " +
+            "join FETCH pp.party p " +
             "where pp.party.id = :partyId ")
     Slice<PartyPromise> findPartyPromiseByPartyId(@Param("partyId") long partyId, Pageable pageable);
 
