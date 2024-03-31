@@ -31,7 +31,7 @@ public class CongressmanService {
 
     public CongressmanResponse getCongressman(String congressmanId) {
         var congressman = findCongressman(congressmanId);
-        return CongressmanResponse.fromCongressman(congressman);
+        return CongressmanResponse.from(congressman);
     }
 
     public PartyCongressmanResponse getPartyCongressman(long partyId, Pageable pageable) {

@@ -69,13 +69,26 @@ public class Facade {
 
     // 의원 상세 조회
     public CongressmanResponse getCongressman(String congressmanId) {
-        return congressmanService.getCongressman(congressmanId);
-
+        var congressmanResponse = congressmanService.getCongressman(congressmanId);
+        var userId = AuthenticationUtil.getUserId();
+        if (userId.isEmpty()) {
+            return congressmanResponse;
+        }
+        var congressmanLike = likeService.getCongressmanLike(congressmanId, userId.get());
+        congressmanResponse.setLikeChecked(congressmanLike);
+        return congressmanResponse;
     }
 
     // 정당 상세 조회
     public PartyDetailResponse getPartyById(long partyId) {
-        return partyService.getPartyById(partyId);
+        var partyDetailResponse =  partyService.getPartyById(partyId);
+        var userId = AuthenticationUtil.getUserId();
+        if (userId.isEmpty()) {
+            return partyDetailResponse;
+        }
+        var followChecked = likeService.getFollowParty(partyId, userId.get());
+        partyDetailResponse.setFollowed(followChecked);
+        return partyDetailResponse;
     }
 
     //
