@@ -18,6 +18,9 @@ public class ProportionalCandidate {
     @Column(name = "proportional_candidate_id")
     private long id;
 
+    @Column(name = "candidate_code")
+    private long candidateCode;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;

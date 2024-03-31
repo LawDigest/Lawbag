@@ -21,7 +21,25 @@ public class LikeService {
     private final CongressmanLikeRepository congressmanLikeRepository;
     private final PartyFollowRepository partyFollowRepository;
 
+    public Boolean getCongressmanLike(String congressmanId, long userId) {
+        var congressmanLike = congressmanLikeRepository.findByUserIdAndCongressmanId(userId, congressmanId);
+        if (congressmanLike.isEmpty()) {
+            return false;
+        }
+        return congressmanLike.get().isLikeChecked();
+    }
+    public Boolean getFollowParty(long partyId, long userId) {
+        var partyFollow = partyFollowRepository.findByUserIdAndPartyId(partyId, userId);
+        if (partyFollow.isPresent()) {
+            return partyFollow.get().isFollowChecked();
+        }
+        return false;
+    }
 
+    public Boolean getBillLikeChecked(String billId, long userId) {
+        var billLike = billLikeRepository.findByUserIdAndBillId(userId, billId);
+        return billLike.isPresent() ? billLike.get().isLikeChecked() : false;
+    }
 
     public BillLikeResponse likeBill(User user, Bill bill) {
         var billLike = billLikeRepository.findByUserIdAndBillId(user.getId(), bill.getId());

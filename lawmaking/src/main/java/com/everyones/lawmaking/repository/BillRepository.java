@@ -71,6 +71,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     )
     List<Bill> findBillInfoByIdList(List<String> billList);
 
+
     // billName 인덱스 걸어줘야 할듯
     @Query("SELECT b FROM Bill b " +
             "WHERE b.billName = :billName")
