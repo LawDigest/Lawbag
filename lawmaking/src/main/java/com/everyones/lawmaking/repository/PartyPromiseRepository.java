@@ -13,7 +13,6 @@ public interface PartyPromiseRepository extends JpaRepository<PartyPromise, Long
 
     @Query("select pp " +
             "from PartyPromise pp " +
-            "JOIN FETCH pp.party p " +
             "where pp.party.id = :partyId ")
     Slice<PartyPromise> findPartyPromiseByPartyId(@Param("partyId") long partyId, Pageable pageable);
 

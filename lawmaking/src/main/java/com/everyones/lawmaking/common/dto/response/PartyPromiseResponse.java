@@ -1,12 +1,14 @@
 package com.everyones.lawmaking.common.dto.response;
 
-import com.everyones.lawmaking.domain.entity.PartyPromise;
+import com.everyones.lawmaking.common.dto.PartyPromiseDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 @Builder
@@ -15,18 +17,14 @@ import lombok.Getter;
 public class PartyPromiseResponse {
 
     @NotNull
-    private long partyPromiseId;
+    private List<PartyPromiseDto> partyPromise;
+    @NotNull
+    private PaginationResponse paginationResponse;
 
-    private String title;
-
-    private String content;
-
-    public static PartyPromiseResponse from(PartyPromise partyPromise){
+    public static PartyPromiseResponse of(List<PartyPromiseDto> partyPromiseList, PaginationResponse paginationResponse) {
         return PartyPromiseResponse.builder()
-                .partyPromiseId(partyPromise.getId())
-                .title(partyPromise.getTitle())
-                .content(partyPromise.getContent())
+                .partyPromise(partyPromiseList)
+                .paginationResponse(paginationResponse)
                 .build();
     }
-
 }

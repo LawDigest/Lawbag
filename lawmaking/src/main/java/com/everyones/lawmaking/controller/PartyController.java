@@ -17,8 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
 @RestController
@@ -119,7 +117,7 @@ public class PartyController {
             ),
     })
     @GetMapping("/promise")
-    public BaseResponse<List<PartyPromiseResponse>> getPartyPromise(@Parameter(example = "1", description = "정당 id")
+    public BaseResponse<PartyPromiseResponse> getPartyPromise(@Parameter(example = "1", description = "정당 id")
                                                                     @RequestParam("party_id") long partyId,
                                                                     @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
                                                                     @RequestParam(name = "page") int page) {

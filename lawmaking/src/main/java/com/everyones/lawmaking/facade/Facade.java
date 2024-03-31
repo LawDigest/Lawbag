@@ -234,7 +234,7 @@ public class Facade {
     }
 
     // 정당 공약 조회
-    public List<PartyPromiseResponse> getPartyPromise(long partyId, Pageable pageable) {
+    public PartyPromiseResponse getPartyPromise(long partyId, Pageable pageable) {
 
         return partyPromiseService.getPartyPromise(partyId, pageable);
     }
