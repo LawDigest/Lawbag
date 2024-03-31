@@ -47,7 +47,7 @@ public class BillService {
         var bill = billRepository.findBillInfoById(billId)
                 .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
 
-        var billDetailResponse =  getBillDetailInfoFrom(bill);
+        var billDetailResponse = getBillDetailInfoFrom(bill);
         var similarBills = billRepository.findSimilarBills(bill.getBillName())
                 .stream()
                 .map(SimilarBill::from)
@@ -141,6 +141,7 @@ public class BillService {
                 .billInfoDto(billInfoDto)
                 .representativeProposerDto(representativeProposerDto)
                 .publicProposerDtoList(publicProposerDtoList)
+                .isBookMark(false)
                 .build();
     }
 
@@ -162,7 +163,7 @@ public class BillService {
 
         var representativeProposerDto = RepresentativeProposerDto.from(representativeProposer);
 
-        return new BillDetailResponse(billInfoDto, representativeProposerDto, publicProposerDtoList);
+        return new BillDetailResponse(billInfoDto, representativeProposerDto, publicProposerDtoList, false);
     }
 
 

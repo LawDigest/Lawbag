@@ -14,11 +14,11 @@ public class BillDetailResponse extends BillDto {
     private List<SimilarBill> similarBills;
 
 
-    public BillDetailResponse(@NotNull BillInfoDto billInfoDto, @NotNull RepresentativeProposerDto representativeProposerDto, @NotNull List<PublicProposerDto> publicProposerDtoList) {
-        super(billInfoDto, representativeProposerDto, publicProposerDtoList);
+    public BillDetailResponse(@NotNull BillInfoDto billInfoDto, @NotNull RepresentativeProposerDto representativeProposerDto, @NotNull List<PublicProposerDto> publicProposerDtoList, @NotNull Boolean isBookMarked) {
+        super(billInfoDto, representativeProposerDto, publicProposerDtoList, isBookMarked);
     }
-    public BillDetailResponse(@NotNull BillInfoDto billInfoDto, @NotNull RepresentativeProposerDto representativeProposerDto, @NotNull List<PublicProposerDto> publicProposerDtoList, List<SimilarBill> similarBills) {
-        super(billInfoDto, representativeProposerDto, publicProposerDtoList);
+    public BillDetailResponse(@NotNull BillInfoDto billInfoDto, @NotNull RepresentativeProposerDto representativeProposerDto, @NotNull List<PublicProposerDto> publicProposerDtoList, Boolean isBookMarked,List<SimilarBill> similarBills) {
+        super(billInfoDto, representativeProposerDto, publicProposerDtoList, isBookMarked);
         this.similarBills = similarBills;
     }
 

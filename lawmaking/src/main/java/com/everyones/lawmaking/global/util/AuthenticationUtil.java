@@ -11,7 +11,7 @@ public class AuthenticationUtil {
         Optional<Long> userId;
         var userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userDetails.getUsername().equals("anonymous")) {
-            userId = Optional.of(null);
+            userId = Optional.empty();
         } else {
             userId = Optional.of(Long.parseLong(userDetails.getUsername()));
         }
