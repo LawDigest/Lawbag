@@ -1,6 +1,9 @@
 package com.everyones.lawmaking.controller;
 
-import com.everyones.lawmaking.common.dto.response.*;
+import com.everyones.lawmaking.common.dto.response.BillListResponse;
+import com.everyones.lawmaking.common.dto.response.PartyCongressmanResponse;
+import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
+import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -103,29 +106,6 @@ public class PartyController {
 
     }
 
-    @Operation(summary = "정당 공약 리스트 조회", description = "정당 공약 데이터 조회")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "서버 오류 (문제 지속시 BE팀 문의)",
-                    content = {@Content(
-                            mediaType = "application/json;charset=UTF-8",
-                            schema = @Schema(implementation = BaseResponse.class),
-                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
-                    )}
-            ),
-    })
-    @GetMapping("/promise")
-    public BaseResponse<PartyPromiseResponse> getPartyPromise(@Parameter(example = "1", description = "정당 id")
-                                                                    @RequestParam("party_id") long partyId,
-                                                                    @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
-                                                                    @RequestParam(name = "page") int page) {
-        var pageable = PageRequest.of(page, 5);
-
-        var response = facade.getPartyPromise(partyId,pageable);
-        return BaseResponse.ok(response);
-    }
 
     @Operation(summary = "정당 팔로우", description = "특정 정당 팔로우하기")
     @ApiResponses(value = {
@@ -155,52 +135,7 @@ public class PartyController {
         return BaseResponse.ok(result);
     }
 
-    @Operation(summary = "정당 비례대표 후보자 조회 ", description = "정당 비례대표 후보자 조회하기")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "서버 오류 (문제 지속시 BE팀 문의)",
-                    content = {@Content(
-                            mediaType = "application/json;charset=UTF-8",
-                            schema = @Schema(implementation = BaseResponse.class),
-                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
-                    )}
-            ),
-    })
-    @GetMapping("/proportional_candidate")
-    public BaseResponse<ProportionalCandidateListResponse> followParty(
-            Authentication authentication,
-            @Parameter(example = "1", description = "정당 Id")
-            @RequestParam("party_id") long partyId,
-            @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
-            @RequestParam(name = "page") int page){
-        var pageable = PageRequest.of(page, 5);
 
-        var result = facade.getProportionalCandidate(partyId, pageable);
-        return BaseResponse.ok(result);
-    }
 
-    @Operation(summary = "비례대표 정당 로고 조회 ", description = "비례대표 정당 로고 조회하기")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "서버 오류 (문제 지속시 BE팀 문의)",
-                    content = {@Content(
-                            mediaType = "application/json;charset=UTF-8",
-                            schema = @Schema(implementation = BaseResponse.class),
-                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
-                    )}
-            ),
-    })
-    @GetMapping("/proportional_candidate/logo")
-    public BaseResponse<ProportionalPartyImageListResponse> getProPartyImage(
-            @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
-            @RequestParam(name = "page") int page){
-        var pageable = PageRequest.of(page, 5);
 
-        var result = facade.getProPartyImage(pageable);
-        return BaseResponse.ok(result);
-    }
 }
