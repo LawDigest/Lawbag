@@ -1,15 +1,14 @@
 package com.everyones.lawmaking.service;
 
+import com.everyones.lawmaking.common.dto.ProportionalPartyImageListDto;
 import com.everyones.lawmaking.common.dto.SearchPartyDto;
-import com.everyones.lawmaking.common.dto.response.FollowingPartyResponse;
-import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
-import com.everyones.lawmaking.common.dto.response.SearchResponse;
-import com.everyones.lawmaking.domain.entity.Congressman;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Party;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.repository.PartyRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +53,14 @@ public class PartyService {
         return searchPartyList.stream()
                 .map(SearchPartyDto::from)
                 .collect(Collectors.toList());
+    }
+
+    public ProportionalPartyImageListResponse getProportionalPartyImageList(Pageable pageable) {
+        var proportionalPartyList = partyRepository.findProportionalParty(pageable);
+        var pagination = PaginationResponse.fromSlice(proportionalPartyList);
+        var proportionalPartyLogoResponse = proportionalPartyList.stream().map((ProportionalPartyImageListDto::from)).toList();
+
+        return ProportionalPartyImageListResponse.of(proportionalPartyLogoResponse,pagination);
     }
 
 

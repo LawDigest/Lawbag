@@ -23,7 +23,7 @@ public class ProportionalCandidateListDto {
 
     private String career1;
 
-    private String imageUrl;
+    private String proportionalCandidateImageUrl;
 
     public static ProportionalCandidateListDto from(ProportionalCandidate proportionalCandidate){
         return ProportionalCandidateListDto.builder()
@@ -31,7 +31,7 @@ public class ProportionalCandidateListDto {
                 .name(proportionalCandidate.getName())
                 .candidateOrder(proportionalCandidate.getCandidateOrder())
                 .career1(proportionalCandidate.getCareer1())
-                .imageUrl(proportionalCandidate.getImage_url())
+                .proportionalCandidateImageUrl(proportionalCandidate.getImage_url())
                 .build();
     }
 }
