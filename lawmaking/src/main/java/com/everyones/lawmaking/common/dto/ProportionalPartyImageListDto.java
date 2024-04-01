@@ -17,10 +17,13 @@ public class ProportionalPartyImageListDto {
 
     private String partyImageUrl;
 
+    private String partyName;
+
     public static ProportionalPartyImageListDto from(Party party){
         return ProportionalPartyImageListDto.builder()
                 .partyId(party.getId())
                 .partyImageUrl(party.getPartyImageUrl())
+                .partyName(party.getName())
                 .build();
     }
 }
