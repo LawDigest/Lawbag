@@ -27,6 +27,7 @@ public class Facade {
     private final UserService userService;
     private final NotificationService notificationService;
     private final PartyPromiseService partyPromiseService;
+    private final ProportionalCandidateService proportionalCandidateService;
 
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
         var billListResponse = billService.getBillsByDefault(pageable);
@@ -237,6 +238,10 @@ public class Facade {
     public PartyPromiseResponse getPartyPromise(long partyId, Pageable pageable) {
 
         return partyPromiseService.getPartyPromise(partyId, pageable);
+    }
+
+    public ProportionalCandidateListResponse getProportionalCandidate(long partyId, Pageable pageable){
+        return proportionalCandidateService.getProportionalCandidateList(partyId, pageable);
     }
 
 }
