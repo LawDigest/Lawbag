@@ -154,4 +154,30 @@ public class PartyController {
         var result = facade.followParty(userId, partyId, followChecked);
         return BaseResponse.ok(result);
     }
+
+    @Operation(summary = "정당 비례대표 후보자 조회 ", description = "정당 비례대표 후보자 조회하기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @GetMapping("/proportional_candidate")
+    public BaseResponse<ProportionalCandidateListResponse> followParty(
+            Authentication authentication,
+            @Parameter(example = "1", description = "정당 Id")
+            @RequestParam("party_id") long partyId,
+            @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
+            @RequestParam(name = "page") int page){
+        var pageable = PageRequest.of(page, 5);
+
+        var result = facade.getProportionalCandidate(partyId, pageable);
+        return BaseResponse.ok(result);
+    }
 }
