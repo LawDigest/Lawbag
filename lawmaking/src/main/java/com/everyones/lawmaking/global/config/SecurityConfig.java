@@ -78,10 +78,11 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer ì
                         .failureHandler(oAuth2AuthenticationFailureHandler()
                         )
                 )
-                .logout((oauth2User) -> oauth2User
+                .logout((logOut) -> logOut
                         .logoutUrl("/v1/logout")
                         .logoutSuccessUrl("/")
                         .deleteCookies("refreshToken")
+
                 );
 
 
