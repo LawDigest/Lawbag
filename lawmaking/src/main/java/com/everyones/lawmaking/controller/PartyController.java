@@ -1,9 +1,6 @@
 package com.everyones.lawmaking.controller;
 
-import com.everyones.lawmaking.common.dto.response.BillListResponse;
-import com.everyones.lawmaking.common.dto.response.PartyCongressmanResponse;
-import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
-import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -135,7 +132,30 @@ public class PartyController {
         return BaseResponse.ok(result);
     }
 
+    @Operation(summary = "후보자 상세조회", description = "후보자 상세조회하기")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @GetMapping("/candidate/detail")
+    public BaseResponse<CandidateDetailResponse> candidateDetail(
+            Authentication authentication,
+            @Parameter(example = "1", description = "정당 Id")
+            @RequestParam("candidate_id") long candidateId,
+            @Schema(type = "boolean", allowableValues = {"true", "false"})
+            @RequestParam("proportional_candidate_checked") boolean proportionalCandidateChecked
+    ) {
 
-
+        var result = facade.candidateDetail(candidateId, proportionalCandidateChecked);
+        return BaseResponse.ok(result);
+    }
 
 }

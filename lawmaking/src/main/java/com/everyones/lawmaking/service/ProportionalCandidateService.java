@@ -2,12 +2,17 @@ package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.ProportionalCandidateListDto;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
+import com.everyones.lawmaking.common.dto.response.ProportionalCandidateDetailResponse;
 import com.everyones.lawmaking.common.dto.response.ProportionalCandidateListResponse;
+import com.everyones.lawmaking.common.dto.response.ProportionalPartyImageListResponse;
+import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.repository.ProportionalCandidateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static com.everyones.lawmaking.global.ResponseCode.INTERNAL_SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -23,4 +28,11 @@ public class ProportionalCandidateService {
 
         return ProportionalCandidateListResponse.of(proportionalCandidateResponse,pagination);
     }
+    public ProportionalCandidateDetailResponse getProportionalCandidateDetail(long candidateId) {
+        var candidateDetail = proportionalCandidateRepository.findProportionalCandidateById(candidateId)
+                .orElseThrow(() -> new CustomException(INTERNAL_SERVER_ERROR));
+
+        return ProportionalCandidateDetailResponse.from(candidateDetail);
+    }
+
 }

@@ -28,6 +28,7 @@ public class Facade {
     private final NotificationService notificationService;
     private final PartyPromiseService partyPromiseService;
     private final ProportionalCandidateService proportionalCandidateService;
+    private final DistrictCandidateService districtCandidateService;
 
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
         var billListResponse = billService.getBillsByDefault(pageable);
@@ -247,5 +248,15 @@ public class Facade {
     public ProportionalPartyImageListResponse getProPartyImage(Pageable pageable){
         return partyService.getProportionalPartyImageList(pageable);
     }
+
+    public CandidateDetailResponse candidateDetail(long candidateId,boolean proportionalCandidateChecked ){
+        int value = proportionalCandidateChecked ? 1 : 0;
+        return switch (value) {
+            case 1 -> proportionalCandidateService.getProportionalCandidateDetail(candidateId);
+            default -> districtCandidateService.getDistrictCandidateDetail(candidateId);
+        };
+    }
+
+
 
 }
