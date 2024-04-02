@@ -249,12 +249,14 @@ public class Facade {
         return partyService.getProportionalPartyImageList(pageable);
     }
 
-    public CandidateDetailResponse candidateDetail(long candidateId,boolean proportionalCandidateChecked ){
-        int value = proportionalCandidateChecked ? 1 : 0;
-        return switch (value) {
-            case 1 -> proportionalCandidateService.getProportionalCandidateDetail(candidateId);
-            default -> districtCandidateService.getDistrictCandidateDetail(candidateId);
-        };
+    public CandidateDetailResponse proportionalCandidateDetail(long candidateId){
+        return     proportionalCandidateService.getProportionalCandidateDetail(candidateId);
+
+    }
+
+    public CandidateDetailResponse districtCandidateDetail(long candidateId){
+        return     districtCandidateService.getDistrictCandidateDetail(candidateId);
+
     }
 
 

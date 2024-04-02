@@ -147,14 +147,14 @@ public class PartyController {
     })
     @GetMapping("/candidate/detail")
     public BaseResponse<CandidateDetailResponse> candidateDetail(
-            Authentication authentication,
-            @Parameter(example = "1", description = "정당 Id")
+            @Parameter(example = "1", description = "후보자 Id")
             @RequestParam("candidate_id") long candidateId,
-            @Schema(type = "boolean", allowableValues = {"true", "false"})
-            @RequestParam("proportional_candidate_checked") boolean proportionalCandidateChecked
+            @Parameter(example = "후보자 타입", description = "비례대표 후보자 또는 지역구 후보자 조회 여부")
+            @Schema(type = "String", allowableValues = {"proportional_candidate", "district_candidate"})
+            @RequestParam("type") String type
     ) {
-
-        var result = facade.candidateDetail(candidateId, proportionalCandidateChecked);
+        var result = (type.equals("proportional_candidate")) ? facade.proportionalCandidateDetail(candidateId)
+                : facade.districtCandidateDetail(candidateId);
         return BaseResponse.ok(result);
     }
 
