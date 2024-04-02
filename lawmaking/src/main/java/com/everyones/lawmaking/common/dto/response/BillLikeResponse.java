@@ -18,13 +18,13 @@ public class BillLikeResponse {
     private String billId;
 
     @NotNull
-    private boolean likeCheckd;
+    private boolean likeChecked;
 
 
     public static BillLikeResponse from(BillLike billLike) {
         return BillLikeResponse.builder()
                 .billId(billLike.getBill().getId())
-                .likeCheckd(billLike.isLikeChecked())
+                .likeChecked(billLike.isLikeChecked())
                 .build();
 
     }
