@@ -69,7 +69,7 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer ì
                                 .authorizationRequestRepository(oAuth2AuthorizationRequestBasedOnCookieRepository())
                         )
                         .redirectionEndpoint(redirection -> redirection
-                                .baseUri("/*/oauth2/code/*")
+                                .baseUri("/v1/login/oauth2/code/*")
                         )
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(oAuth2UserService)
