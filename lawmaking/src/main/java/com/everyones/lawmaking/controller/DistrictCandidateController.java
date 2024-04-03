@@ -1,7 +1,8 @@
 package com.everyones.lawmaking.controller;
 
+
+import com.everyones.lawmaking.common.dto.response.DistrictCandidateListResponse;
 import com.everyones.lawmaking.common.dto.response.ProportionalCandidateListResponse;
-import com.everyones.lawmaking.common.dto.response.ProportionalPartyImageListResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,16 +23,15 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
-@RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/proportional_candidate")
-@Tag(name = "비례대표 후보자 관련 API", description = "정당 관련 API 호출")
-public class ProportionalCandidateController {
+@RestController
+@RequestMapping("/v1/districtCandidate")
+@Tag(name="지역구 후보자 관련 조회 API", description = "지역구 후보자 관련 데이터를 가져오는 API입니다.")
+public class DistrictCandidateController {
 
     private final Facade facade;
 
-
-    @Operation(summary = "정당 비례대표 후보자 조회 ", description = "정당 비례대표 후보자 조회하기")
+    @Operation(summary = "지역구 후보자 조회 ", description = "지역구 후보자 조회하기")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(
@@ -45,38 +45,16 @@ public class ProportionalCandidateController {
             ),
     })
     @GetMapping("/list")
-    public BaseResponse<ProportionalCandidateListResponse> getProportionalCandidateList(
+    public BaseResponse<DistrictCandidateListResponse> getDistrictCandidateList(
             Authentication authentication,
-            @Parameter(example = "1", description = "정당 Id")
-            @RequestParam("party_id") long partyId,
+            @Parameter(example = "1", description = "지역구 Id")
+            @RequestParam("district_id") long districtId,
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page") int page){
         var pageable = PageRequest.of(page, 5);
 
-        var result = facade.getProportionalCandidateList(partyId, pageable);
+        var result = facade.getDistrictCandidateList(districtId, pageable);
         return BaseResponse.ok(result);
     }
 
-    @Operation(summary = "비례대표 정당 로고 조회 ", description = "비례대표 정당 로고 조회하기")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "서버 오류 (문제 지속시 BE팀 문의)",
-                    content = {@Content(
-                            mediaType = "application/json;charset=UTF-8",
-                            schema = @Schema(implementation = BaseResponse.class),
-                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
-                    )}
-            ),
-    })
-    @GetMapping("/proportional_candidate/party_logo")
-    public BaseResponse<ProportionalPartyImageListResponse> getProPartyImage(
-            @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
-            @RequestParam(name = "page") int page){
-        var pageable = PageRequest.of(page, 5);
-
-        var result = facade.getProPartyImage(pageable);
-        return BaseResponse.ok(result);
-    }
 }
