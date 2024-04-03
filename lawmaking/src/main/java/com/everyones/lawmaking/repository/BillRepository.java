@@ -4,15 +4,22 @@ import com.everyones.lawmaking.domain.entity.Bill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, String> {
+    @Transactional
+    @Modifying
+    @Query("UPDATE Bill b SET b.gptSummary =:gptSummary, b.briefSummary =:briefSummary WHERE b.id =:billId")
+    void updateBill(@Param("billId") String billId, @Param("gptSummary") String gptSummary, @Param("briefSummary") String briefSummary);
+
     @Query("SELECT b FROM Bill b " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
     Slice<Bill> findDefaultBillsByPage(Pageable pageable);

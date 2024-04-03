@@ -24,6 +24,7 @@ public class BillInfoDto {
     private String gptSummary;
     private int viewCount;
     private int billLikeCount;
+    private String briefSummary;
 
 
     public static BillInfoDto from(Bill bill) {
@@ -35,6 +36,7 @@ public class BillInfoDto {
                 .gptSummary(bill.getGptSummary())
                 .viewCount(bill.getViewCount())
                 .billLikeCount(bill.getLikeCount())
+                .briefSummary(bill.getBriefSummary())
                 .build();
     }
 

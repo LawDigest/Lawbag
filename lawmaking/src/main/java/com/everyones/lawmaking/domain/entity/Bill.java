@@ -24,7 +24,8 @@ public class Bill {
     private String id;
 
     @NotNull
-    private int age;
+    @Column(name = "assembly_number")
+    private int assemblyNumber;
 
     @Column(name = "bill_name")
     private String billName;
@@ -57,6 +58,9 @@ public class Bill {
 
     @Column(name = "bill_pdf_url")
     private String billPdfUrl; // PDF 파일의 경로 또는 식별자
+
+    @Column(name = "brief_summary", columnDefinition = "TEXT")
+    private String briefSummary;
 
     @ColumnDefault("0")
     private int viewCount;
