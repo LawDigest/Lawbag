@@ -1,6 +1,6 @@
 package com.everyones.lawmaking.controller;
 
-import com.everyones.lawmaking.common.dto.response.SignOutResponse;
+import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,8 +42,8 @@ public class AuthController {
                     )}
             ),
     })
-    @PostMapping("/sign_out")
-    public BaseResponse<SignOutResponse> signOut(
+    @PostMapping("/withdraw")
+    public BaseResponse<WithdrawResponse> withdraw(
             Authentication authentication,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {

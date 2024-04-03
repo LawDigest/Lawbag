@@ -262,7 +262,7 @@ public class Facade {
 
     }
 
-public SignOutResponse withdraw(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
+public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
     return authService.withdraw(userId,httpRequest, httpResponse);
 
     }

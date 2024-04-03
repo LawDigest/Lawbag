@@ -12,7 +12,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class SignOutResponse {
+public class WithdrawResponse {
 
     @NotNull
     private String socialId;
@@ -20,8 +20,8 @@ public class SignOutResponse {
     @NotNull
     private String provider;
 
-    public static SignOutResponse of(AuthInfo authInfo) {
-        return SignOutResponse.builder()
+    public static WithdrawResponse of(AuthInfo authInfo) {
+        return WithdrawResponse.builder()
                 .socialId(authInfo.getSocialId())
                 .provider(authInfo.getProvider().name())
                 .build();

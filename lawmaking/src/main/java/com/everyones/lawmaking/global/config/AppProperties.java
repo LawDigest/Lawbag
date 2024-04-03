@@ -36,8 +36,8 @@ public class AppProperties {
         @Value("${app.auth.kakao-app-admin-key}")
         private String kakaoAppAdminKey;
 
-        @Value("${app.auth.kakao-sign-out-uri}")
-        private String kakaoSignOutUri;
+        @Value("${app.auth.kakao-withdraw-uri}")
+        private String kakaoWithdrawUri;
 
     }
 

@@ -1,6 +1,6 @@
 package com.everyones.lawmaking.service;
 
-import com.everyones.lawmaking.common.dto.response.SignOutResponse;
+import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.global.config.AppProperties;
@@ -35,7 +35,7 @@ public class AuthService {
     private static final String TARGET_ID_TYPE = "user_id";
 
     @Transactional
-    public SignOutResponse withdraw(String userId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+    public WithdrawResponse withdraw(String userId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         var authInfoSaved = authInfoRepository.findAuthInfoByUserId(userId)
                 .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
 
@@ -50,11 +50,11 @@ public class AuthService {
             params.add("target_id_type", TARGET_ID_TYPE);
             params.add("target_id", authInfoSaved.getSocialId());
 
-            HttpEntity<MultiValueMap<String, String>> kakaoSignOutRequest = new HttpEntity<>(params, headers);
+            HttpEntity<MultiValueMap<String, String>> kakaoWithdrawRequest = new HttpEntity<>(params, headers);
             System.out.println(appProperties.getAuth().getClientRedirectUri());
-            String url = appProperties.getAuth().getKakaoSignOutUri();
+            String url = appProperties.getAuth().getKakaoWithdrawUri();
 
-            restTemplateUtil.restTemplate().postForEntity(url, kakaoSignOutRequest, String.class);
+            restTemplateUtil.restTemplate().postForEntity(url, kakaoWithdrawRequest, String.class);
 
         } catch (RestClientException e) {
             log.error("카카오 계정 연결 해제 중 오류가 발생하였습니다.", e);
@@ -79,7 +79,7 @@ public class AuthService {
 
 
 
-        return SignOutResponse.of(authInfoSaved);
+        return WithdrawResponse.of(authInfoSaved);
     }
 
 
