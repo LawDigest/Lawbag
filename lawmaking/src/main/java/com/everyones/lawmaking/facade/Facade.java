@@ -8,12 +8,10 @@ import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -264,8 +262,8 @@ public class Facade {
 
     }
 
-public SignOutResponse signOut(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
-    return authService.signOut(userId,httpRequest, httpResponse);
+public SignOutResponse withdraw(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
+    return authService.withdraw(userId,httpRequest, httpResponse);
 
     }
 }

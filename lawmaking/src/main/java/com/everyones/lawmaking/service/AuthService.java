@@ -6,7 +6,6 @@ import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.global.config.AppProperties;
 import com.everyones.lawmaking.global.util.RestTemplateUtil;
 import com.everyones.lawmaking.repository.AuthInfoRepository;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,9 +13,6 @@ import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -39,7 +35,7 @@ public class AuthService {
     private static final String TARGET_ID_TYPE = "user_id";
 
     @Transactional
-    public SignOutResponse signOut(String userId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+    public SignOutResponse withdraw(String userId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         var authInfoSaved = authInfoRepository.findAuthInfoByUserId(userId)
                 .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
 

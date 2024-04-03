@@ -1,6 +1,5 @@
 package com.everyones.lawmaking.controller;
 
-import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.SignOutResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
@@ -11,12 +10,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -53,7 +49,7 @@ public class AuthController {
             HttpServletResponse response) throws Exception {
         var userDetails = (UserDetails) authentication.getPrincipal();
 
-        var result = facade.signOut(userDetails.getUsername(),request,response);
+        var result = facade.withdraw(userDetails.getUsername(),request,response);
         return BaseResponse.ok(result);
     }
 }
