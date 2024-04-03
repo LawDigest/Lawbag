@@ -248,6 +248,8 @@ public class Facade {
         return proportionalCandidateService.getProportionalCandidateList(partyId, pageable);
     }
 
+
+
     public ProportionalPartyImageListResponse getProPartyImage(Pageable pageable){
         return partyService.getProportionalPartyImageList(pageable);
     }
@@ -266,4 +268,10 @@ public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, 
     return authService.withdraw(userId,httpRequest, httpResponse);
 
     }
+
+    public DistrictCandidateListResponse getDistrictCandidateList(long districtId, Pageable pageable){
+        return districtCandidateService.getDistrictCandidateList(districtId, pageable);
+    }
+
+
 }
