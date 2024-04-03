@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.List;
 
@@ -14,7 +16,8 @@ import java.util.List;
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User extends BaseEntity  {
+@OnDelete(action = OnDeleteAction.CASCADE)
+public class User extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -6,6 +6,8 @@ import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.service.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +31,7 @@ public class Facade {
     private final PartyPromiseService partyPromiseService;
     private final ProportionalCandidateService proportionalCandidateService;
     private final DistrictCandidateService districtCandidateService;
+    private final AuthService authService;
 
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
         var billListResponse = billService.getBillsByDefault(pageable);
@@ -259,6 +262,8 @@ public class Facade {
 
     }
 
+public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
+    return authService.withdraw(userId,httpRequest, httpResponse);
 
-
+    }
 }
