@@ -80,7 +80,7 @@ jobs:
              -e "BIN_LOG_PASSWORD=${{ secrets.BIN_LOG_PASSWORD }}" \
              -e "BIN_LOG_USER=${{ secrets.BIN_LOG_USER }}" \
              -e "BIN_LOG_PORT=${{ secrets.BIN_LOG_PORT }}" \
-             -e "APP_ADMIN_KEY=${{ secrets.APP_ADMIN_KEY }}
+             -e "APP_ADMIN_KEY=${{ secrets.APP_ADMIN_KEY }} \
             ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker rmi -f $(docker images -f "dangling=true" -q) || true
           
