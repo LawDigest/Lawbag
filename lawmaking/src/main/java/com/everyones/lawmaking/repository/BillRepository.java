@@ -15,10 +15,6 @@ import java.util.Optional;
 
 @Repository
 public interface BillRepository extends JpaRepository<Bill, String> {
-    @Transactional
-    @Modifying
-    @Query("UPDATE Bill b SET b.gptSummary =:gptSummary, b.briefSummary =:briefSummary WHERE b.id =:billId")
-    void updateBill(@Param("billId") String billId, @Param("gptSummary") String gptSummary, @Param("briefSummary") String briefSummary);
 
     @Query("SELECT b FROM Bill b " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
