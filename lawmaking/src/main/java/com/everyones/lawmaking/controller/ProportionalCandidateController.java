@@ -44,8 +44,8 @@ public class ProportionalCandidateController {
                     )}
             ),
     })
-    @GetMapping("/simple_list")
-    public BaseResponse<ProportionalCandidateListResponse> followParty(
+    @GetMapping("/list")
+    public BaseResponse<ProportionalCandidateListResponse> getProportionalCandidateList(
             Authentication authentication,
             @Parameter(example = "1", description = "정당 Id")
             @RequestParam("party_id") long partyId,
@@ -53,7 +53,7 @@ public class ProportionalCandidateController {
             @RequestParam(name = "page") int page){
         var pageable = PageRequest.of(page, 5);
 
-        var result = facade.getProportionalCandidate(partyId, pageable);
+        var result = facade.getProportionalCandidateList(partyId, pageable);
         return BaseResponse.ok(result);
     }
 

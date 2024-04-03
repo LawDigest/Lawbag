@@ -244,7 +244,7 @@ public class Facade {
         return partyPromiseService.getPartyPromise(partyId, pageable);
     }
 
-    public ProportionalCandidateListResponse getProportionalCandidate(long partyId, Pageable pageable){
+    public ProportionalCandidateListResponse getProportionalCandidateList(long partyId, Pageable pageable){
         return proportionalCandidateService.getProportionalCandidateList(partyId, pageable);
     }
 

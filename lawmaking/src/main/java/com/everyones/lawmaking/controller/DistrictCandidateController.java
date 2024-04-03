@@ -44,8 +44,8 @@ public class DistrictCandidateController {
                     )}
             ),
     })
-    @GetMapping("/simple_list")
-    public BaseResponse<DistrictCandidateListResponse> followParty(
+    @GetMapping("/list")
+    public BaseResponse<DistrictCandidateListResponse> getDistrictCandidateList(
             Authentication authentication,
             @Parameter(example = "1", description = "지역구 Id")
             @RequestParam("district_id") long districtId,
