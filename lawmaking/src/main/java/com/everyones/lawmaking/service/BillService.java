@@ -11,9 +11,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +23,7 @@ import java.util.List;
 public class BillService {
     private final BillRepository billRepository;
 
-    public Bill getBillEntityById(String billId) {
+    public Bill findById(String billId) {
         return billRepository.findById(billId)
                 .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
     }
@@ -112,7 +109,7 @@ public class BillService {
                 .build();
     }
 
-    @Transactional
+
     public void updateBillLikeCount(Bill bill, boolean likeChecked) {
         var likeCount = likeChecked ? bill.getLikeCount() + 1 : bill.getLikeCount() - 1;
         bill.setLikeCount(likeCount);

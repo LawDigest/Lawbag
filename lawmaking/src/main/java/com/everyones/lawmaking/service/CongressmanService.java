@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 public class CongressmanService {
     private final CongressmanRepository congressmanRepository;
 
-    public Congressman findCongressman(String congressmanId) {
+    public Congressman findById(String congressmanId) {
         return congressmanRepository.findByIdWithParty(congressmanId)
                 .orElseThrow(() -> new EntityNotFoundException("해당 의원이 존재하지 않습니다."));
     }
 
     public CongressmanResponse getCongressman(String congressmanId) {
-        var congressman = findCongressman(congressmanId);
+        var congressman = findById(congressmanId);
         return CongressmanResponse.from(congressman);
     }
 
@@ -45,6 +45,7 @@ public class CongressmanService {
 
     @Transactional
     public void updateCongressmanLikeCount(Congressman congressman, boolean likeChecked) {
+
         var likeCount = likeChecked ? congressman.getLikeCount() + 1 : congressman.getLikeCount() - 1;
         congressman.setLikeCount(likeCount);
         congressmanRepository.save(congressman);
