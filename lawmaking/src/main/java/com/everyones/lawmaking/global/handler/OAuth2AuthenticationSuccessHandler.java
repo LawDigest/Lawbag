@@ -90,9 +90,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         // access 토큰 설정
         var now = new Date();
         var role = hasAuthority(authorities, Role.ADMIN.getCode()) ? Role.ADMIN : Role.MEMBER;
-        var savedAuth = authInfoRepository.findBySocialIdAndProvider(userInfo.getId(), provider)
-        .orElseThrow();
-        var savedUser = userRepository.findByAuthInfo_Id(savedAuth.getId())
+        var savedUser = userRepository.findBySocialIdAndProvider(userInfo.getId(), provider)
         .orElseThrow();
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userInfo.getId(),
