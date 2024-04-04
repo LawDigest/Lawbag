@@ -51,4 +51,16 @@ public class Party extends BaseEntity{
     @Column(name = "district_congressman_count")
     private int districtCongressmanCount;
 
+    @ColumnDefault("0")
+    @Column(name = "total_bill_count")
+    private int totalBillCount;
+
+    @ColumnDefault("0")
+    @Column(name = "representative_bill_count")
+    private int representativeBillCount;
+
+    @ColumnDefault("0")
+    @Column(name = "public_bill_count")
+    private int publicBillCount;
+
 }
