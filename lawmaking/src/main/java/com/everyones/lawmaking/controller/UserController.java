@@ -15,19 +15,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/user")
 @Tag(name = "유저 관련 API", description = "유저 관련 API 호출")
-public class UserConroller {
+public class UserController {
     private final Facade facade;
 
     @Operation(summary = "유저 정보 조회", description = "마이 페이지에서 유저의 기본 정보 조회 ")
