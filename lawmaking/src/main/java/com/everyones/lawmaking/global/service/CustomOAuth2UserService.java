@@ -53,15 +53,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
         var userSocialId = userInfo.getId();
         // 저장된 AuthInfo 찾아서 값이 있으면 우리가 찾는 사용자인지 확인
-        var savedAuthInfo = authInfoRepository.findBySocialIdAndProvider(userSocialId, provider)
-                .orElseGet(() -> createAuthAndUser(userInfo,provider));
+        System.out.println("어");
 
         // 저장된 AuthInfo 으로 사용자 객체 들고옴
-        var savedUser = userRepository.findByAuthInfo_Id(savedAuthInfo.getId())
+        var savedUser = userRepository.findBySocialIdAndProvider(userSocialId, provider)
                 //TODO: 글로벌 익셉션으로 관리하기 현재는 401 에러
                 .orElseThrow(()-> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
-
-        return PrincipalDetails.create(savedAuthInfo,savedUser, user.getAttributes());
+        System.out.println("지");
+        return PrincipalDetails.create(savedUser, user.getAttributes());
 
 
     }

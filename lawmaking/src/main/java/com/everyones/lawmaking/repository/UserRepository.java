@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.repository;
 
+import com.everyones.lawmaking.domain.entity.Provider;
 import com.everyones.lawmaking.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,6 +13,14 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
+
+    @Query("select u " +
+            "from User u " +
+            "join fetch u.authInfo " +
+            "where u.authInfo.socialId=:socialId and u.authInfo.provider =:provider")
+    Optional<User> findBySocialIdAndProvider(@Param("socialId") String socialId, @Param("provider") Provider provider);
+
+
     Optional<User> findByAuthInfo_Id(Long authInfoId);
 
     @Query("SELECT cl.user FROM CongressManLike cl " +
