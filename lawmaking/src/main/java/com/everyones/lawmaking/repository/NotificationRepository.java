@@ -16,7 +16,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             select n
             from Notification n
             Join User u on u.id = :userId
-            where n.user.id = :userId
+            where n.user.id = :userId and n.isRead = false
             """)
     List<Notification> findAllByUserId(@Param("userId") Long userId);
 
