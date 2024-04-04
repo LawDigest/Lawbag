@@ -77,8 +77,8 @@ public class BillController {
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
             @RequestParam(name = "size") int size,
             @Parameter(example = "공포", description = "법안의 단계 현황을 나타냅니다.")
-            @Schema(type = "string", allowableValues = {"접수",
-                    "공포","위원회 심사","본회의 심의"})
+            @Schema(type = "string", allowableValues = {"접수", "위원회 심사",
+                    "본회의 심의","공포"})
             @RequestParam(name = "stage") String stage
             ) {
         var pageable = PageRequest.of(page, size);

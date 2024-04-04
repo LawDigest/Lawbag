@@ -51,9 +51,11 @@ public class Congressman {
     @Column(name = "homepage")
     private String homepage;
 
+    @ColumnDefault("0")
     @Column(name = "represent_count")
     private int representCount;
 
+    @ColumnDefault("0")
     @Column(name = "public_count")
     private int publicCount;
 
