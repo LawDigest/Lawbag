@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class PartyService {
     private final PartyRepository partyRepository;
 
-    public Party findParty(long partyId) {
+    public Party findById(long partyId) {
         return partyRepository.findById(partyId)
                 .orElseThrow(() -> new CustomException(ResponseCode.BAD_REQUEST));
     }

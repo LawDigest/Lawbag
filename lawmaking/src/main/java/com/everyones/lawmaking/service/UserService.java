@@ -17,13 +17,13 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
 
-    public User getUserId(long userId) {
+    public User findById(long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
     }
 
     public UserMyPageInfoResponse getUserMyPageInfo(long userId) {
-        var user = getUserId(userId);
+        var user = findById(userId);
         return UserMyPageInfoResponse.from(user);
     }
 

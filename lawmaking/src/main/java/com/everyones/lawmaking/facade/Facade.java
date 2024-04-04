@@ -113,29 +113,30 @@ public class Facade {
     }
 
     // 법안 좋아요 기능
+    @Transactional
     public BillLikeResponse likeBill(long userId, String billId, boolean likeChecked) {
-        // 해당하는 userId와 billId가 있는 지 확인 없으면 하위 모듈에서 에러 발생
-        var bill = billService.getBillEntityById(billId);
-        var user = userService.getUserId(userId);
+        var user = userService.findById(userId);
+        var bill = billService.findById(billId);
         billService.updateBillLikeCount(bill, likeChecked);
-        return likeService.likeBill(user, bill);
+        return likeService.likeBill(user, bill, likeChecked);
     }
 
     // 의원 좋아요 기능
+    @Transactional
     public CongressmanLikeResponse likeCongressman(long userId, String congressmanId, boolean likeChecked) {
-        var user = userService.getUserId(userId);
-        var congressman = congressmanService.findCongressman(congressmanId);
+        var user = userService.findById(userId);
+        var congressman = congressmanService.findById(congressmanId);
         congressmanService.updateCongressmanLikeCount(congressman, likeChecked);
-        return likeService.likeCongressman(user, congressman);
+        return likeService.likeCongressman(user, congressman, likeChecked);
     }
 
     // 정당 팔로우 기능
     @Transactional
     public PartyFollowResponse followParty(long userId, long partyId, boolean followChecked) {
-        var user = userService.getUserId(userId);
-        var party = partyService.findParty(partyId);
+        var user = userService.findById(userId);
+        var party = partyService.findById(partyId);
         partyService.updatePartyFollowCount(party, followChecked);
-        return likeService.followParty(user, party);
+        return likeService.followParty(user, party, followChecked);
     }
 
     // 팔로우한 의원 조회
@@ -190,10 +191,10 @@ public class Facade {
     // 알림 데이터를 각 테이블에 해당하는 실제 데이터로 변환 (ex : bill_id
 
     public List<String> rpInsert(List<String> raw) {
-        var congressman = congressmanService.findCongressman(raw.get(0));
+        var congressman = congressmanService.findById(raw.get(0));
         var billRepProposer = congressman.getName();
 
-        var bill = billService.getBillEntityById(raw.get(1));
+        var bill = billService.findById(raw.get(1));
         var billId = bill.getId();
         var billName = bill.getBillName();
         var billProposers = bill.getProposers();
@@ -205,11 +206,11 @@ public class Facade {
     }
 
     public List<String> updateCongressmanParty(List<String> raw) {
-        var congressman = congressmanService.findCongressman(raw.get(0));
+        var congressman = congressmanService.findById(raw.get(0));
         var congressmanId = congressman.getId();
         var congressmanName = congressman.getName();
 
-        var party = partyService.findParty(Long.parseLong(raw.get(1)));
+        var party = partyService.findById(Long.parseLong(raw.get(1)));
         var partyName = party.getName();
 
         return List.of(congressmanId, partyName, congressmanName);
