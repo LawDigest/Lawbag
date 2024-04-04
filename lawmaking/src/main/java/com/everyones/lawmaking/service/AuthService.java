@@ -51,7 +51,6 @@ public class AuthService {
             params.add("target_id", authInfoSaved.getSocialId());
 
             HttpEntity<MultiValueMap<String, String>> kakaoWithdrawRequest = new HttpEntity<>(params, headers);
-            System.out.println(appProperties.getAuth().getClientRedirectUri());
             String url = appProperties.getAuth().getKakaoWithdrawUri();
 
             restTemplateUtil.restTemplate().postForEntity(url, kakaoWithdrawRequest, String.class);

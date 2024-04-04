@@ -114,7 +114,6 @@ public class TableEventListener {
         );
 
         logClient.registerEventListener(event -> {
-            System.out.println(event);
 
             // 이벤트 타입에 따라서 Data가 없는 것도 있음.
             // 따라서 바로 event.getData를 호출하는 것은 주의
