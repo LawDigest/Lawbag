@@ -80,7 +80,8 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer ì
                 .logout((logOut) ->
                         logOut
                         .logoutUrl("/v1/logout")
-                        .deleteCookies("refreshToken","accessToken")
+                        .logoutSuccessHandler(new CustomLogoutSuccessHandler())
+                        .deleteCookies("refreshToken", "accessToken")
 
                 );
 
