@@ -30,8 +30,7 @@ import java.net.URI;
 import java.util.*;
 import java.util.stream.Stream;
 
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.*;
 
 @Slf4j
 @Component
@@ -74,13 +73,13 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         var refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
 
-        var cookieMaxAge = (int) refreshTokenExpiry / 60;
+        var cookieMaxAge = (int) refreshTokenExpiry *1000*60;
         Map<String, AuthToken> userToken = userTokenToCookie(userInfo, authorities,provider);
 
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, userToken.get("refreshToken").getToken(), cookieMaxAge);
+        CookieUtil.addCookie(response, ACCESS_TOKEN, userToken.get("accessToken").getToken(), cookieMaxAge);
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", userToken.get("accessToken").getToken())
                 .build().toUriString();
     }
 
@@ -92,15 +91,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         var role = hasAuthority(authorities, Role.ADMIN.getCode()) ? Role.ADMIN : Role.MEMBER;
         var savedUser = userRepository.findBySocialIdAndProvider(userInfo.getId(), provider)
         .orElseThrow();
+        var accessTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry()*1000*60;
+
+
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userInfo.getId(),
                 role.getCode(),
                 savedUser.getId(),
-                new Date(now.getTime() + appProperties.getAuth().getTokenExpiry()*1000*3600*24)
+                new Date(now.getTime() + accessTokenExpiry)
         );
 
         // refresh 토큰 설정
-        var refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry();
+        var refreshTokenExpiry = appProperties.getAuth().getRefreshTokenExpiry()*1000*60;
 
         AuthToken refreshToken = tokenProvider.createAuthToken(
                 userInfo.getId(),
