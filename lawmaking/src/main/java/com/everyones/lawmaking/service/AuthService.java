@@ -65,7 +65,15 @@ public class AuthService {
 
 
         // 로그아웃
-        httpServletResponse.addCookie(new Cookie("refreshToken",null));
+        String[] cookieNames = {"refreshToken", "accessToken"};
+
+        for (String cookieName : cookieNames) {
+            Cookie cookie = new Cookie(cookieName, null);
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            httpServletResponse.addCookie(cookie);
+        }
+
         HttpSession session = httpServletRequest.getSession(false); // 기존 세션 가져오기
         if (session != null) {
             session.invalidate();

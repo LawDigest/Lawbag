@@ -4,8 +4,6 @@ import com.everyones.lawmaking.domain.entity.AuthInfo;
 import com.everyones.lawmaking.domain.entity.Provider;
 import com.everyones.lawmaking.domain.entity.Role;
 import com.everyones.lawmaking.domain.entity.User;
-import com.everyones.lawmaking.global.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.global.auth.PrincipalDetails;
 import com.everyones.lawmaking.global.auth.socialInfo.OAuth2UserInfo;
 import com.everyones.lawmaking.global.auth.socialInfo.OAuth2UserInfoFactory;
@@ -57,14 +55,13 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 저장된 AuthInfo 으로 사용자 객체 들고옴
         var savedUser = userRepository.findBySocialIdAndProvider(userSocialId, provider)
                 //TODO: 글로벌 익셉션으로 관리하기 현재는 401 에러
-                .orElseThrow(()-> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
-
-        return PrincipalDetails.create(savedUser, user.getAttributes());
+                .orElseGet(() -> createAuthAndUser(userInfo,provider));
+        return PrincipalDetails.create(savedUser, userSocialId, provider, user.getAttributes());
 
 
     }
 
-    private AuthInfo createAuthAndUser(OAuth2UserInfo userInfo, Provider provider) {
+    private User createAuthAndUser(OAuth2UserInfo userInfo, Provider provider) {
         // AuthInfo에 데이터 저장
         AuthInfo authInfo = AuthInfo.builder()
                 .socialId(userInfo.getId())
@@ -79,12 +76,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                 .name(userInfo.getName())
                 .role(Role.MEMBER)
                 .build();
-        userRepository.saveAndFlush(user);
+        userRepository.save(user);
 
-        return authInfoRepository.saveAndFlush(authInfo);
+
+        return user;
+
     }
-
-
-
-
 }

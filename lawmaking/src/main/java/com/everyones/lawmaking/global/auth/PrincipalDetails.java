@@ -46,10 +46,10 @@ public class PrincipalDetails implements OAuth2User {
         return userId;}
 
 
-    public static PrincipalDetails create(User user, Map<String, Object> attributes) {
+    public static PrincipalDetails create(User user,String socialId, Provider provider, Map<String, Object> attributes) {
         var userPrincipal = new PrincipalDetails(
-                user.getAuthInfo().getSocialId(),
-                user.getAuthInfo().getProvider(),
+                socialId,
+                provider,
                 user.getId(),
                 Role.MEMBER,
                 Collections.singletonList(new SimpleGrantedAuthority(Role.MEMBER.getCode()))
