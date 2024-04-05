@@ -80,11 +80,6 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
                 .logout((logOut) ->
                         logOut
                         .logoutUrl("/v1/logout")
-                        .logoutSuccessHandler(new CustomLogoutSuccessHandler(
-                                "/", // 기본 리다이렉션 URL
-                                Arrays.asList("http://localhost:3000/login", "https://lawDigest.net/login") // 허용된 리다이렉션 URL 목록
-                        ))
-                        .logoutSuccessUrl("/")
                         .deleteCookies("refreshToken","accessToken")
 
                 );
