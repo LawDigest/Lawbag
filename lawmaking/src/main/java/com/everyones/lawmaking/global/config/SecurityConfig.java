@@ -20,8 +20,6 @@ import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
-
 @Configuration // Configuration 어노테이션 추가
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -81,7 +79,6 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
                         logOut
                         .logoutUrl("/v1/logout")
                         .logoutSuccessHandler(new CustomLogoutSuccessHandler())
-                        .deleteCookies("refreshToken", "accessToken")
 
                 );
 
