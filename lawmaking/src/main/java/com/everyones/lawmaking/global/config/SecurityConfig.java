@@ -1,10 +1,7 @@
 package com.everyones.lawmaking.global.config;
 
 import com.everyones.lawmaking.global.filterException.RestAuthenticationEntryPoint;
-import com.everyones.lawmaking.global.handler.OAuth2AuthenticationFailureHandler;
-import com.everyones.lawmaking.global.handler.OAuth2AuthenticationSuccessHandler;
-import com.everyones.lawmaking.global.handler.TokenAccessDeniedHandler;
-import com.everyones.lawmaking.global.handler.TokenAuthenticationFilter;
+import com.everyones.lawmaking.global.handler.*;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
 import com.everyones.lawmaking.global.service.CustomOAuth2UserService;
 import com.everyones.lawmaking.repository.AuthInfoRepository;
@@ -22,6 +19,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 @Configuration // Configuration 어노테이션 추가
 @EnableWebSecurity
@@ -78,8 +77,13 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
                         .failureHandler(oAuth2AuthenticationFailureHandler()
                         )
                 )
-                .logout((logOut) -> logOut
+                .logout((logOut) ->
+                        logOut
                         .logoutUrl("/v1/logout")
+                        .logoutSuccessHandler(new CustomLogoutSuccessHandler(
+                                "/", // 기본 리다이렉션 URL
+                                Arrays.asList("http://localhost:3000/login", "https://lawDigest.net/login") // 허용된 리다이렉션 URL 목록
+                        ))
                         .logoutSuccessUrl("/")
                         .deleteCookies("refreshToken","accessToken")
 
