@@ -21,8 +21,8 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler {
 
     @Override
     public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-        CookieUtil.deleteCookie(request, response, ACCESS_TOKEN);
+//        CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+//        CookieUtil.deleteCookie(request, response, ACCESS_TOKEN);
 
         BaseResponse<String> responseMessage = BaseResponse.ok("Logout succeeded");
         response.setStatus(HttpServletResponse.SC_OK);

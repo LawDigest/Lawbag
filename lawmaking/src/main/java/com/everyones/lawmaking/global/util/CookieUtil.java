@@ -39,11 +39,16 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    var newCookie = new Cookie(name, null);
-                    newCookie.setHttpOnly(true);
-                    newCookie.setPath("/");
-                    newCookie.setMaxAge(0);
-                    response.addCookie(newCookie);
+//                    var newCookie = new Cookie(name, null);
+//                    newCookie.setHttpOnly(true);
+//                    newCookie.setPath("/");
+//                    newCookie.setMaxAge(0);
+//                    response.addCookie(newCookie);
+                    cookie.setValue("");
+                    cookie.setPath("/");
+                    cookie.setMaxAge(0);
+                    response.addCookie(cookie);
+
                 }
             }
         }
