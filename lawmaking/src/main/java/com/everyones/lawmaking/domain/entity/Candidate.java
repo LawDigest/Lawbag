@@ -24,11 +24,11 @@ public class Candidate {
 
     @NotNull
     @Column(name="district_candidate_id")
-    private String districtCandidateId;
+    private Long districtCandidateId;
 
     @NotNull
     @Column(name="proportional_candidate_id")
-    private String proportionalCandidateId;
+    private Long proportionalCandidateId;
 
     @NotNull
     @Column(name="city_name")

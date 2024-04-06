@@ -21,10 +21,10 @@ public class SearchCandidateDto implements SearchResponse {
     private String candidateId;
 
     @NotNull
-    private String districtCandidateId;
+    private Long districtCandidateId;
 
     @NotNull
-    private String proportionalCandidateId;
+    private Long proportionalCandidateId;
 
     @NotNull
     private String cityName;
