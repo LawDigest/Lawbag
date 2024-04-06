@@ -31,16 +31,19 @@ public class CookieUtil {
         response.addCookie(cookie);
     }
 
+
+
     public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
+                    var newCookie = new Cookie(name, null);
+                    newCookie.setHttpOnly(true);
+                    newCookie.setPath("/");
+                    newCookie.setMaxAge(0);
+                    response.addCookie(newCookie);
                 }
             }
         }
