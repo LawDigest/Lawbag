@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.repository;
 
 import com.everyones.lawmaking.domain.entity.Bill;
+import com.everyones.lawmaking.domain.entity.Candidate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -90,5 +91,22 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "order by keyword_rel desc, bill_name_rel desc, summary_rel desc"
             , nativeQuery = true)
     Slice<String> findBillByKeyword(Pageable pageable,@Param("keyword") String keyword);
+
+    @Query(value = "select * " +
+            "from " +
+            "(select *,\n" +
+            "         (\n" +
+            "    (CASE WHEN city_name LIKE CONCAT('%',:keyword,'%') THEN 1\n" +
+            "        WHEN district_name LIKE CONCAT('%',:keyword,'%') THEN 1\n" +
+            "    WHEN gu_name LIKE CONCAT('%',:keyword,'%') THEN 1\n" +
+            "            WHEN party_name LIKE CONCAT('%',:keyword,'%') THEN 1\n" +
+            "            WHEN name LIKE CONCAT('%',:keyword,'%') THEN 1\n" +
+            "        ELSE 0 END)\n" +
+            "  ) AS relevance_score\n" +
+            "from candidate ) search\n" +
+            "where relevance_score > 0\n" +
+            "order by relevance_score desc;"
+            , nativeQuery = true)
+    Slice<Candidate> findCandidateByKeyword(Pageable pageable, @Param("keyword") String keyword);
 
 }
