@@ -32,6 +32,7 @@ public class Facade {
     private final ProportionalCandidateService proportionalCandidateService;
     private final DistrictCandidateService districtCandidateService;
     private final AuthService authService;
+    private final DistrictService districtService;
 
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
         var billListResponse = billService.getBillsByDefault(pageable);
@@ -274,5 +275,23 @@ public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, 
         return districtCandidateService.getDistrictCandidateList(districtId, pageable);
     }
 
+    public List<DistrictResponse> getDistrictList(String cityName, String guName){
 
-}
+        if(cityName != null && !cityName.isEmpty()){
+            // 도시이름 받음
+            if(guName != null && !guName.isEmpty()){
+            // 도시이름이랑 지역구 받음
+                return districtService.getDistrictList(cityName,guName);
+            }
+            else{
+                //도시 이름만 받음
+                return districtService.getGuNameList(cityName);
+            }
+        }
+        else{
+            // 아무것도 안받음.
+            return districtService.getAllCity();
+
+        }
+
+}}
