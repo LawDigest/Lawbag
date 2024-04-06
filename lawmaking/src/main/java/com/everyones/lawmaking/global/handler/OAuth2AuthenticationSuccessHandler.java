@@ -77,6 +77,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Map<String, AuthToken> userToken = userTokenToCookie(userInfo, authorities,provider);
 
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.deleteCookie(request, response, ACCESS_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, userToken.get("refreshToken").getToken(), cookieMaxAge);
         CookieUtil.addCookie(response, ACCESS_TOKEN, userToken.get("accessToken").getToken(), cookieMaxAge);
         return UriComponentsBuilder.fromUriString(targetUrl)
