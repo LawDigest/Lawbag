@@ -33,6 +33,7 @@ public class Facade {
     private final DistrictCandidateService districtCandidateService;
     private final AuthService authService;
     private final DistrictService districtService;
+    private final CandidateService candidateService;
 
     public BillListResponse getBillsFromMainFeed(Pageable pageable) {
         var billListResponse = billService.getBillsByDefault(pageable);
@@ -294,4 +295,11 @@ public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, 
 
         }
 
-}}
+}
+    public SearchDataResponse searchCandidate(String searchWord,Pageable pageable ) {
+
+        return candidateService.searchCandidate(searchWord, pageable);
+
+    }
+
+}
