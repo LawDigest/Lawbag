@@ -201,9 +201,11 @@ public class Facade {
         var billName = bill.getBillName();
         var billProposers = bill.getProposers();
 
-        return List.of(billId, billRepProposer, billProposers, billName);
+        return List.of(billId, billRepProposer, billProposers, billName,congressman.getParty().getPartyImageUrl());
     }
     public List<String> updateBillStage(List<String> raw) {
+        var party = partyService.getPartyByBillId(raw.get(0));
+        raw.add(party.getPartyImageUrl());
         return raw;
     }
 
@@ -215,7 +217,7 @@ public class Facade {
         var party = partyService.findById(Long.parseLong(raw.get(1)));
         var partyName = party.getName();
 
-        return List.of(congressmanId, partyName, congressmanName);
+        return List.of(congressmanId, partyName, congressmanName,congressman.getParty().getPartyImageUrl());
     }
 
     public List<User> getSubscribedUsers(ColumnEventType cet, String targetId) {

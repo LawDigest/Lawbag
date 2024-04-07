@@ -47,25 +47,29 @@ public class NotificationConverter {
         String target = data.get(0);
         String title = null;
         String content = null;
+        String notificationImageUrl = null;
         List<String> processedData;
         switch (columnEventType) {
             case RP_INSERT:
                 processedData = facade.rpInsert(data);
-                // List.of(billId, billRepProposer, billProposers, billName)
+                // List.of(billId, billRepProposer, billProposers, billName, partyImage) <-정당이미지
                 title = processedData.get(1) + " 의원";
                 content = processedData.get(2) + "이 '" + processedData.get(3) + "'을/를 발의했어요!";
+                notificationImageUrl = processedData.get(4);
                 break;
             case BILL_STAGE_UPDATE:
-                // List.of("bill_id", "bill_name", "proposers", "stage")
+                // List.of("bill_id", "bill_name", "proposers", "stage", "partyImage") <-정당이미지
                 processedData = facade.updateBillStage(data);
-                title = processedData.get(1) + " " + processedData.get(2);
+                title = processedData.get(1) + "(" + processedData.get(2) + ")";
                 content = "스크랩한 법안이 본회의에서 '"+processedData.get(3)+"'되었어요!";
+                notificationImageUrl = processedData.get(4);
                 break;
             case CONGRESSMAN_PARTY_UPDATE:
-                // List.of(congressmanId, partyName, congressmanName);
+                // List.of(congressmanId, partyName, congressmanName, partyImage); <-정당이미지
                 processedData = facade.updateCongressmanParty(data);
                 title = processedData.get(1);
                 content = "'"+processedData.get(2)+"'의원의 당적이 '"+processedData.get(1)+"'(으)로 변동했어요!";
+                notificationImageUrl = processedData.get(3);
                 break;
         }
 
@@ -79,8 +83,9 @@ public class NotificationConverter {
         return NotificationResponse.builder()
                 // 이벤트 타입
                 .type(type)
-                // 알림 이미지 id값
+                // 알림으로 이동할 대상 id값
                 .target(target)
+                .notificationImageUrl(notificationImageUrl)
                 .title(title)
                 .content(content)
                 .createdDate(createdDate)
