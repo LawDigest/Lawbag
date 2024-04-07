@@ -28,6 +28,9 @@ public class NotificationResponse {
     private String target;
 
     @NotNull
+    private String notificationImageUrl;
+
+    @NotNull
     private String type;
 
     @NotNull
