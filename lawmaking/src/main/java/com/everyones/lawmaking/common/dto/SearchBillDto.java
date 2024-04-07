@@ -31,7 +31,7 @@ public class SearchBillDto implements SearchResponse {
     private LocalDate proposedDate;
 
     @NotNull
-    private String summary;
+    private String gptSummary;
 
     @NotNull
     private long likeCount;
@@ -52,6 +52,9 @@ public class SearchBillDto implements SearchResponse {
     private String partyImageUrl;
 
     @NotNull
+    private String congressmanId;
+
+    @NotNull
     private String congressmanImageUrl;
 
     @NotNull
@@ -67,11 +70,12 @@ public class SearchBillDto implements SearchResponse {
                 .name(bill.getBillName())
                 .searchType(SearchType.BILL.name())
                 .proposedDate(bill.getProposeDate())
-                .summary(bill.getSummary())
+                .gptSummary(bill.getGptSummary())
                 .likeCount(bill.getLikeCount())
                 .viewCount(bill.getViewCount())
                 .proposers(bill.getProposers())
                 .representativeProposer(congressMan.getName())
+                .congressmanId(congressMan.getId())
                 .congressmanImageUrl(congressMan.getCongressmanImageUrl())
                 .partyId(party.getId())
                 .partyName(party.getName())
