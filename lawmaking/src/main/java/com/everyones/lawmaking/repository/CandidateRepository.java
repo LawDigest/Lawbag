@@ -23,7 +23,7 @@ public interface CandidateRepository extends JpaRepository<Candidate, Long> {
             "            WHEN name LIKE CONCAT('%',:keyword,'%') THEN 1\n" +
             "        ELSE 0 END)\n" +
             "  ) AS relevance_score\n" +
-            "from candidate ) search\n" +
+            "from Candidate ) search\n" +
             "where relevance_score > 0\n;", nativeQuery = true)
     Slice<Candidate> findCandidateByKeyword(Pageable pageable, @Param("keyword") String keyword);
 }
