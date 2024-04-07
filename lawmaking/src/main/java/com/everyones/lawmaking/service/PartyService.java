@@ -72,6 +72,14 @@ public class PartyService {
         return ProportionalPartyResponse.from(proportionalCandidates);
     }
 
+    public Party getPartyByBillId(String billId) {
+        return partyRepository.findPartyByBillId(billId)
+                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+
+    }
+
+
+
 
 
 
