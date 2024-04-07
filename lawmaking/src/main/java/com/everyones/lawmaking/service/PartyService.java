@@ -7,6 +7,7 @@ import com.everyones.lawmaking.domain.entity.Party;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.repository.PartyRepository;
+import com.everyones.lawmaking.repository.ProportionalCandidateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class PartyService {
     private final PartyRepository partyRepository;
+    private final ProportionalCandidateRepository proportionalCandidateRepository;
 
     public Party findById(long partyId) {
         return partyRepository.findById(partyId)
@@ -62,6 +64,15 @@ public class PartyService {
 
         return ProportionalPartyImageListResponse.of(proportionalPartyLogoResponse,pagination);
     }
+
+    public ProportionalPartyResponse getProPartyInfo(long partyId) {
+        // 파티 정보 // 후보자 명수 카운트
+        var proportionalCandidates = proportionalCandidateRepository.findProportionalCandidateByPartyId(partyId);
+
+        return ProportionalPartyResponse.from(proportionalCandidates);
+    }
+
+
 
 
 }

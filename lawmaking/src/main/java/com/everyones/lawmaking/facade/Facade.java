@@ -302,4 +302,12 @@ public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, 
 
     }
 
+    public ProportionalPartyResponse getProPartyInfo(long partyId) {
+
+        return partyService.getProPartyInfo(partyId);
+
+    }
+
+
+
 }
