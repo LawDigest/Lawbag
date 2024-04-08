@@ -1,7 +1,5 @@
 package com.everyones.lawmaking.repository;
 
-import com.everyones.lawmaking.common.dto.ProportionalCountByPartyDto;
-import com.everyones.lawmaking.domain.entity.Party;
 import com.everyones.lawmaking.domain.entity.ProportionalCandidate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
