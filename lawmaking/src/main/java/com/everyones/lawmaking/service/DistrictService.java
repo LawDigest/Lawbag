@@ -1,9 +1,6 @@
 package com.everyones.lawmaking.service;
 
-import com.everyones.lawmaking.common.dto.response.CityNameResponse;
-import com.everyones.lawmaking.common.dto.response.DistrictNameResponse;
-import com.everyones.lawmaking.common.dto.response.DistrictResponse;
-import com.everyones.lawmaking.common.dto.response.GuNameResponse;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.repository.DistrictCandidateRepository;
 import com.everyones.lawmaking.repository.DistrictRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,4 +27,9 @@ public class DistrictService {
     public List<DistrictResponse> getDistrictList(String cityName, String guName){
         var districtList = districtRepository.findAllDistrict(cityName,guName);
         return districtList.stream().map(DistrictNameResponse::from).toList();        }
+
+    public DistrictIdResponse getDistrictId(String cityName, String guName,String districtName){
+        var districtId = districtRepository.findDistrictId(cityName,guName,districtName);
+        return DistrictIdResponse.from(districtId);        }
+
 }

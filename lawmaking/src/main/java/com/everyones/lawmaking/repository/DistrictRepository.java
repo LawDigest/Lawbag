@@ -26,4 +26,9 @@ public interface DistrictRepository extends JpaRepository<District,Long > {
             "from District d " +
             "where d.cityName =:cityName and d.guName =:guName")
     List<String> findAllDistrict(@Param("cityName") String cityName, @Param("guName") String guName);
+
+    @Query("select d.id " +
+            "from District d " +
+            "where d.cityName =:cityName and d.guName =:guName and d.districtName =:districtName")
+    Long findDistrictId(@Param("cityName") String cityName, @Param("guName") String guName, @Param("districtName") String districtName);
 }
