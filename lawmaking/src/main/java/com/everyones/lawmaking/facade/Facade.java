@@ -205,8 +205,9 @@ public class Facade {
     }
     public List<String> updateBillStage(List<String> raw) {
         var party = partyService.getPartyByBillId(raw.get(0));
-        raw.add(party.getPartyImageUrl());
-        return raw;
+
+        return Stream.concat(raw.stream(), Stream.of(party.getPartyImageUrl()))
+                .toList();
     }
 
     public List<String> updateCongressmanParty(List<String> raw) {
@@ -218,6 +219,15 @@ public class Facade {
         var partyName = party.getName();
 
         return List.of(congressmanId, partyName, congressmanName,congressman.getParty().getPartyImageUrl());
+    }
+
+    public List<String> getProcessedData(ColumnEventType cet,List<String> eventData) {
+        return switch (cet) {
+            case RP_INSERT -> rpInsert(eventData);
+            case CONGRESSMAN_PARTY_UPDATE -> updateCongressmanParty(eventData);
+            case BILL_STAGE_UPDATE -> updateBillStage(eventData);
+        };
+
     }
 
     public List<User> getSubscribedUsers(ColumnEventType cet, String targetId) {

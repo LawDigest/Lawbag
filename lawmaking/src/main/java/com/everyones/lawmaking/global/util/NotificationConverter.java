@@ -22,12 +22,7 @@ public class NotificationConverter {
     // static을 하지 않으면 사용하는 객체를 생성할 때 facade를 계속 의존성 주입 해줘야함
     // 그런데 NotificationResponse Dto 클래스에 Facade 의존성 주입을 해주는 것이 클래스 목적성을 흐린다고 생각하여 해당 클래스를 만듦.
     // 따라서 처음에 facade를 static으로 선언 된 것을 필드 주입을 통해서 facade 인스턴스를 초기화
-    private static Facade facade;
 
-    @Autowired
-    private void setFacade(Facade facade) {
-        NotificationConverter.facade = facade;
-    }
 
     private static final ObjectMapper mapper = new ObjectMapper();
 
@@ -48,28 +43,24 @@ public class NotificationConverter {
         String title = null;
         String content = null;
         String notificationImageUrl = null;
-        List<String> processedData;
         switch (columnEventType) {
             case RP_INSERT:
-                processedData = facade.rpInsert(data);
                 // List.of(billId, billRepProposer, billProposers, billName, partyImage) <-정당이미지
-                title = processedData.get(1) + " 의원";
-                content = processedData.get(2) + "이 '" + processedData.get(3) + "'을/를 발의했어요!";
-                notificationImageUrl = processedData.get(4);
+                title = data.get(1) + " 의원";
+                content = data.get(2) + "이 '" + data.get(3) + "'을/를 발의했어요!";
+                notificationImageUrl = data.get(4);
                 break;
             case BILL_STAGE_UPDATE:
                 // List.of("bill_id", "bill_name", "proposers", "stage", "partyImage") <-정당이미지
-                processedData = facade.updateBillStage(data);
-                title = processedData.get(1) + "(" + processedData.get(2) + ")";
-                content = "스크랩한 법안이 본회의에서 '"+processedData.get(3)+"'되었어요!";
-                notificationImageUrl = processedData.get(4);
+                title = data.get(1) + "(" + data.get(2) + ")";
+                content = "스크랩한 법안이 본회의에서 '"+data.get(3)+"'되었어요!";
+                notificationImageUrl = data.get(4);
                 break;
             case CONGRESSMAN_PARTY_UPDATE:
                 // List.of(congressmanId, partyName, congressmanName, partyImage); <-정당이미지
-                processedData = facade.updateCongressmanParty(data);
-                title = processedData.get(1);
-                content = "'"+processedData.get(2)+"'의원의 당적이 '"+processedData.get(1)+"'(으)로 변동했어요!";
-                notificationImageUrl = processedData.get(3);
+                title = data.get(1);
+                content = "'"+data.get(2)+"'의원의 당적이 '"+data.get(1)+"'(으)로 변동했어요!";
+                notificationImageUrl = data.get(3);
                 break;
         }
 
