@@ -95,7 +95,7 @@ public class ProportionalCandidateController {
             ),
     })
     @GetMapping("/party_info")
-    public BaseResponse<ProportionalPartyResponse> getProPartyImage(
+    public BaseResponse<ProportionalPartyResponse> getProPartyInfo(
             @Parameter(example = "1", description = "정당 Id")
             @RequestParam("party_id") long partyId){
         var result = facade.getProPartyInfo(partyId);

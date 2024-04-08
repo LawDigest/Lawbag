@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.repository;
 
+import com.everyones.lawmaking.common.dto.ProportionalCountByPartyDto;
 import com.everyones.lawmaking.domain.entity.ProportionalCandidate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -8,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -20,11 +20,11 @@ public interface ProportionalCandidateRepository extends JpaRepository<Proportio
             "where pc.party.id = :partyId ")
     Slice<ProportionalCandidate> findProportionalCandidateByPartyId(@Param("partyId") long partyId, Pageable pageable);
 
-    @Query("select pc " +
+    @Query("select new com.everyones.lawmaking.common.dto.ProportionalCountByPartyDto(pc.party,count(pc)) " +
             "from ProportionalCandidate pc " +
-            "join FETCH pc.party p " +
+            "join  pc.party p " +
             "where pc.party.id = :partyId ")
-    List<ProportionalCandidate> findProportionalCandidateByPartyId(@Param("partyId") long partyId);
+    Optional<ProportionalCountByPartyDto> findProportionalCandidateByPartyId(@Param("partyId") long partyId);
 
     @Query("select pc " +
             "from ProportionalCandidate pc " +

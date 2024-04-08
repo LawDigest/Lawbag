@@ -67,9 +67,9 @@ public class PartyService {
 
     public ProportionalPartyResponse getProPartyInfo(long partyId) {
         // 파티 정보 // 후보자 명수 카운트
-        var proportionalCandidates = proportionalCandidateRepository.findProportionalCandidateByPartyId(partyId);
-
-        return ProportionalPartyResponse.from(proportionalCandidates);
+        var proportionalCandidate = proportionalCandidateRepository.findProportionalCandidateByPartyId(partyId)
+                .orElseThrow(()->new CustomException(ResponseCode.INVALID_QUERY_PARAMETER));
+        return ProportionalPartyResponse.from(proportionalCandidate);
     }
 
     public Party getPartyByBillId(String billId) {

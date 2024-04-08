@@ -1,14 +1,12 @@
 package com.everyones.lawmaking.common.dto.response;
 
-import com.everyones.lawmaking.domain.entity.ProportionalCandidate;
+import com.everyones.lawmaking.common.dto.ProportionalCountByPartyDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder
@@ -24,7 +22,7 @@ public class ProportionalPartyResponse {
     private String partyImageUrl;
 
     @NotNull
-    private Integer candidateNumber;
+    private Long candidateNumber;
 
     @NotNull
     private String partyName;
@@ -32,12 +30,12 @@ public class ProportionalPartyResponse {
     @NotNull
     private Long partyOrder;
 
-    public static ProportionalPartyResponse from(List<ProportionalCandidate> proportionalCandidate) {
-        var partyInfo = proportionalCandidate.get(0).getParty();
+    public static ProportionalPartyResponse from(ProportionalCountByPartyDto proportionalCandidate) {
+        var partyInfo = proportionalCandidate.getParty();
         return ProportionalPartyResponse.builder()
                 .partyId(partyInfo.getId())
                 .partyImageUrl(partyInfo.getPartyImageUrl())
-                .candidateNumber(proportionalCandidate.size())
+                .candidateNumber(proportionalCandidate.getCandidateCount())
                 .partyName(partyInfo.getName())
                 .partyOrder(partyInfo.getId())
                 .build();
