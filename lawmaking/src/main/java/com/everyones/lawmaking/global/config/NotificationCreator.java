@@ -30,8 +30,10 @@ public class NotificationCreator {
                     eventDataByEventTypeMap.forEach((eventType, eventData) -> {
                         try {
                             ColumnEventType columnEventType = ColumnEventType.from(eventType);
-                            String jsonString = objectMapper.writeValueAsString(eventData);
                             List<User> subscribedSavedUser = facade.getSubscribedUsers(columnEventType, eventData.get(0));
+                            List<String> processedData = facade.getProcessedData(columnEventType,eventData);
+                            String jsonString = objectMapper.writeValueAsString(processedData);
+
                             subscribedSavedUser
                                     .forEach(user -> {
                                         notifications.add(
