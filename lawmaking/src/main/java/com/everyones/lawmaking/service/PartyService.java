@@ -65,11 +65,13 @@ public class PartyService {
         return ProportionalPartyImageListResponse.of(proportionalPartyLogoResponse,pagination);
     }
 
+    @Transactional
     public ProportionalPartyResponse getProPartyInfo(long partyId) {
         // 파티 정보 // 후보자 명수 카운트
-        var proportionalCandidate = proportionalCandidateRepository.findProportionalCandidateByPartyId(partyId)
-                .orElseThrow(()->new CustomException(ResponseCode.INVALID_QUERY_PARAMETER));
-        return ProportionalPartyResponse.from(proportionalCandidate);
+        var party = partyRepository.findPartyDetailById(partyId)
+                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+        var candidateNumberByParty = proportionalCandidateRepository.countByPartyId(partyId);
+        return ProportionalPartyResponse.of(party,candidateNumberByParty);
     }
 
     public Party getPartyByBillId(String billId) {
