@@ -308,6 +308,15 @@ public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, 
         }
 
 }
+
+    public DistrictIdResponse getDistrictId(String cityName, String guName,String districtName){
+
+
+            return districtService.getDistrictId(cityName,guName,districtName);
+
+
+    }
+
     public SearchDataResponse searchCandidate(String searchWord,Pageable pageable ) {
 
         return candidateService.searchCandidate(searchWord, pageable);

@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.controller;
 
 
+import com.everyones.lawmaking.common.dto.response.DistrictIdResponse;
 import com.everyones.lawmaking.common.dto.response.DistrictResponse;
 import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
 import com.everyones.lawmaking.facade.Facade;
@@ -52,6 +53,31 @@ public class DistrictController {
                                                              ) {
 
         var response = facade.getDistrictList(cityName,guName);
+        return BaseResponse.ok(response);
+    }
+
+    @Operation(summary = "선거구Id 조회", description = "선거구Id 조회 조회")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @GetMapping("")
+    public BaseResponse<DistrictIdResponse> getDistrictId(@Parameter(example = "서울특별시", description = "도시 이름")
+                                                                @RequestParam(value = "city_name") String cityName,
+                                                          @Parameter(example = "종로구", description = "지역구 이름")
+                                                                @RequestParam(value="gu_name") String guName,
+                                                          @Parameter(example = "종로구", description = "지역구 이름")
+                                                                  @RequestParam(value="district_name") String districtName) {
+
+        var response = facade.getDistrictId(cityName,guName,districtName);
         return BaseResponse.ok(response);
     }
 
