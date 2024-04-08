@@ -314,9 +314,9 @@ public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, 
 
     }
 
-    public ProportionalPartyResponse getProPartyInfo(long partyId) {
+    public ProportionalPartyResponse getPartyInfoWithProportionalPage(long partyId) {
 
-        return partyService.getProPartyInfo(partyId);
+        return partyService.getPartyInfoWithProportionalPage(partyId);
 
     }
 

@@ -66,12 +66,11 @@ public class PartyService {
     }
 
     @Transactional
-    public ProportionalPartyResponse getProPartyInfo(long partyId) {
-        // 파티 정보 // 후보자 명수 카운트
+    public ProportionalPartyResponse getPartyInfoWithProportionalPage(long partyId) {
         var party = partyRepository.findPartyDetailById(partyId)
                 .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
-        var candidateNumberByParty = proportionalCandidateRepository.countByPartyId(partyId);
-        return ProportionalPartyResponse.of(party,candidateNumberByParty);
+        var candidateNumber = proportionalCandidateRepository.countByPartyId(partyId);
+        return ProportionalPartyResponse.of(party,candidateNumber);
     }
 
     public Party getPartyByBillId(String billId) {

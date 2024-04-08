@@ -13,8 +13,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class ProportionalPartyResponse {
-    // 입력받은 partyId로 정당 로고, 후보자 명수, 정당 이름, 기호몇번인지 조회(partyId)
-
 
     @NotNull
     private Long partyId;

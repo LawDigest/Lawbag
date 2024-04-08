@@ -95,10 +95,10 @@ public class ProportionalCandidateController {
             ),
     })
     @GetMapping("/party_info")
-    public BaseResponse<ProportionalPartyResponse> getProPartyInfo(
+    public BaseResponse<ProportionalPartyResponse> getPartyInfoWithProportionalPage(
             @Parameter(example = "1", description = "정당 Id")
             @RequestParam("party_id") long partyId){
-        var result = facade.getProPartyInfo(partyId);
+        var result = facade.getPartyInfoWithProportionalPage(partyId);
         return BaseResponse.ok(result);
     }
 }
