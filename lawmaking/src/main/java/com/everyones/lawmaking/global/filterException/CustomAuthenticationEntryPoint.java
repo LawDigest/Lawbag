@@ -23,7 +23,7 @@ public class CustomAuthenticationEntryPoint implements AuthenticationEntryPoint 
             // 특정 예외에 대한 처리 로직
             response.setContentType("application/json;charset=UTF-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"reason\":\"The access token expired\"}");
+            response.getWriter().write("{\"reason\":\"The accessToken expired\"}");
         } else {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
                     authException.getLocalizedMessage());
