@@ -1,9 +1,9 @@
 package com.everyones.lawmaking.controller;
 
 
-import com.everyones.lawmaking.common.dto.response.CongressmanResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
+import com.everyones.lawmaking.common.dto.response.CongressmanResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,7 +44,7 @@ public class CongressmanController {
                     )}
             ),
     })
-    @GetMapping("/public/detail")
+    @GetMapping("/detail")
     public BaseResponse<CongressmanResponse> getCongressmanDetails(
             @Parameter(example = "04T3751T", description = "의원 Id")
             @RequestParam("congressman_id")
@@ -70,7 +70,7 @@ public class CongressmanController {
                     )}
             ),
     })
-    @GetMapping("/public/bill_info")
+    @GetMapping("/bill_info")
     public BaseResponse<BillListResponse> getCongressmanBills(
             @Parameter(example = "04T3751T", description = "의원 Id")
             @RequestParam("congressman_id") String congressmanId,
@@ -103,7 +103,7 @@ public class CongressmanController {
                     )}
             ),
     })
-    @PatchMapping("/like")
+    @PatchMapping("/private/like")
     public BaseResponse<CongressmanLikeResponse> likeCongressman(
             Authentication authentication,
             @Parameter(example = "04T3751T", description = "의원 Id")

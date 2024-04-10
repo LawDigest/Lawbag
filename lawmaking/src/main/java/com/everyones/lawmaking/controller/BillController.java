@@ -42,9 +42,8 @@ public class BillController {
                     )}
             ),
     })
-    @GetMapping("/public/mainfeed")
+    @GetMapping("/mainfeed")
     public BaseResponse<BillListResponse> getBillsFromMainFeed(
-            Authentication authentication,
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page")
             int page,
@@ -70,7 +69,7 @@ public class BillController {
                     )}
             ),
     })
-    @GetMapping("/public/mainfeed/stage")
+    @GetMapping("/mainfeed/stage")
     public BaseResponse<BillListResponse> getBillsByStage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page") int page,
@@ -100,7 +99,7 @@ public class BillController {
                     )}
             ),
     })
-    @GetMapping("/public/detail/{bill_id}")
+    @GetMapping("/detail/{bill_id}")
     public BaseResponse<BillDto> getBillWtihDeatail(
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @PathVariable("bill_id") String billId) {
@@ -122,7 +121,7 @@ public class BillController {
                     )}
             ),
     })
-    @PatchMapping("/public/view_count")
+    @PatchMapping("/view_count")
     public BaseResponse<BillViewCountResponse> updateViewCount(
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @RequestParam("bill_id") String billId
@@ -148,7 +147,7 @@ public class BillController {
     TODO: patch와 post기능이 둘 다 있는데, Post로 정의하는 것이 맞는가에 대한 고민
     like 관련을 따로 Controller를 파는게 맞는가에 대한 고민이 있다.
     */
-    @PostMapping("/bookmark")
+    @PostMapping("/private/bookmark")
     public BaseResponse<BillLikeResponse> likeBill(
             Authentication authentication,
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")

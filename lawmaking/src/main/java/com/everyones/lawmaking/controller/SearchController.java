@@ -24,7 +24,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/search/public")
+@RequestMapping("/v1/search")
 @Tag(name="검색 관련 API", description = "의원, 정당 및 법안 검색 API")
 public class SearchController {
 

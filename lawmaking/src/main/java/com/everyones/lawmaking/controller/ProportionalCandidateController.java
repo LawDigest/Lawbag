@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -47,7 +46,6 @@ public class ProportionalCandidateController {
     })
     @GetMapping("/list")
     public BaseResponse<ProportionalCandidateListResponse> getProportionalCandidateList(
-            Authentication authentication,
             @Parameter(example = "1", description = "정당 Id")
             @RequestParam("party_id") long partyId,
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
@@ -71,7 +69,7 @@ public class ProportionalCandidateController {
                     )}
             ),
     })
-    @GetMapping("/public/party_logo")
+    @GetMapping("/party_logo")
     public BaseResponse<ProportionalPartyImageListResponse> getProPartyImage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page") int page){
@@ -94,7 +92,7 @@ public class ProportionalCandidateController {
                     )}
             ),
     })
-    @GetMapping("/public/party_info")
+    @GetMapping("/party_info")
     public BaseResponse<ProportionalPartyResponse> getPartyInfoWithProportionalPage(
             @Parameter(example = "1", description = "정당 Id")
             @RequestParam("party_id") long partyId){

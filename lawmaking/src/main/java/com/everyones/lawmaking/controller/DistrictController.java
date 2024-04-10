@@ -3,7 +3,6 @@ package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.response.DistrictIdResponse;
 import com.everyones.lawmaking.common.dto.response.DistrictResponse;
-import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +25,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/district/public")
+@RequestMapping("/v1/district")
 @Tag(name = "선거구 관련 API", description = "선거구 관련 데이터를 가져오는 API입니다.")
 public class DistrictController {
     private final Facade facade;
