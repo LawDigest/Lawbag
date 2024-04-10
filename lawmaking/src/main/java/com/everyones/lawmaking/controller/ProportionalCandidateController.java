@@ -25,7 +25,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/proportional_candidate")
-@Tag(name = "비례대표 후보자 관련 API", description = "정당 관련 API 호출")
+@Tag(name = "비례대표 후보자 관련 API", description = "비례대표 후보자 관련 API 호출")
 public class ProportionalCandidateController {
 
     private final Facade facade;
