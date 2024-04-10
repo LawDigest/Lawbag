@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +25,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/v1/proportional_candidate")
-@Tag(name = "비례대표 후보자 관련 API", description = "정당 관련 API 호출")
+@Tag(name = "비례대표 후보자 관련 API", description = "비례대표 후보자 관련 API 호출")
 public class ProportionalCandidateController {
 
     private final Facade facade;
@@ -47,7 +46,6 @@ public class ProportionalCandidateController {
     })
     @GetMapping("/list")
     public BaseResponse<ProportionalCandidateListResponse> getProportionalCandidateList(
-            Authentication authentication,
             @Parameter(example = "1", description = "정당 Id")
             @RequestParam("party_id") long partyId,
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")

@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.global.jwt;
 
 
+import com.everyones.lawmaking.domain.entity.Role;
 import com.everyones.lawmaking.global.config.AppProperties;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
@@ -55,21 +56,32 @@ public class AuthTokenProvider {
         if (authToken.validate()) {
 
             var claims = authToken.getTokenClaims();
-            Collection<? extends GrantedAuthority> authorities =
-                    Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
-                            .map(SimpleGrantedAuthority::new)
-                            .collect(Collectors.toList());
+            Collection<? extends GrantedAuthority> authorities;
+            if (claims.get(AUTHORITIES_KEY) != null){
+                authorities =
+                        Arrays.stream(new String[]{claims.get(AUTHORITIES_KEY).toString()})
+                                .map(SimpleGrantedAuthority::new)
+                                .collect(Collectors.toList());
+                // 비밀번호 사용되지 않음
 
-            UserDetails principal = new User(claims.get(LOCAL_USER_ID).toString(), "", authorities);
-
-            return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+                UserDetails principal = new User(claims.get(LOCAL_USER_ID).toString(), "", authorities);
+                return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+            }
+            // 클레임에 권한이 null인 경우
+            else{
+                var guestAuthority = new SimpleGrantedAuthority(Role.GUEST.getCode());
+                authorities = Collections.singleton(guestAuthority);
+                // 비밀번호 사용되지 않음
+                UserDetails principal = new User("anonymous", "", authorities);
+                return new UsernamePasswordAuthenticationToken(principal, null, authorities);
+            }
         // 토큰이 검증이 되지 않았을 경우는 게스트를 가진 권한을 부여하게 된다.
         } else {
-            var guestAuthority = new SimpleGrantedAuthority("ROLE_GUEST");
+            var guestAuthority = new SimpleGrantedAuthority(Role.GUEST.getCode());
             Collection<? extends GrantedAuthority> authorities = Collections.singleton(guestAuthority);
-            UserDetails principal = new User("anonymous", "null", authorities);
-
-            return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
+            // 비밀번호 사용되지 않음
+            UserDetails principal = new User("anonymous", "", authorities);
+            return new UsernamePasswordAuthenticationToken(principal, null, authorities);
         }
     }
 

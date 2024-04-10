@@ -1,6 +1,6 @@
 package com.everyones.lawmaking.global.config;
 
-import com.everyones.lawmaking.global.filterException.RestAuthenticationEntryPoint;
+import com.everyones.lawmaking.global.filterException.CustomAuthenticationEntryPoint;
 import com.everyones.lawmaking.global.handler.*;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
 import com.everyones.lawmaking.global.service.CustomOAuth2UserService;
@@ -51,13 +51,10 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
                         .configurationSource(corsConfig.corsConfigurationSource()))
                 .sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                        .requestMatchers("/v1/**/like**").hasRole("MEMBER")
-                        .requestMatchers("/v1/**/bookmark**").hasRole("MEMBER")
-                        .requestMatchers("/v1/**/follow**").hasRole("MEMBER")
-                        .requestMatchers("/v1/**").permitAll()
+                        .requestMatchers("/v1/**/user/**").hasRole("MEMBER")
                         .anyRequest().authenticated())
                 .exceptionHandling(exceptionHandling -> exceptionHandling
-                        .authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                        .authenticationEntryPoint(customAuthenticationEntryPoint())
                         .accessDeniedHandler(tokenAccessDeniedHandler))
 
                 .oauth2Login(oauth2 -> oauth2
@@ -97,6 +94,11 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter() {
         return new TokenAuthenticationFilter(tokenProvider);
+    }
+
+    @Bean
+    public CustomAuthenticationEntryPoint customAuthenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
     }
 
 

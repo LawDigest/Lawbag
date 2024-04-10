@@ -2,7 +2,6 @@ package com.everyones.lawmaking.controller;
 
 
 import com.everyones.lawmaking.common.dto.response.DistrictCandidateListResponse;
-import com.everyones.lawmaking.common.dto.response.ProportionalCandidateListResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -46,7 +44,6 @@ public class DistrictCandidateController {
     })
     @GetMapping("/list")
     public BaseResponse<DistrictCandidateListResponse> getDistrictCandidateList(
-            Authentication authentication,
             @Parameter(example = "1", description = "지역구 Id")
             @RequestParam("district_id") long districtId,
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")

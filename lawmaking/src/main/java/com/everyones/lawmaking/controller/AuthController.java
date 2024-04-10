@@ -23,7 +23,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/v1/user/auth/private")
 @Tag(name = "인증 API", description = "인증 관련 API")
 public class AuthController {
 
