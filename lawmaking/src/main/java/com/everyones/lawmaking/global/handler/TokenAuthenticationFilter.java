@@ -43,7 +43,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.clearContext();
 
             // 토큰이 없을 경우 게스트사용자 권한을 SecurityContext에 부여해주고
-            if( tokenStr == null || tokenStr.isEmpty() || !request.getRequestURI().contains("private")){
+            if( tokenStr == null || tokenStr.isEmpty() || !request.getRequestURI().contains("user")){
                 setGuestAuthentication();
             }
             // 토큰이 있을 경우 검증을 해주고 검증이 되지 않으면 GUEST 권한을 주도록 하자.

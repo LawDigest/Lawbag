@@ -24,7 +24,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/notification/private")
+@RequestMapping("/v1/notification/user")
 @Tag(name="알림 관련 API", description = "알림 조회 및 생성 삭제 기능 포함")
 public class NotificationController {
 

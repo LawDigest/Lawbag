@@ -117,7 +117,7 @@ public class PartyController {
                     )}
             ),
     })
-    @PatchMapping("/private/follow")
+    @PatchMapping("/user/follow")
     public BaseResponse<PartyFollowResponse> followParty(
             Authentication authentication,
             @Parameter(example = "1", description = "정당 Id")

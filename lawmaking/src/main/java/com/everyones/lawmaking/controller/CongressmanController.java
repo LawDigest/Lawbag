@@ -103,7 +103,7 @@ public class CongressmanController {
                     )}
             ),
     })
-    @PatchMapping("/private/like")
+    @PatchMapping("/user/like")
     public BaseResponse<CongressmanLikeResponse> likeCongressman(
             Authentication authentication,
             @Parameter(example = "04T3751T", description = "의원 Id")
