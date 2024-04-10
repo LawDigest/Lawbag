@@ -71,7 +71,7 @@ public class ProportionalCandidateController {
                     )}
             ),
     })
-    @GetMapping("/party_logo")
+    @GetMapping("/public/party_logo")
     public BaseResponse<ProportionalPartyImageListResponse> getProPartyImage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page") int page){
@@ -94,7 +94,7 @@ public class ProportionalCandidateController {
                     )}
             ),
     })
-    @GetMapping("/party_info")
+    @GetMapping("/public/party_info")
     public BaseResponse<ProportionalPartyResponse> getPartyInfoWithProportionalPage(
             @Parameter(example = "1", description = "정당 Id")
             @RequestParam("party_id") long partyId){

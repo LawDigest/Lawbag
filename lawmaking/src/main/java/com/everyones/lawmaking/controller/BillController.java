@@ -42,7 +42,7 @@ public class BillController {
                     )}
             ),
     })
-    @GetMapping("/mainfeed")
+    @GetMapping("/public/mainfeed")
     public BaseResponse<BillListResponse> getBillsFromMainFeed(
             Authentication authentication,
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
@@ -70,7 +70,7 @@ public class BillController {
                     )}
             ),
     })
-    @GetMapping("/mainfeed/stage")
+    @GetMapping("/public/mainfeed/stage")
     public BaseResponse<BillListResponse> getBillsByStage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page") int page,
@@ -100,7 +100,7 @@ public class BillController {
                     )}
             ),
     })
-    @GetMapping("/detail/{bill_id}")
+    @GetMapping("/public/detail/{bill_id}")
     public BaseResponse<BillDto> getBillWtihDeatail(
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @PathVariable("bill_id") String billId) {
@@ -122,7 +122,7 @@ public class BillController {
                     )}
             ),
     })
-    @PatchMapping("/view_count")
+    @PatchMapping("/public/view_count")
     public BaseResponse<BillViewCountResponse> updateViewCount(
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @RequestParam("bill_id") String billId

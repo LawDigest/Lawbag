@@ -44,7 +44,7 @@ public class CongressmanController {
                     )}
             ),
     })
-    @GetMapping("/detail")
+    @GetMapping("/public/detail")
     public BaseResponse<CongressmanResponse> getCongressmanDetails(
             @Parameter(example = "04T3751T", description = "의원 Id")
             @RequestParam("congressman_id")
@@ -70,7 +70,7 @@ public class CongressmanController {
                     )}
             ),
     })
-    @GetMapping("/bill_info")
+    @GetMapping("/public/bill_info")
     public BaseResponse<BillListResponse> getCongressmanBills(
             @Parameter(example = "04T3751T", description = "의원 Id")
             @RequestParam("congressman_id") String congressmanId,

@@ -27,7 +27,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/v1/district")
+@RequestMapping("/v1/district/public")
 @Tag(name = "선거구 관련 API", description = "선거구 관련 데이터를 가져오는 API입니다.")
 public class DistrictController {
     private final Facade facade;

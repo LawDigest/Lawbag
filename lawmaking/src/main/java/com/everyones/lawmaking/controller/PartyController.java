@@ -39,7 +39,7 @@ public class PartyController {
                     )}
             ),
     })
-    @GetMapping("/detail")
+    @GetMapping("/public/detail")
     public BaseResponse<PartyDetailResponse> getParty(@Parameter(example = "1", description = "정당 id")
                                                       @RequestParam("party_id") long partyId) {
 
@@ -60,7 +60,7 @@ public class PartyController {
                     )}
             ),
     })
-    @GetMapping("/bill")
+    @GetMapping("/public/bill")
     public BaseResponse<BillListResponse> getBillsByParty(@Parameter(example = "1", description = "정당 id")
                                                           @RequestParam("party_id") long partyId,
                                                           @Parameter(example = "대표", description = "공동대표발의안 또는 대표발의 의안 조회 여부")
@@ -91,7 +91,7 @@ public class PartyController {
                     )}
             ),
     })
-    @GetMapping("/congressman")
+    @GetMapping("/public/congressman")
     public BaseResponse<PartyCongressmanResponse> getPartyCongressman(@Parameter(example = "1", description = "정당 id")
                                                                       @RequestParam("party_id") long partyId,
                                                                       @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
@@ -145,7 +145,7 @@ public class PartyController {
                     )}
             ),
     })
-    @GetMapping("/candidate/detail")
+    @GetMapping("/public/candidate/detail")
     public BaseResponse<CandidateDetailResponse> candidateDetail(
             @Parameter(example = "1", description = "후보자 Id")
             @RequestParam("candidate_id") long candidateId,
