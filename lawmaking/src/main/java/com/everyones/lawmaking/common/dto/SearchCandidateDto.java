@@ -1,9 +1,7 @@
 package com.everyones.lawmaking.common.dto;
 
 import com.everyones.lawmaking.common.dto.response.SearchResponse;
-import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.domain.entity.Candidate;
-import com.everyones.lawmaking.global.constant.SearchType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
@@ -25,6 +23,8 @@ public class SearchCandidateDto implements SearchResponse {
 
     @NotNull
     private Long proportionalCandidateId;
+
+    private String candidateImageUrl ;
 
     @NotNull
     private String cityName;
@@ -49,6 +49,7 @@ public class SearchCandidateDto implements SearchResponse {
                 .candidateId(candidate.getCandidateId())
                 .districtCandidateId(candidate.getDistrictCandidateId())
                 .proportionalCandidateId(candidate.getProportionalCandidateId())
+                .candidateImageUrl(candidate.getCandidateImageUrl())
                 .cityName(candidate.getCityName())
                 .districtName(candidate.getDistrictName())
                 .guName(candidate.getGuName())

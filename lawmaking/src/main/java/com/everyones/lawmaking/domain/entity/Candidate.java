@@ -2,7 +2,10 @@ package com.everyones.lawmaking.domain.entity;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.Immutable;
@@ -29,6 +32,9 @@ public class Candidate {
     @NotNull
     @Column(name="proportional_candidate_id")
     private Long proportionalCandidateId;
+
+    @Column(name="candidate_image_url")
+    private String candidateImageUrl;
 
     @NotNull
     @Column(name="city_name")
