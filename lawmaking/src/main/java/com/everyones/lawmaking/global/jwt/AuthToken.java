@@ -1,7 +1,8 @@
 package com.everyones.lawmaking.global.jwt;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.security.SecurityException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,16 +63,13 @@ public class AuthToken {
 
     // ToDo(Exception 처리해야함)
     public Claims getTokenClaims()  {
-        try {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-        } catch (SecurityException | MalformedJwtException | ExpiredJwtException | UnsupportedJwtException |
-                 IllegalArgumentException e) {
-            return null;
+
         }
-    }
+
 
 }
