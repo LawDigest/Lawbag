@@ -4,7 +4,6 @@ import com.everyones.lawmaking.global.filterException.CustomAuthenticationEntryP
 import com.everyones.lawmaking.global.handler.*;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
 import com.everyones.lawmaking.global.service.CustomOAuth2UserService;
-import com.everyones.lawmaking.repository.AuthInfoRepository;
 import com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.everyones.lawmaking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +36,6 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final CorsConfig corsConfig;
     private final UserRepository userRepository;
-    private final AuthInfoRepository authInfoRepository;
 
 
     // 회원가입이랑 로그인 필요한 요청에 대해서만 시큐리티 필터를 타기
@@ -119,7 +117,6 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler(
                 userRepository,
-                authInfoRepository,
                 tokenProvider,
                 appProperties,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()
