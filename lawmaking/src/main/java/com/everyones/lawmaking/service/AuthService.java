@@ -4,21 +4,25 @@ import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
 import com.everyones.lawmaking.global.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.global.config.AppProperties;
-import com.everyones.lawmaking.global.util.RestTemplateUtil;
+import com.everyones.lawmaking.global.config.RestTemplateConfig;
+import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
+import com.everyones.lawmaking.global.util.HeaderUtil;
+import com.everyones.lawmaking.global.util.TokenUtil;
 import com.everyones.lawmaking.repository.AuthInfoRepository;
+import com.everyones.lawmaking.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.http.HttpEntity;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 
@@ -30,8 +34,10 @@ import org.springframework.web.client.RestClientException;
 public class AuthService {
 
     private final AuthInfoRepository authInfoRepository;
-    private final RestTemplateUtil restTemplateUtil;
+    private final RestTemplateConfig restTemplateUtil;
     private final AppProperties appProperties;
+    private final AuthTokenProvider authTokenProvider;
+    private final UserRepository userRepository;
     private static final String TARGET_ID_TYPE = "user_id";
 
     @Transactional
@@ -89,6 +95,50 @@ public class AuthService {
         return WithdrawResponse.of(authInfoSaved);
     }
 
+    @Transactional
+    public void reissueToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+        // 쿠키에서 Refresh Token 가져오기
+        Cookie[] cookies = httpServletRequest.getCookies();
+
+        String refreshTokenCookie = null;
+        if (cookies == null) {
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+        }
+        for (Cookie cookie : cookies) {
+            if ("refreshToken".equals(cookie.getName())) {
+                refreshTokenCookie = cookie.getValue();
+                break;
+            }
+        }
+
+        if (refreshTokenCookie == null) {
+            throw new CustomException(ResponseCode.BAD_REQUEST);
+        }
+
+        String accessTokenFromHeader = HeaderUtil.getAccessToken(httpServletRequest);
+
+        //토큰 재발급
+        var reissueTokenArgsDto = TokenUtil.ReissueTokenArgsDto.builder()
+                .auth(appProperties.getAuth())
+                .tokenProvider(authTokenProvider)
+                .userRepository(userRepository)
+                .accessToken(accessTokenFromHeader)
+                .refreshTokenFromCookie(refreshTokenCookie)
+                .build();
+        var tokenMap = TokenUtil.reissueToken(reissueTokenArgsDto);
+
+        // 쿠키 설정
+        String[] cookieNames = {"refreshToken", "accessToken"};
+
+        for (String cookieName : cookieNames) {
+            Cookie cookie = new Cookie(cookieName, tokenMap.get(cookieName).getToken());
+            cookie.setMaxAge(0);
+            cookie.setPath("/");
+            httpServletResponse.addCookie(cookie);
+        }
+
+//        return EmptyResponse.instance;
+    }
 
 
-}
+    }

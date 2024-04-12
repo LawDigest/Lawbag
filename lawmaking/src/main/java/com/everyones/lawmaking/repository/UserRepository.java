@@ -20,8 +20,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "where u.authInfo.socialId=:socialId and u.authInfo.provider =:provider")
     Optional<User> findBySocialIdAndProvider(@Param("socialId") String socialId, @Param("provider") Provider provider);
 
+    @Query("select u " +
+            "from User u " +
+            "where u.authInfo.socialId=:socialId and u.authInfo.provider =:provider")
+    Optional<User> findUserBySocialIdAndProvider(@Param("socialId") String socialId, @Param("provider") Provider provider);
 
-    Optional<User> findByAuthInfo_Id(Long authInfoId);
 
     @Query("SELECT cl.user FROM CongressManLike cl " +
             "WHERE cl.congressman.id = :congressmanId")

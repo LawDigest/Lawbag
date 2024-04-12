@@ -11,7 +11,7 @@ import java.util.List;
 
 
 @Entity
-@Getter
+@Data
 @SuperBuilder
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
@@ -42,6 +42,8 @@ public class User extends BaseEntity {
 
     @NotNull
     private String imageUrl;
+
+    private String refreshToken;
 
     @Enumerated(EnumType.STRING)
     @NotNull
