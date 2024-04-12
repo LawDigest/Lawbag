@@ -39,8 +39,8 @@ public class AuthTokenProvider {
         this.key = Keys.hmacShaKeyFor(this.appProperties.getAuth().getTokenSecret().getBytes());
     }
 
-    public AuthToken createAuthToken(String id, Date expiry) {
-        return new AuthToken(id, expiry, key);
+    public AuthToken createAuthToken(String id,String provider, Date expiry) {
+        return new AuthToken(id,provider, expiry, key);
     }
 
     public AuthToken createAuthToken(String id, String role,Long userId, Date expiry) {

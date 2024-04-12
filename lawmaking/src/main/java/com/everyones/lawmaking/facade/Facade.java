@@ -329,6 +329,11 @@ public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, 
 
     }
 
+    public void reissueToken(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse) throws Exception {
+//        return authService.reissueToken(httpServletRequest, httpServletResponse);
+        authService.reissueToken(httpServletRequest, httpServletResponse);
+    }
+
 
 
 }

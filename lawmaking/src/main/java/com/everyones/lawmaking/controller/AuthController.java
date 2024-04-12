@@ -15,7 +15,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,7 +24,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/v1/user/auth")
+@RequestMapping("/v1/auth")
 @Tag(name = "인증 API", description = "인증 관련 API")
 public class AuthController {
 
@@ -42,7 +43,7 @@ public class AuthController {
                     )}
             ),
     })
-    @PostMapping("/withdraw")
+    @DeleteMapping("/user/withdraw")
     public BaseResponse<WithdrawResponse> withdraw(
             Authentication authentication,
             HttpServletRequest request,
@@ -51,5 +52,28 @@ public class AuthController {
 
         var result = facade.withdraw(userDetails.getUsername(),request,response);
         return BaseResponse.ok(result);
+    }
+
+
+
+    @Operation(summary = "토큰 재발급", description = "토큰 재발급 api를 호출합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PatchMapping("/reissue/token")
+    public BaseResponse<String> reissueToken(
+            HttpServletRequest request,
+            HttpServletResponse response) throws Exception {
+        facade.reissueToken(request,response);
+        return BaseResponse.ok("success");
     }
 }

@@ -24,8 +24,8 @@ public class AppProperties {
         @Value("${app.auth.token-secret}")
         private  String tokenSecret;
 
-        @Value("${app.auth.token-expiry}")
-        private  long tokenExpiry;
+        @Value("${app.auth.access-token-expiry}")
+        private  long accessTokenExpiry;
 
         @Value("${app.auth.refresh-token-expiry}")
         private  long refreshTokenExpiry;

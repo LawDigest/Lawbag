@@ -24,6 +24,8 @@ public class AuthToken {
 
     private static final String LOCAL_USER_ID = "userId";
 
+    private static final String PROVIDER = "provider";
+
 
 
     AuthToken(String id,String role,Long userId, Date expiry, Key key) {
@@ -31,9 +33,9 @@ public class AuthToken {
         this.token = createAccessToken(id,role,userId, expiry);
     }
 
-    AuthToken(String id, Date expiry, Key key) {
+    AuthToken(String id,String provider, Date expiry, Key key) {
         this.key = key;
-        this.token = createRefreshToken(id, expiry);
+        this.token = createRefreshToken(id,provider, expiry);
     }
     // access Token 발급
     private String createAccessToken(String id,String role,Long userId, Date expiry) {
@@ -47,9 +49,10 @@ public class AuthToken {
     }
 
     // refresh Token 발급
-    private String createRefreshToken(String id, Date expiry) {
+    private String createRefreshToken(String id,String provider, Date expiry) {
         return Jwts.builder()
                 .setSubject(id)
+                .claim(PROVIDER,provider)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .compact();
@@ -68,7 +71,6 @@ public class AuthToken {
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
-
         }
 
 
