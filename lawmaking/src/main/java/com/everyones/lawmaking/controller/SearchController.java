@@ -3,8 +3,9 @@ package com.everyones.lawmaking.controller;
 import com.everyones.lawmaking.common.dto.response.SearchDataResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
-import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.error.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.global.error.ErrorCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -53,7 +54,7 @@ public class SearchController {
             @RequestParam("page") int page) {
 
         if(searchWord == null || searchWord.trim().isEmpty()) {
-            throw new CustomException(ResponseCode.BAD_REQUEST);
+            throw new CustomException(ErrorCode.BAD_REQUEST);
         }
 
         var result = facade.searchCongressmanAndParty(searchWord, page);
@@ -82,7 +83,7 @@ public class SearchController {
             @Parameter(example = "0", description = "검색 결과 페이징을 위한 페이지 넘버")
             @RequestParam("page") int page) {
         if (searchWord.trim().length()<2){
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
         var result = facade.searchBill(searchWord,page);
         return BaseResponse.ok(result);

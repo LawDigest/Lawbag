@@ -3,13 +3,12 @@ package com.everyones.lawmaking.global.util;
 import com.everyones.lawmaking.common.dto.response.NotificationResponse;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.Notification;
-import com.everyones.lawmaking.facade.Facade;
-import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.error.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.global.error.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -31,7 +30,7 @@ public class NotificationConverter {
             return mapper.readValue(data, new TypeReference<List<String>>() {
             });
         } catch (JsonProcessingException e) {
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -67,7 +66,7 @@ public class NotificationConverter {
         LocalDateTime createdDate = notification.getCreatedDate();
 
         if (type == null || target == null || title == null || content == null || createdDate.isAfter(LocalDateTime.now())) {
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
 
 

@@ -4,8 +4,10 @@ import com.everyones.lawmaking.common.dto.ProportionalPartyImageListDto;
 import com.everyones.lawmaking.common.dto.SearchPartyDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Party;
-import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.error.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.global.error.ErrorCode;
+import com.everyones.lawmaking.global.error.PartyException;
 import com.everyones.lawmaking.repository.PartyRepository;
 import com.everyones.lawmaking.repository.ProportionalCandidateRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,12 +28,12 @@ public class PartyService {
 
     public Party findById(long partyId) {
         return partyRepository.findById(partyId)
-                .orElseThrow(() -> new CustomException(ResponseCode.BAD_REQUEST));
+                .orElseThrow(() -> new PartyException.PartyNotFound(Map.of("partyId", Long.toString(partyId))));
     }
 
     public PartyDetailResponse getPartyById(long partyId) {
         var party = partyRepository.findPartyDetailById(partyId)
-                .orElseThrow(() -> new CustomException(ResponseCode.BAD_REQUEST));
+                .orElseThrow(() -> new PartyException.PartyNotFound(Map.of("partyId", Long.toString(partyId))));
         return PartyDetailResponse.from(party);
     }
 
@@ -68,14 +71,14 @@ public class PartyService {
     @Transactional
     public ProportionalPartyResponse getPartyInfoWithProportionalPage(long partyId) {
         var party = partyRepository.findPartyDetailById(partyId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
         var candidateNumber = proportionalCandidateRepository.countByPartyId(partyId);
         return ProportionalPartyResponse.of(party,candidateNumber);
     }
 
     public Party getPartyByBillId(String billId) {
         return partyRepository.findPartyByBillId(billId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 
     }
 

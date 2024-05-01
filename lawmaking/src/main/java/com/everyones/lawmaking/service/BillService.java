@@ -3,8 +3,9 @@ package com.everyones.lawmaking.service;
 import com.everyones.lawmaking.common.dto.*;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Bill;
-import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.error.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.global.error.ErrorCode;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class BillService {
 
     public Bill findById(String billId) {
         return billRepository.findById(billId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     public BillListResponse getBillsByDefault(Pageable pageable) {
@@ -42,7 +43,7 @@ public class BillService {
 
     public BillDto getBillWithDetail(String billId) {
         var bill = billRepository.findBillInfoById(billId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
 
         var billDetailResponse = getBillDetailInfoFrom(bill);
         var similarBills = billRepository.findSimilarBills(bill.getBillName())
@@ -58,7 +59,7 @@ public class BillService {
     @Transactional
     public BillViewCountResponse updateViewCount(String billId) {
         var bill = billRepository.findById(billId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INVALID_QUERY_PARAMETER));
+                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_QUERY_PARAMETER));
         bill.setViewCount(bill.getViewCount()+1);
         var updatedBill = billRepository.save(bill);
         return BillViewCountResponse.from(updatedBill);

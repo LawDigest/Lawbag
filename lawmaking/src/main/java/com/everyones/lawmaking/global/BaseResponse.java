@@ -14,7 +14,7 @@ import org.springframework.http.HttpStatus;
 public class BaseResponse<T> {
 
     @Schema(description = "성공 여부")
-    private HttpStatus status;
+    private Boolean status;
     @Schema(description = "응답 코드 (HTTP 코드와 동일)", defaultValue = "200")
     private int code;
     @Schema(description = "응답 메시지 (오류시 오류메시지 전달용)", defaultValue = "정상적으로 처리되었습니다.")
@@ -25,7 +25,7 @@ public class BaseResponse<T> {
     public static <T> BaseResponse<T> ok(T data) {
         return BaseResponse.<T>builder()
                 .code(ResponseCode.OK.getCode())
-                .status(ResponseCode.OK.getStatus())
+                .status(true)
                 .message(ResponseCode.OK.getMessage())
                 .data(data)
                 .build();
@@ -35,7 +35,7 @@ public class BaseResponse<T> {
     public static <T> BaseResponse ok(T data, String message) {
         return BaseResponse.builder()
                 .code(ResponseCode.OK.getCode())
-                .status(ResponseCode.OK.getStatus())
+                .status(true)
                 .message(message)
                 .data(data)
                 .build();

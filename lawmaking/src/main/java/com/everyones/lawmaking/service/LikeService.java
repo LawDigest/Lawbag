@@ -4,8 +4,9 @@ import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
 import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
 import com.everyones.lawmaking.domain.entity.*;
-import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.error.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.global.error.ErrorCode;
 import com.everyones.lawmaking.repository.BillLikeRepository;
 import com.everyones.lawmaking.repository.CongressmanLikeRepository;
 import com.everyones.lawmaking.repository.PartyFollowRepository;
@@ -129,7 +130,7 @@ public class LikeService {
 
     private void isEqual(boolean dbValue, boolean parameterValue) {
         if (dbValue == parameterValue) {
-            throw new CustomException(ResponseCode.BAD_UPDATE_PARAMETER);
+            throw new CustomException(ErrorCode.BAD_UPDATE_PARAMETER);
         }
     }
 

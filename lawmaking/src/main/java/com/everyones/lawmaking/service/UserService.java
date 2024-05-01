@@ -2,8 +2,9 @@ package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.UserMyPageInfoResponse;
 import com.everyones.lawmaking.domain.entity.User;
-import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.error.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.global.error.ErrorCode;
 import com.everyones.lawmaking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class UserService {
 
     public User findById(long userId) {
         return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     public UserMyPageInfoResponse getUserMyPageInfo(long userId) {
