@@ -25,7 +25,7 @@ public class BaseResponse<T> {
     public static <T> BaseResponse<T> ok(T data) {
         return BaseResponse.<T>builder()
                 .code(ResponseCode.OK.getCode())
-                .status(ResponseCode.OK.getStatus())
+                .status(HttpStatus.OK)
                 .message(ResponseCode.OK.getMessage())
                 .data(data)
                 .build();
@@ -35,7 +35,7 @@ public class BaseResponse<T> {
     public static <T> BaseResponse ok(T data, String message) {
         return BaseResponse.builder()
                 .code(ResponseCode.OK.getCode())
-                .status(ResponseCode.OK.getStatus())
+                .status(HttpStatus.OK)
                 .message(message)
                 .data(data)
                 .build();

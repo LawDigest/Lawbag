@@ -2,10 +2,10 @@ package com.everyones.lawmaking.global.util;
 
 import com.everyones.lawmaking.domain.entity.Provider;
 import com.everyones.lawmaking.domain.entity.User;
-import com.everyones.lawmaking.global.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.global.auth.PrincipalDetails;
 import com.everyones.lawmaking.global.config.AppProperties;
+import com.everyones.lawmaking.global.error.AuthException;
+import com.everyones.lawmaking.global.error.UserException;
 import com.everyones.lawmaking.global.jwt.AuthToken;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
 import com.everyones.lawmaking.repository.UserRepository;
@@ -96,7 +96,7 @@ public class TokenUtil {
         );
 
         var savedUser = issueTokenArgsDto.userRepository.findUserBySocialIdAndProvider(userSocialId, userProvider)
-                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new UserException.UserNotFoundException(Map.of("userProvider", userProvider.toString())));
 
         savedUser.setRefreshToken(refreshToken.getToken());
         issueTokenArgsDto.userRepository.save(savedUser);
@@ -112,13 +112,11 @@ public class TokenUtil {
 
         AuthToken refreshToken = reissueTokenArgsDto.tokenProvider.convertAuthToken(reissueTokenArgsDto.refreshTokenFromCookie);
 
-        try {
-            if (!refreshToken.validate()) {
-                throw new CustomException(ResponseCode.BAD_REQUEST);
-            }
-        } catch (Exception e) {
-            throw new CustomException(ResponseCode.BAD_REQUEST);
+
+        if (!refreshToken.validate()) {
+            throw new AuthException.TokenNotValid();
         }
+
 
         // 엑세스토큰과 리프레시토큰의 socialId 비교
         AuthToken token = reissueTokenArgsDto.tokenProvider.convertAuthToken(reissueTokenArgsDto.accessToken);
@@ -129,16 +127,16 @@ public class TokenUtil {
         String providerFromRT = ((String) refreshToken.getTokenClaims().get("provider"));
 
         if (!socialIdFromAT.equals(socialIdFromRT)) {
-            throw new CustomException(ResponseCode.BAD_REQUEST);
+            throw new AuthException.SocialIdNotEqual();
         }
 
         User savedUser = reissueTokenArgsDto.userRepository.findBySocialIdAndProvider(socialIdFromRT, Enum.valueOf(Provider.class, providerFromRT))
-                .orElseThrow(() -> new CustomException(ResponseCode.BAD_REQUEST));
+                .orElseThrow(UserException.UserNotFoundException::new);
 
         String rTFromUser = savedUser.getRefreshToken();
 
         if (!rTFromUser.equals(reissueTokenArgsDto.refreshTokenFromCookie)) {
-            throw new CustomException(ResponseCode.BAD_REQUEST);
+            throw new AuthException.TokenNotValid();
         }
 
         Map<String, AuthToken> authTokenMap = new HashMap<>();

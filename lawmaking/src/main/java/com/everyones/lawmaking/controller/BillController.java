@@ -51,7 +51,7 @@ public class BillController {
             int size
             ) {
         var pageable = PageRequest.of(page, size);
-        var result = facade.getBillsFromMainFeed(pageable);
+        var result = facade.findByPage(pageable);
         return BaseResponse.ok(result);
 
     }
@@ -81,7 +81,7 @@ public class BillController {
             @RequestParam(name = "stage") String stage
             ) {
         var pageable = PageRequest.of(page, size);
-        var result = facade.getBillsByStage(pageable, stage);
+        var result = facade.findByPage(pageable, stage);
         return BaseResponse.ok(result);
 
     }

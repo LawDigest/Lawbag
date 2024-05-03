@@ -35,14 +35,14 @@ public class Facade {
     private final DistrictService districtService;
     private final CandidateService candidateService;
 
-    public BillListResponse getBillsFromMainFeed(Pageable pageable) {
-        var billListResponse = billService.getBillsByDefault(pageable);
+    public BillListResponse findByPage(Pageable pageable) {
+        var billListResponse = billService.findByPage(pageable);
         return setBillListResponseBookMark(billListResponse);
     }
 
     // 법안의 처리 단계에 따라 법안 페이징해서 법안 반환
-    public BillListResponse getBillsByStage(Pageable pageable, String stage) {
-        var billListResponse = billService.getBillsByStage(pageable, stage);
+    public BillListResponse findByPage(Pageable pageable, String stage) {
+        var billListResponse = billService.findByPage(pageable, stage);
         return setBillListResponseBookMark(billListResponse);
     }
 

@@ -14,9 +14,8 @@ public class PaginationResponse {
     private boolean isLastPage;
     private int pageNumber;
 
-
-    public static <T> PaginationResponse fromSlice(Slice<T> sliceObject) {
-        return PaginationResponse.<T>builder()
+    public static <T> PaginationResponse from(Slice<T> sliceObject) {
+        return PaginationResponse.builder()
                 .isLastPage(!sliceObject.hasNext())
                 .pageNumber(sliceObject.getNumber())
                 .build();

@@ -4,8 +4,10 @@ import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.Notification;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.facade.Facade;
-import com.everyones.lawmaking.global.CustomException;
+import com.everyones.lawmaking.global.error.CommonException;
+import com.everyones.lawmaking.global.error.CustomException;
 import com.everyones.lawmaking.global.ResponseCode;
+import com.everyones.lawmaking.global.error.ErrorCode;
 import com.everyones.lawmaking.repository.NotificationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -44,7 +46,7 @@ public class NotificationCreator {
                                                 .build());
                                     });
                         } catch (JsonProcessingException e) {
-                            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+                            throw new CommonException.JsonParsingException();
                         }
                     });
                 });

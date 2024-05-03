@@ -1,10 +1,9 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
-import com.everyones.lawmaking.global.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.global.config.AppProperties;
 import com.everyones.lawmaking.global.config.RestTemplateConfig;
+import com.everyones.lawmaking.global.error.AuthException;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
 import com.everyones.lawmaking.global.util.HeaderUtil;
 import com.everyones.lawmaking.global.util.TokenUtil;
@@ -26,6 +25,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 
+import java.util.Map;
+
 
 @RequiredArgsConstructor
 @Service
@@ -43,7 +44,7 @@ public class AuthService {
     @Transactional
     public WithdrawResponse withdraw(String userId, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         var authInfoSaved = authInfoRepository.findAuthInfoByUserId(userId)
-                .orElseThrow(() -> new CustomException(ResponseCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new AuthException.AuthInfoNotFound(Map.of("userId", userId)));
 
 
 
@@ -63,7 +64,7 @@ public class AuthService {
 
         } catch (RestClientException e) {
             log.error("카카오 계정 연결 해제 중 오류가 발생하였습니다.", e);
-            throw new CustomException(ResponseCode.INTERNAL_SERVER_ERROR);
+            throw new AuthException.ThirdPartyError();
         }
 
         // userId기반으로 authInfo 가져와서 일괄 삭제
@@ -102,7 +103,7 @@ public class AuthService {
 
         String refreshTokenCookie = null;
         if (cookies == null) {
-            throw new CustomException(ResponseCode.BAD_REQUEST);
+            throw new AuthException.CookieNotFound();
         }
         for (Cookie cookie : cookies) {
             if ("refreshToken".equals(cookie.getName())) {
@@ -112,7 +113,7 @@ public class AuthService {
         }
 
         if (refreshTokenCookie == null) {
-            throw new CustomException(ResponseCode.BAD_REQUEST);
+            throw new AuthException.CookieNotFound();
         }
 
         String accessTokenFromHeader = HeaderUtil.getAccessToken(httpServletRequest);
