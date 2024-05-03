@@ -4,9 +4,7 @@ import com.everyones.lawmaking.common.dto.ProportionalPartyImageListDto;
 import com.everyones.lawmaking.common.dto.SearchPartyDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Party;
-import com.everyones.lawmaking.global.error.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
-import com.everyones.lawmaking.global.error.ErrorCode;
+import com.everyones.lawmaking.global.error.BillException;
 import com.everyones.lawmaking.global.error.PartyException;
 import com.everyones.lawmaking.repository.PartyRepository;
 import com.everyones.lawmaking.repository.ProportionalCandidateRepository;
@@ -26,14 +24,16 @@ public class PartyService {
     private final PartyRepository partyRepository;
     private final ProportionalCandidateRepository proportionalCandidateRepository;
 
+    private static final String PARTY_ID_KEY_STRING = "partyId";
+
     public Party findById(long partyId) {
         return partyRepository.findById(partyId)
-                .orElseThrow(() -> new PartyException.PartyNotFound(Map.of("partyId", Long.toString(partyId))));
+                .orElseThrow(() -> new PartyException.PartyNotFound(Map.of(PARTY_ID_KEY_STRING, Long.toString(partyId))));
     }
 
     public PartyDetailResponse getPartyById(long partyId) {
         var party = partyRepository.findPartyDetailById(partyId)
-                .orElseThrow(() -> new PartyException.PartyNotFound(Map.of("partyId", Long.toString(partyId))));
+                .orElseThrow(() -> new PartyException.PartyNotFound(Map.of(PARTY_ID_KEY_STRING, Long.toString(partyId))));
         return PartyDetailResponse.from(party);
     }
 
@@ -62,7 +62,7 @@ public class PartyService {
 
     public ProportionalPartyImageListResponse getProportionalPartyImageList(Pageable pageable) {
         var proportionalPartyList = partyRepository.findProportionalParty(pageable);
-        var pagination = PaginationResponse.fromSlice(proportionalPartyList);
+        var pagination = PaginationResponse.from(proportionalPartyList);
         var proportionalPartyLogoResponse = proportionalPartyList.stream().map((ProportionalPartyImageListDto::from)).toList();
 
         return ProportionalPartyImageListResponse.of(proportionalPartyLogoResponse,pagination);
@@ -71,14 +71,14 @@ public class PartyService {
     @Transactional
     public ProportionalPartyResponse getPartyInfoWithProportionalPage(long partyId) {
         var party = partyRepository.findPartyDetailById(partyId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new PartyException.PartyNotFound(Map.of(PARTY_ID_KEY_STRING, Long.toString(partyId))));
         var candidateNumber = proportionalCandidateRepository.countByPartyId(partyId);
         return ProportionalPartyResponse.of(party,candidateNumber);
     }
 
     public Party getPartyByBillId(String billId) {
         return partyRepository.findPartyByBillId(billId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new BillException.BillNotFound(Map.of("billId", billId)));
 
     }
 

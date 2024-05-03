@@ -19,12 +19,12 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     @Query("SELECT b FROM Bill b " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
-    Slice<Bill> findDefaultBillsByPage(Pageable pageable);
+    Slice<Bill> findByPage(Pageable pageable);
 
     @Query("SELECT b FROM Bill b " +
            "WHERE b.stage = :stage " +
             "ORDER BY b.proposeDate DESC, b.id DESC ")
-    Slice<Bill> findDefaultBillsByStage(Pageable pageable, @Param("stage") String stage);
+    Slice<Bill> findByPage(Pageable pageable, @Param("stage") String stage);
 
 
     @Query("SELECT b FROM Bill b " +

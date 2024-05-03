@@ -18,7 +18,7 @@ public class PartyPromiseService {
 
     public PartyPromiseResponse getPartyPromise(long partyId, Pageable pageable) {
         var partyPromiseList = partyPromiseRepository.findPartyPromiseByPartyId(partyId,pageable);
-        var pagination = PaginationResponse.fromSlice(partyPromiseList);
+        var pagination = PaginationResponse.from(partyPromiseList);
         var partyPromiseResponse = partyPromiseList.stream().map((PartyPromiseDto::from)).toList();
 
         return PartyPromiseResponse.of(partyPromiseResponse,pagination);

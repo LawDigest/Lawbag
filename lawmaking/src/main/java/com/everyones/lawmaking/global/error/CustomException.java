@@ -26,7 +26,7 @@ public class CustomException extends RuntimeException {
 
     // CustomException을 protected로 생성한 이유는 직접적으로 CustomException을 생성하는 것을 방지하기 위함.
     // CustomeException을 상속 받은 다른 에러계층에서 생성할 수 있게 하기 위함.
-    public CustomException(final ErrorCode errorCode) {
+    protected CustomException(final ErrorCode errorCode) {
         this(errorCode, Collections.emptyMap());
     }
 
@@ -35,14 +35,6 @@ public class CustomException extends RuntimeException {
         this.message = errorCode.getMessage();
         this.inputValuesByProperty = inputValuesByProperty;
     }
-
-//    public static CustomException of(final ErrorCode errorCode, final Map<String, String> inputValuesByProperty) {
-//        return new CustomException(errorCode, inputValuesByProperty);
-//    }
-//
-//    public static CustomException from(final ErrorCode errorCode) {
-//        return new CustomException(errorCode);
-//    }
 
     public String getErrorInfoLog() {
         final String codeMessage = String.format(ErrorConstant.CODE_MESSAGE, code, message);

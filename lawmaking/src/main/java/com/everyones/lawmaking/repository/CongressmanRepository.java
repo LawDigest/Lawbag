@@ -31,6 +31,6 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
     @Query("SELECT c FROM Congressman c " +
             "JOIN c.party p WHERE p.id = :partyId " +
             "ORDER BY c.name ")
-    Slice<Congressman> findCongressmanById(@Param("partyId") long partyId, Pageable pageable);
+    Slice<Congressman> findByPage(@Param("partyId") long partyId, Pageable pageable);
 
 }

@@ -3,14 +3,15 @@ package com.everyones.lawmaking.global.util;
 import com.everyones.lawmaking.common.dto.response.NotificationResponse;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.Notification;
+import com.everyones.lawmaking.global.error.CommonException;
 import com.everyones.lawmaking.global.error.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
 import com.everyones.lawmaking.global.error.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
+import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -30,10 +31,14 @@ public class NotificationConverter {
             return mapper.readValue(data, new TypeReference<List<String>>() {
             });
         } catch (JsonProcessingException e) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new CommonException.JsonParsingException();
         }
     }
 
+    /* TODO: 객체 기능좀 나누는게 좋지 않을까 싶습니다.
+    응답 객체를 만드는 기능의 static 메소드인데 너무 뚱뚱함. 다이어트 필요해보임.
+    그리고 해당 Response 객체 생성 자체도 NotificationResponse객체에서 하게 하는게 맞는 것 같아 보임.
+    */
     public static NotificationResponse from(Notification notification) {
         ColumnEventType columnEventType = notification.getNotificationName();
         List<String> data = parseData(notification.getContentJson());
@@ -66,7 +71,7 @@ public class NotificationConverter {
         LocalDateTime createdDate = notification.getCreatedDate();
 
         if (type == null || target == null || title == null || content == null || createdDate.isAfter(LocalDateTime.now())) {
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new CommonException.JsonParsingException();
         }
 
 

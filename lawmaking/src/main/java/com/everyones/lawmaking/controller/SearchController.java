@@ -3,9 +3,8 @@ package com.everyones.lawmaking.controller;
 import com.everyones.lawmaking.common.dto.response.SearchDataResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
-import com.everyones.lawmaking.global.error.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
-import com.everyones.lawmaking.global.error.ErrorCode;
+import com.everyones.lawmaking.global.error.BillException;
+import com.everyones.lawmaking.global.error.CongressmanException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
@@ -54,7 +55,7 @@ public class SearchController {
             @RequestParam("page") int page) {
 
         if(searchWord == null || searchWord.trim().isEmpty()) {
-            throw new CustomException(ErrorCode.BAD_REQUEST);
+            throw new CongressmanException.SearchParameterInvalid(Map.of("searchWord", searchWord));
         }
 
         var result = facade.searchCongressmanAndParty(searchWord, page);
@@ -83,7 +84,7 @@ public class SearchController {
             @Parameter(example = "0", description = "검색 결과 페이징을 위한 페이지 넘버")
             @RequestParam("page") int page) {
         if (searchWord.trim().length()<2){
-            throw new CustomException(ErrorCode.INTERNAL_SERVER_ERROR);
+            throw new BillException.SearchParameterInvalid(Map.of("searchWord", searchWord));
         }
         var result = facade.searchBill(searchWord,page);
         return BaseResponse.ok(result);

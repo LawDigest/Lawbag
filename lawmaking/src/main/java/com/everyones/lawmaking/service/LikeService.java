@@ -4,9 +4,7 @@ import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
 import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
 import com.everyones.lawmaking.domain.entity.*;
-import com.everyones.lawmaking.global.error.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
-import com.everyones.lawmaking.global.error.ErrorCode;
+import com.everyones.lawmaking.global.error.LikeException;
 import com.everyones.lawmaking.repository.BillLikeRepository;
 import com.everyones.lawmaking.repository.CongressmanLikeRepository;
 import com.everyones.lawmaking.repository.PartyFollowRepository;
@@ -14,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -23,6 +23,8 @@ public class LikeService {
     private final BillLikeRepository billLikeRepository;
     private final CongressmanLikeRepository congressmanLikeRepository;
     private final PartyFollowRepository partyFollowRepository;
+
+    private static final String UPDATE_PARAMETER = "updateParameter";
 
     public Boolean getCongressmanLike(String congressmanId, long userId) {
         var congressmanLike = congressmanLikeRepository.findByUserIdAndCongressmanId(userId, congressmanId);
@@ -130,7 +132,7 @@ public class LikeService {
 
     private void isEqual(boolean dbValue, boolean parameterValue) {
         if (dbValue == parameterValue) {
-            throw new CustomException(ErrorCode.BAD_UPDATE_PARAMETER);
+            throw new LikeException.UpdateParameterException(Map.of(UPDATE_PARAMETER ,Boolean.toString(parameterValue)));
         }
     }
 

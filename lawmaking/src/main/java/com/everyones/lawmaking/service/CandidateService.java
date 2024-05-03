@@ -19,7 +19,7 @@ public class CandidateService {
     private final CandidateRepository candidateRepository;
     public SearchDataResponse searchCandidate(String searchWord, Pageable pageable) {
         var candidateSlice = candidateRepository.findCandidateByKeyword(pageable,searchWord);
-        var paginationResponse = PaginationResponse.fromSlice(candidateSlice);
+        var paginationResponse = PaginationResponse.from(candidateSlice);
         var candidateList = candidateSlice.stream().map(SearchCandidateDto::from).toList();
 
         return SearchDataResponse.builder()

@@ -2,11 +2,32 @@ package com.everyones.lawmaking.global.error;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.springframework.http.HttpStatus;
 
 @AllArgsConstructor
 @Getter
 public enum ErrorCode {
+
+
+
+    COOKIE_NOT_FOUND(404, "쿠키를 찾을 수 없습니다."),
+
+    THRID_PARTY_ERROR(500, "써드 파티 인증 이용 중 오류가 발생하였습니다."),
+
+    AUTH_INFO_NOT_FOUND(404, "인증 정보를 찾을 수 없습니다."),
+
+    SOCIAL_ID_NOT_EQUAL(400, "소셜 아이디가 일치하지 않습니다."),
+
+    TOKEN_NOT_VALID(400, "토큰이 유효하지 않습니다."),
+
+    SEARCH_PARAMETER_INVALID(400, "검색 단어가 조건에 부합하지 않습니다."),
+
+    USER_NOT_FOUND(404, "해당 유저를 찾을 수 없습니다."),
+
+    CANDIDATE_NOT_FOUND(404, "해당 후보자를 찾을 수 없습니다."),
+
+    CONGRESSMAN_NOT_FOUND(404, "해당 의원을 찾을 수 없습니다."),
+
+    BILL_NOT_FOUND(404, "해당 법안을 찾을 수 없습니다."),
 
     PARTY_NOT_FOUND(404, "해당 파티를 찾을 수 없습니다."),
 
@@ -14,6 +35,8 @@ public enum ErrorCode {
     BAD_UPDATE_PARAMETER(400, "업데이트 하려는 파라미터와 DB 내부 값이 일치합니다."),
 
     BAD_REQUEST(400, "잘못된 요청입니다."),
+
+    JSON_PARSING_ERROR(500, "데이터 파싱 오류"),
 
     INTERNAL_SERVER_ERROR(500, "서버 내부 오류입니다."),
 

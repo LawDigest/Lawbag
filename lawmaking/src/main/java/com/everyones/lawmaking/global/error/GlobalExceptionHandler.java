@@ -12,22 +12,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
+    // 400 BAD_REQUEST 에러
+    @ExceptionHandler({LikeException.UpdateParameterException.class})
+    protected ResponseEntity<ErrorResponse> handleGlobalBadRequestException(final CustomException e) {
+        log.error(e.getErrorInfoLog());
+        return ResponseEntity.badRequest()
+                .body(ErrorResponse.from(e));
+    }
+
     // 404 NotFound 에러
     @ExceptionHandler({PartyException.PartyNotFound.class})
     protected ResponseEntity<ErrorResponse> handleGlobalNotFoundException(final CustomException e) {
+
         log.error(e.getErrorInfoLog());
         return new ResponseEntity<>(ErrorResponse.from(e), HttpStatus.NOT_FOUND);
-    }
-
-
-
-    //custom error
-    @ExceptionHandler({CustomException.class})
-    protected ResponseEntity<ErrorResponse> handleCustomException(final CustomException e) {
-        log.error(e.getErrorInfoLog());
-        return ResponseEntity
-                .status(e.getCode())
-                .body(ErrorResponse.from(ErrorCode.INTERNAL_SERVER_ERROR));
     }
 
     //500 error
@@ -37,7 +35,4 @@ public class GlobalExceptionHandler {
         return ResponseEntity.internalServerError()
                 .body(ErrorResponse.from(ErrorCode.INTERNAL_SERVER_ERROR));
     }
-
-
-
 }

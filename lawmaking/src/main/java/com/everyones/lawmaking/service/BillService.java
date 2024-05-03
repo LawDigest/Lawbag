@@ -3,9 +3,7 @@ package com.everyones.lawmaking.service;
 import com.everyones.lawmaking.common.dto.*;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Bill;
-import com.everyones.lawmaking.global.error.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
-import com.everyones.lawmaking.global.error.ErrorCode;
+import com.everyones.lawmaking.global.error.BillException;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @RequiredArgsConstructor
 @Service
@@ -24,26 +23,29 @@ import java.util.List;
 public class BillService {
     private final BillRepository billRepository;
 
+    private static final String BILL_ID_KEY_STRING = "billId";
+
     public Bill findById(String billId) {
         return billRepository.findById(billId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new BillException.BillNotFound(Map.of(BILL_ID_KEY_STRING, billId)));
     }
 
-    public BillListResponse getBillsByDefault(Pageable pageable) {
-        // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
-        var billSlice = billRepository.findDefaultBillsByPage(pageable);
+    // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
+    public BillListResponse findByPage(Pageable pageable) {
+        var billSlice = billRepository.findByPage(pageable);
         return getBillListResponse(billSlice);
 
     }
 
-    public BillListResponse getBillsByStage(Pageable pageable, String stage) {
-        var billSlice = billRepository.findDefaultBillsByStage(pageable, stage);
+    // 단계 추가
+    public BillListResponse findByPage(Pageable pageable, String stage) {
+        var billSlice = billRepository.findByPage(pageable, stage);
         return getBillListResponse(billSlice);
     }
 
     public BillDto getBillWithDetail(String billId) {
         var bill = billRepository.findBillInfoById(billId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INTERNAL_SERVER_ERROR));
+                .orElseThrow(() -> new BillException.BillNotFound(Map.of(BILL_ID_KEY_STRING, billId)));
 
         var billDetailResponse = getBillDetailInfoFrom(bill);
         var similarBills = billRepository.findSimilarBills(bill.getBillName())
@@ -59,7 +61,7 @@ public class BillService {
     @Transactional
     public BillViewCountResponse updateViewCount(String billId) {
         var bill = billRepository.findById(billId)
-                .orElseThrow(() -> new CustomException(ErrorCode.INVALID_QUERY_PARAMETER));
+                .orElseThrow(() -> new BillException.BillNotFound(Map.of(BILL_ID_KEY_STRING, billId)));
         bill.setViewCount(bill.getViewCount()+1);
         var updatedBill = billRepository.save(bill);
         return BillViewCountResponse.from(updatedBill);
@@ -91,7 +93,7 @@ public class BillService {
 
     private BillListResponse getBillListResponse(Slice<Bill> billSlice) {
 
-        var pagination = PaginationResponse.fromSlice(billSlice);
+        var pagination = PaginationResponse.from(billSlice);
 
         var billIdList = billSlice
                 .stream()
@@ -170,7 +172,7 @@ public class BillService {
     public SearchDataResponse searchBill(String searchWord,Pageable pageable) {
         var billSlice = billRepository.findBillByKeyword(pageable,searchWord);
 
-        var pagination = PaginationResponse.fromSlice(billSlice);
+        var pagination = PaginationResponse.from(billSlice);
 
 
         var billIdList = billSlice.toList();
@@ -180,8 +182,6 @@ public class BillService {
         var searchResponse = billList.stream()
                 .map(SearchBillDto::from)
                 .toList();
-
-
 
         return SearchDataResponse.builder()
                 .searchResponse(searchResponse)
