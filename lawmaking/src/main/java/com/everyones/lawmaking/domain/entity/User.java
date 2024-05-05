@@ -41,9 +41,8 @@ public class User extends BaseEntity {
     private String name;
 
     @NotNull
+    @Column(name="image_url")
     private String imageUrl;
-
-    private String refreshToken;
 
     @Enumerated(EnumType.STRING)
     @NotNull
