@@ -28,31 +28,28 @@ public class AuthToken {
 
 
 
-    AuthToken(String id,String role,Long userId, Date expiry, Key key) {
+    AuthToken(Long userId,String role, Date expiry, Key key) {
         this.key = key;
-        this.token = createAccessToken(id,role,userId, expiry);
+        this.token = createAccessToken(userId,role, expiry);
     }
 
-    AuthToken(String id,String provider, Date expiry, Key key) {
+    AuthToken(Date expiry, Key key) {
         this.key = key;
-        this.token = createRefreshToken(id,provider, expiry);
+        this.token = createRefreshToken(expiry);
     }
     // access Token 발급
-    private String createAccessToken(String id,String role,Long userId, Date expiry) {
+    private String createAccessToken(Long userId,String role, Date expiry) {
         return Jwts.builder()
-                .setSubject(id)
+                .setSubject(userId.toString())
                 .claim(AUTHENTICATION_KEY,role)
-                .claim(LOCAL_USER_ID,userId)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .compact();
     }
 
     // refresh Token 발급
-    private String createRefreshToken(String id,String provider, Date expiry) {
+    private String createRefreshToken(Date expiry) {
         return Jwts.builder()
-                .setSubject(id)
-                .claim(PROVIDER,provider)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .setExpiration(expiry)
                 .compact();
