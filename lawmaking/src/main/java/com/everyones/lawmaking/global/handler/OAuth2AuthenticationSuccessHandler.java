@@ -1,12 +1,9 @@
 package com.everyones.lawmaking.global.handler;
 
 import com.everyones.lawmaking.global.config.AppProperties;
-import com.everyones.lawmaking.global.jwt.AuthToken;
-import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
+import com.everyones.lawmaking.global.service.TokenService;
 import com.everyones.lawmaking.global.util.CookieUtil;
-import com.everyones.lawmaking.global.util.TokenUtil;
 import com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.everyones.lawmaking.repository.UserRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -31,9 +28,8 @@ import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBased
 @Component
 @RequiredArgsConstructor
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final UserRepository userRepository;
-    private final AuthTokenProvider tokenProvider;
     private final AppProperties appProperties;
+    private final TokenService tokenService;
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
 
     @Override
@@ -51,7 +47,6 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     protected String determineTargetUrl(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         Optional<String> redirectUri = CookieUtil.getCookie(request, REDIRECT_URI_PARAM_COOKIE_NAME)
                 .map(Cookie::getValue);
-
         if (redirectUri.isPresent() && !isAuthorizedRedirectUri(redirectUri.get())) {
             throw new IllegalArgumentException("비인가 Redirect URI를 받아 인증을 진행할 수 없습니다");
         }
@@ -61,26 +56,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         var minutes = 1000 * 60;
 
-//        var cookieForAccessToken = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
-        var cookieForRefreshToken = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
+        var refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
 
 
 
-        var issueTokenArgsDto = TokenUtil.IssueTokenArgsDto.builder()
-                .auth(appProperties.getAuth())
-                .userRepository(userRepository)
-                .authentication(authentication)
-                .tokenProvider(tokenProvider)
-                .build();
 
-        Map<String, AuthToken> userToken = TokenUtil.issueToken(issueTokenArgsDto);
+
+        Map<String, String> userToken = tokenService.issueToken(authentication);
 
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
-//        CookieUtil.deleteCookie(request, response, ACCESS_TOKEN);
-        CookieUtil.addCookie(response, REFRESH_TOKEN, userToken.get("refreshToken").getToken(), cookieForRefreshToken);
-//        CookieUtil.addCookie(response, ACCESS_TOKEN, userToken.get("accessToken").getToken(), cookieMaxAge);
+        CookieUtil.addCookie(response, REFRESH_TOKEN, userToken.get("refreshToken"), refreshTokenExpiry);
+        response.addHeader("Authorization", "Bearer " + userToken.get("accessToken"));
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", userToken.get("accessToken").getToken())
                 .build().toUriString();
     }
 

@@ -4,8 +4,8 @@ import com.everyones.lawmaking.global.filterException.CustomAuthenticationEntryP
 import com.everyones.lawmaking.global.handler.*;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
 import com.everyones.lawmaking.global.service.CustomOAuth2UserService;
+import com.everyones.lawmaking.global.service.TokenService;
 import com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.everyones.lawmaking.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -35,13 +36,14 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
     private final CustomOAuth2UserService oAuth2UserService;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
     private final CorsConfig corsConfig;
-    private final UserRepository userRepository;
+    private final TokenService tokenService;
 
 
     // 회원가입이랑 로그인 필요한 요청에 대해서만 시큐리티 필터를 타기
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+                .addFilterBefore(customLogoutFilter(), LogoutFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -72,7 +74,6 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
                 )
                 .logout((logOut) ->
                         logOut
-                        .logoutUrl("/v1/logout")
                         .logoutSuccessHandler(new CustomLogoutSuccessHandler())
 
                 );
@@ -84,7 +85,12 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
         return http.build();
     }
 
-
+    @Bean
+    public CustomLogoutFilter customLogoutFilter() {
+        return new CustomLogoutFilter(
+                tokenService
+        );
+    }
 
     /*
      * 토큰 필터 설정
@@ -116,9 +122,8 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer �
     @Bean
     public OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler() {
         return new OAuth2AuthenticationSuccessHandler(
-                userRepository,
-                tokenProvider,
                 appProperties,
+                tokenService,
                 oAuth2AuthorizationRequestBasedOnCookieRepository()
         );
     }

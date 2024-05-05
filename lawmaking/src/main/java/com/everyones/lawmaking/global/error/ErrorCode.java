@@ -19,6 +19,8 @@ public enum ErrorCode {
 
     TOKEN_NOT_VALID(400, "토큰이 유효하지 않습니다."),
 
+    TOKEN_NOT_FOUND(404, "토큰데이터를 찾을 수 없습니다."),
+
     SEARCH_PARAMETER_INVALID(400, "검색 단어가 조건에 부합하지 않습니다."),
 
     USER_NOT_FOUND(404, "해당 유저를 찾을 수 없습니다."),
