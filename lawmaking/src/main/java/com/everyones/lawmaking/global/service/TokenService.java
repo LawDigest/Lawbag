@@ -78,7 +78,6 @@ public class TokenService {
         var tokenData = Token.builder()
                 .user(savedUser)
                 .role(savedUser.getRole())
-                .accessToken(accessTokenForUse)
                 .refreshToken(refreshTokenForUse)
                 .build();
 
@@ -90,10 +89,10 @@ public class TokenService {
         return authTokenMap;
     }
 
-    public Map<String, String> reissueToken(String accessToken, String refreshTokenFromCookie ) {
+    public Map<String, String> reissueToken(String refreshTokenFromCookie ) {
 
-        // accessToken으로 token 행 가져오기
-        var savedToken = tokenRepository.findTokenByAccessToken(accessToken)
+        // 쿠키에서 가져온 refresh token으로 token 행 가져오기
+        var savedToken = tokenRepository.findTokenByRefreshToken(refreshTokenFromCookie)
                 .orElseThrow(AuthException.TokenNotFound::new);
 
         var refreshTokenForUse = savedToken.getRefreshToken();
@@ -137,7 +136,6 @@ public class TokenService {
         var tokenData = Token.builder()
                 .user(savedToken.getUser())
                 .role(savedToken.getUser().getRole())
-                .accessToken(newAccessToken.getToken())
                 .refreshToken(newRefreshToken.getToken())
                 .build();
 

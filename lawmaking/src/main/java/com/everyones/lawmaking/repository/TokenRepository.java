@@ -10,11 +10,6 @@ import java.util.Optional;
 public interface TokenRepository extends JpaRepository<Token, Long> {
 
 
-    @Query("select t " +
-            "from Token t " +
-            "inner join fetch t.user u " +
-            "where t.accessToken =:accessToken ")
-    Optional<Token> findTokenByAccessToken(@Param("accessToken") String accessToken);
 
     @Query("select t " +
             "from Token t " +
