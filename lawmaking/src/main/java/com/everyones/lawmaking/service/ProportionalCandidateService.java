@@ -5,8 +5,6 @@ import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.common.dto.response.ProportionalCandidateDetailResponse;
 import com.everyones.lawmaking.common.dto.response.ProportionalCandidateListResponse;
 import com.everyones.lawmaking.global.error.CandidateException;
-import com.everyones.lawmaking.global.error.CustomException;
-import com.everyones.lawmaking.global.error.ErrorCode;
 import com.everyones.lawmaking.repository.ProportionalCandidateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
-
-import static com.everyones.lawmaking.global.ResponseCode.INTERNAL_SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor

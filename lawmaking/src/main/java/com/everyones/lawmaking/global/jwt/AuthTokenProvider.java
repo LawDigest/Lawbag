@@ -39,12 +39,12 @@ public class AuthTokenProvider {
         this.key = Keys.hmacShaKeyFor(this.appProperties.getAuth().getTokenSecret().getBytes());
     }
 
-    public AuthToken createAuthToken(String id,String provider, Date expiry) {
-        return new AuthToken(id,provider, expiry, key);
+    public AuthToken createAuthToken(Date expiry) {
+        return new AuthToken(expiry, key);
     }
 
-    public AuthToken createAuthToken(String id, String role,Long userId, Date expiry) {
-        return new AuthToken(id, role,userId, expiry, key);
+    public AuthToken createAuthToken(Long userId,String role, Date expiry) {
+        return new AuthToken(userId,role, expiry, key);
     }
 
     public AuthToken convertAuthToken(String token) {
@@ -64,7 +64,7 @@ public class AuthTokenProvider {
                                 .collect(Collectors.toList());
                 // 비밀번호 사용되지 않음
 
-                UserDetails principal = new User(claims.get(LOCAL_USER_ID).toString(), "", authorities);
+                UserDetails principal = new User(claims.getSubject(), "", authorities);
                 return new UsernamePasswordAuthenticationToken(principal, authToken, authorities);
             }
             // 클레임에 권한이 null인 경우

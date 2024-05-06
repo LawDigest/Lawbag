@@ -4,11 +4,9 @@ import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
 import com.everyones.lawmaking.global.config.AppProperties;
 import com.everyones.lawmaking.global.config.RestTemplateConfig;
 import com.everyones.lawmaking.global.error.AuthException;
-import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
-import com.everyones.lawmaking.global.util.HeaderUtil;
-import com.everyones.lawmaking.global.util.TokenUtil;
+import com.everyones.lawmaking.global.service.TokenService;
+import com.everyones.lawmaking.global.util.CookieUtil;
 import com.everyones.lawmaking.repository.AuthInfoRepository;
-import com.everyones.lawmaking.repository.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,6 +25,8 @@ import org.springframework.web.client.RestClientException;
 
 import java.util.Map;
 
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.*;
+
 
 @RequiredArgsConstructor
 @Service
@@ -37,8 +37,7 @@ public class AuthService {
     private final AuthInfoRepository authInfoRepository;
     private final RestTemplateConfig restTemplateUtil;
     private final AppProperties appProperties;
-    private final AuthTokenProvider authTokenProvider;
-    private final UserRepository userRepository;
+    private final TokenService tokenService;
     private static final String TARGET_ID_TYPE = "user_id";
 
     @Transactional
@@ -72,14 +71,10 @@ public class AuthService {
 
 
         // 로그아웃
-        String[] cookieNames = {"refreshToken", "accessToken"};
-
-        for (String cookieName : cookieNames) {
-            Cookie cookie = new Cookie(cookieName, null);
-            cookie.setMaxAge(0);
-            cookie.setPath("/");
-            httpServletResponse.addCookie(cookie);
-        }
+        tokenService.invalidateToken();
+        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN);
+        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
+        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
 
         HttpSession session = httpServletRequest.getSession(false); // 기존 세션 가져오기
         if (session != null) {
@@ -116,30 +111,19 @@ public class AuthService {
             throw new AuthException.CookieNotFound();
         }
 
-        String accessTokenFromHeader = HeaderUtil.getAccessToken(httpServletRequest);
-
         //토큰 재발급
-        var reissueTokenArgsDto = TokenUtil.ReissueTokenArgsDto.builder()
-                .auth(appProperties.getAuth())
-                .tokenProvider(authTokenProvider)
-                .userRepository(userRepository)
-                .accessToken(accessTokenFromHeader)
-                .refreshTokenFromCookie(refreshTokenCookie)
-                .build();
-        var tokenMap = TokenUtil.reissueToken(reissueTokenArgsDto);
+        var tokenMap = tokenService.reissueToken(refreshTokenCookie);
 
         // 쿠키 설정
-        String[] cookieNames = {"refreshToken", "accessToken"};
+        var minutes = 1000 * 60;
+        var refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
+        var accessTokenExpiry = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
 
-        for (String cookieName : cookieNames) {
-            Cookie cookie = new Cookie(cookieName, tokenMap.get(cookieName).getToken());
-            cookie.setMaxAge(0);
-            cookie.setPath("/");
-            httpServletResponse.addCookie(cookie);
-        }
+        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN);
+        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
+        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
 
-//        return EmptyResponse.instance;
+        CookieUtil.addCookie(httpServletResponse, REFRESH_TOKEN, tokenMap.get("refreshToken"), refreshTokenExpiry);
+        CookieUtil.addCookieForClient(httpServletResponse, ACCESS_TOKEN, tokenMap.get("accessToken"), accessTokenExpiry);
     }
-
-
     }

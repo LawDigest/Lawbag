@@ -7,46 +7,33 @@ import lombok.experimental.SuperBuilder;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
-import java.util.List;
-
-
 @Entity
-@Data
+@Getter
 @SuperBuilder
 @Builder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @OnDelete(action = OnDeleteAction.CASCADE)
-public class User extends BaseEntity {
+public class Token extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="user_id")
+    @Column(name = "auth_info_id")
     private long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "auth_info_id")
-    private AuthInfo authInfo;
 
-    @OneToMany(mappedBy = "user")
-    private List<CongressManLike> congressManLike;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToMany(mappedBy = "user")
-    private List<PartyFollow> partyFollow;
-
-    @NotNull
-    private String email;
-
-    @NotNull
-    private String name;
-
-    @NotNull
-    @Column(name="image_url")
-    private String imageUrl;
 
     @Enumerated(EnumType.STRING)
     @NotNull
     private Role role;
+
+    @Column(name="refresh_token")
+    private String refreshToken;
+
 
 
 }

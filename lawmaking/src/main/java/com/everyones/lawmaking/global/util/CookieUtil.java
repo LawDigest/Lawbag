@@ -26,6 +26,16 @@ public class CookieUtil {
         var cookie = new Cookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setMaxAge(maxAge);
+
+        response.addCookie(cookie);
+    }
+
+    public static void addCookieForClient(HttpServletResponse response, String name, String value, int maxAge) {
+        var cookie = new Cookie(name, value);
+        cookie.setPath("/");
+        cookie.setSecure(true);
         cookie.setMaxAge(maxAge);
 
         response.addCookie(cookie);
@@ -39,15 +49,31 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-//                    var newCookie = new Cookie(name, null);
-//                    newCookie.setHttpOnly(true);
-//                    newCookie.setPath("/");
-//                    newCookie.setMaxAge(0);
-//                    response.addCookie(newCookie);
-                    cookie.setValue("");
-                    cookie.setPath("/");
-                    cookie.setMaxAge(0);
-                    response.addCookie(cookie);
+                    var newCookie = new Cookie(name, null);
+                    newCookie.setHttpOnly(true);
+                    newCookie.setValue("");
+                    newCookie.setPath("/");
+                    newCookie.setSecure(true);
+                    newCookie.setMaxAge(0);
+                    response.addCookie(newCookie);
+
+                }
+            }
+        }
+    }
+
+    public static void deleteCookieForClient(HttpServletRequest request, HttpServletResponse response, String name) {
+        Cookie[] cookies = request.getCookies();
+
+        if (cookies != null && cookies.length > 0) {
+            for (Cookie cookie : cookies) {
+                if (name.equals(cookie.getName())) {
+                    var newCookie = new Cookie(name, null);
+                    newCookie.setValue("");
+                    newCookie.setPath("/");
+                    newCookie.setSecure(true);
+                    newCookie.setMaxAge(0);
+                    response.addCookie(newCookie);
 
                 }
             }

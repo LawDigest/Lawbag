@@ -1,7 +1,5 @@
 package com.everyones.lawmaking.global.error;
 
-import com.everyones.lawmaking.global.config.AppProperties;
-
 import java.util.Map;
 
 public class AuthException extends CustomException {
@@ -52,13 +50,14 @@ public class AuthException extends CustomException {
         }
     }
 
-    public static class SocialIdNotEqual extends AuthException {
-        public SocialIdNotEqual() {
-            super(ErrorCode.SOCIAL_ID_NOT_EQUAL);
+
+    public static class TokenNotFound extends AuthException {
+        public TokenNotFound() {
+            super(ErrorCode.TOKEN_NOT_FOUND);
         }
 
-        public SocialIdNotEqual(Map<String, String> inputValueProperties) {
-            super(ErrorCode.SOCIAL_ID_NOT_EQUAL, inputValueProperties);
+        public TokenNotFound(Map<String, String> inputValueProperties) {
+            super(ErrorCode.TOKEN_NOT_FOUND, inputValueProperties);
         }
     }
 }
