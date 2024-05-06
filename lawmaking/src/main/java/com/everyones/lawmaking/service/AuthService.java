@@ -6,7 +6,6 @@ import com.everyones.lawmaking.global.config.RestTemplateConfig;
 import com.everyones.lawmaking.global.error.AuthException;
 import com.everyones.lawmaking.global.service.TokenService;
 import com.everyones.lawmaking.global.util.CookieUtil;
-import com.everyones.lawmaking.global.util.HeaderUtil;
 import com.everyones.lawmaking.repository.AuthInfoRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,8 +25,7 @@ import org.springframework.web.client.RestClientException;
 
 import java.util.Map;
 
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.JSESSIONID;
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.*;
 
 
 @RequiredArgsConstructor
@@ -74,6 +72,7 @@ public class AuthService {
 
         // 로그아웃
         tokenService.invalidateToken();
+        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
 
@@ -112,18 +111,19 @@ public class AuthService {
             throw new AuthException.CookieNotFound();
         }
 
-        String accessTokenFromHeader = HeaderUtil.getAccessToken(httpServletRequest);
-
         //토큰 재발급
-        var tokenMap = tokenService.reissueToken(accessTokenFromHeader, refreshTokenCookie);
+        var tokenMap = tokenService.reissueToken(refreshTokenCookie);
 
         // 쿠키 설정
         var minutes = 1000 * 60;
         var refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
+        var accessTokenExpiry = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
 
+        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
-        CookieUtil.addCookie(httpServletResponse, REFRESH_TOKEN, tokenMap.get("refreshToken"), refreshTokenExpiry);
-        httpServletResponse.addHeader("Authorization", "Bearer " + tokenMap.get("accessToken"));
+        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
 
+        CookieUtil.addCookie(httpServletResponse, REFRESH_TOKEN, tokenMap.get("refreshToken"), refreshTokenExpiry);
+        CookieUtil.addCookieForClient(httpServletResponse, ACCESS_TOKEN, tokenMap.get("accessToken"), accessTokenExpiry);
     }
     }

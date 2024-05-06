@@ -21,8 +21,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.*;
 
 @Slf4j
 @Component
@@ -57,6 +56,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         var minutes = 1000 * 60;
 
         var refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
+        var accessTokenExpiry = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
 
 
 
@@ -65,9 +65,11 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         Map<String, String> userToken = tokenService.issueToken(authentication);
 
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
+        CookieUtil.deleteCookieForClient(request,response,ACCESS_TOKEN);
         CookieUtil.addCookie(response, REFRESH_TOKEN, userToken.get("refreshToken"), refreshTokenExpiry);
+        CookieUtil.addCookieForClient(response, ACCESS_TOKEN, userToken.get("accessToken"), accessTokenExpiry);
+
         return UriComponentsBuilder.fromUriString(targetUrl)
-                .queryParam("token", userToken.get("accessToken"))
                 .build().toUriString();
     }
 
