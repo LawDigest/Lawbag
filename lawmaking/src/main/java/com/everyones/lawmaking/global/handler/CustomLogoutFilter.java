@@ -14,8 +14,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.JSESSIONID;
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.*;
 
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends OncePerRequestFilter {
@@ -48,6 +47,7 @@ public class CustomLogoutFilter extends OncePerRequestFilter {
         tokenService.invalidateToken();
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.deleteCookie(request, response, JSESSIONID);
+        CookieUtil.deleteCookieForClient(request,response,ACCESS_TOKEN);
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(null);
         SecurityContextHolder.clearContext();
