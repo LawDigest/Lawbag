@@ -85,13 +85,12 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private boolean isAuthorizedRedirectUri(String uri) {
         var checkUri = URI.create(uri);
 
-        var clientUri = appProperties.getAuth().getClientRedirectUri();
+        var clientUri = appProperties.getOauth2().getClientRedirectUri();
 
 
-        return Stream.concat(appProperties.getOauth2().getAuthorizedRedirectUris()
-                .stream(), Stream.of(clientUri))
+        return clientUri.stream()
                 .anyMatch(authorizedRedirectUri -> {
-                    URI authorizedURI = URI.create(clientUri);
+                    URI authorizedURI = URI.create(authorizedRedirectUri);
                     return authorizedURI.getHost().equals(checkUri.getHost())
                             && authorizedURI.getPort() == checkUri.getPort();
                 });
