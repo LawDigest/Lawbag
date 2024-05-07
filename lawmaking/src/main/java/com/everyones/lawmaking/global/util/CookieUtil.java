@@ -3,6 +3,7 @@ package com.everyones.lawmaking.global.util;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.http.ResponseCookie;
 import org.springframework.util.SerializationUtils;
 
 import java.util.Base64;
@@ -23,22 +24,22 @@ public class CookieUtil {
     }
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        var cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setMaxAge(maxAge);
-        cookie.setAttribute("SameSite", "None");
-        response.addCookie(cookie);
+        var cookie = ResponseCookie.from(name,value);
+        cookie.path("/");
+        cookie.httpOnly(true);
+        cookie.secure(true);
+        cookie.maxAge(maxAge);
+        cookie.sameSite("None");
+        response.addHeader("Set-Cookie",cookie.toString());
     }
 
     public static void addCookieForClient(HttpServletResponse response, String name, String value, int maxAge) {
-        var cookie = new Cookie(name, value);
-        cookie.setPath("/");
-        cookie.setSecure(true);
-        cookie.setMaxAge(maxAge);
-        cookie.setAttribute("SameSite", "None");
-        response.addCookie(cookie);
+        var cookie = ResponseCookie.from(name, value);
+        cookie.path("/");
+        cookie.secure(true);
+        cookie.maxAge(maxAge);
+        cookie.sameSite("None");
+        response.addHeader("Set-Cookie",cookie.toString());
     }
 
 
@@ -49,14 +50,14 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    var newCookie = new Cookie(name, null);
-                    newCookie.setHttpOnly(true);
-                    newCookie.setValue("");
-                    newCookie.setPath("/");
-                    newCookie.setSecure(true);
-                    newCookie.setMaxAge(0);
-                    cookie.setAttribute("SameSite", "None");
-                    response.addCookie(newCookie);
+                    var newCookie = ResponseCookie.from(name, null);
+                    newCookie.path("/");
+                    newCookie.value("");
+                    newCookie.httpOnly(true);
+                    newCookie.secure(true);
+                    newCookie.maxAge(0);
+                    newCookie.sameSite("None");
+                    response.addHeader("Set-Cookie",newCookie.toString());
 
                 }
             }
@@ -69,13 +70,13 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    var newCookie = new Cookie(name, null);
-                    newCookie.setValue("");
-                    newCookie.setPath("/");
-                    newCookie.setSecure(true);
-                    newCookie.setMaxAge(0);
-                    cookie.setAttribute("SameSite", "None");
-                    response.addCookie(newCookie);
+                    var newCookie = ResponseCookie.from(name, null);
+                    newCookie.path("/");
+                    newCookie.value("");
+                    newCookie.secure(true);
+                    newCookie.maxAge(0);
+                    newCookie.sameSite("None");
+                    response.addHeader("Set-Cookie",newCookie.toString());
 
                 }
             }
