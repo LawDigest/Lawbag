@@ -24,21 +24,24 @@ public class CookieUtil {
     }
 
     public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
-        var cookie = ResponseCookie.from(name,value);
-        cookie.path("/");
-        cookie.httpOnly(true);
-        cookie.secure(true);
-        cookie.maxAge(maxAge);
-        cookie.sameSite("None");
+        var cookie = ResponseCookie.from(name,value)
+        .path("/")
+        .httpOnly(true)
+        .secure(true)
+        .maxAge(maxAge)
+        .sameSite("None")
+        .build();
         response.addHeader("Set-Cookie",cookie.toString());
     }
 
     public static void addCookieForClient(HttpServletResponse response, String name, String value, int maxAge) {
-        var cookie = ResponseCookie.from(name, value);
-        cookie.path("/");
-        cookie.secure(true);
-        cookie.maxAge(maxAge);
-        cookie.sameSite("None");
+        var cookie = ResponseCookie.from(name, value)
+                .path("/")
+                .secure(true)
+                .maxAge(maxAge)
+                .sameSite("None")
+                .build();
+
         response.addHeader("Set-Cookie",cookie.toString());
     }
 
@@ -50,13 +53,14 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    var newCookie = ResponseCookie.from(name, null);
-                    newCookie.path("/");
-                    newCookie.value("");
-                    newCookie.httpOnly(true);
-                    newCookie.secure(true);
-                    newCookie.maxAge(0);
-                    newCookie.sameSite("None");
+                    var newCookie = ResponseCookie.from(name, null)
+                            .path("/")
+                            .value("")
+                            .httpOnly(true)
+                            .secure(true)
+                            .maxAge(0)
+                            .sameSite("None")
+                            .build();
                     response.addHeader("Set-Cookie",newCookie.toString());
 
                 }
@@ -70,12 +74,13 @@ public class CookieUtil {
         if (cookies != null && cookies.length > 0) {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
-                    var newCookie = ResponseCookie.from(name, null);
-                    newCookie.path("/");
-                    newCookie.value("");
-                    newCookie.secure(true);
-                    newCookie.maxAge(0);
-                    newCookie.sameSite("None");
+                    var newCookie = ResponseCookie.from(name, null)
+                            .path("/")
+                            .value("")
+                            .secure(true)
+                            .maxAge(0)
+                            .sameSite("None")
+                            .build();
                     response.addHeader("Set-Cookie",newCookie.toString());
 
                 }
