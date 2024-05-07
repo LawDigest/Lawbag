@@ -14,7 +14,7 @@ import java.util.List;
 @ConfigurationProperties(prefix = "app")
 public class AppProperties {
     private Auth auth;
-    private final OAuth2 oauth2 = new OAuth2(auth);
+    private final OAuth2 oauth2 = new OAuth2();
 
     @Getter
     @Setter
@@ -30,8 +30,6 @@ public class AppProperties {
         @Value("${app.auth.refresh-token-expiry}")
         private  long refreshTokenExpiry;
 
-        @Value("${app.auth.client-redirect-uri}")
-        private String clientRedirectUri;
 
         @Value("${app.auth.kakao-app-admin-key}")
         private String kakaoAppAdminKey;
@@ -42,14 +40,12 @@ public class AppProperties {
     }
 
     @Getter
+    @Setter
     @RequiredArgsConstructor
     public static final class OAuth2 {
-        private final Auth auth;
-        private List<String> authorizedRedirectUris = new ArrayList<>();
 
-        public OAuth2 authorizedRedirectUris(List<String> authorizedRedirectUris) {
-            this.authorizedRedirectUris = authorizedRedirectUris;
-            return this;
-        }
+        @Value("${app.oauth2.client-redirect-uri}")
+        private List<String> clientRedirectUri;
+
     }
 }
