@@ -23,6 +23,9 @@ public class Bill {
     @Column(name = "bill_id")
     private String id;
 
+    @Column(name = "bill_number", unique = true)
+    private int billNumber;
+
     @NotNull
     @Column(name = "assembly_number")
     private int assemblyNumber;
@@ -33,12 +36,14 @@ public class Bill {
     @Column(name = "proposers")
     private String proposers;
 
-    @Builder.Default
     @OneToMany(mappedBy = "bill")
-    private List<BillProposer> publicProposer = new ArrayList<>();
+    private List<BillProposer> publicProposer;
 
     @OneToOne(mappedBy = "bill", fetch = FetchType.LAZY)
     private RepresentativeProposer representativeProposer;
+
+    @OneToMany(mappedBy = "bill")
+    private List<BillLike> billLike;
 
     private String committee;
 
@@ -61,6 +66,9 @@ public class Bill {
 
     @Column(name = "brief_summary", columnDefinition = "TEXT")
     private String briefSummary;
+
+    @Column(name ="bill_link")
+    private String billLink;
 
     @ColumnDefault("0")
     private int viewCount;

@@ -13,7 +13,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -56,6 +55,11 @@ public class BillService {
         return billDetailResponse;
     }
 
+    // 유저가 좋아요한 법안 목록 슬라이스로 가져오기
+    public BillListResponse getBookmarkingBills(Pageable pageable, long userId) {
+        var billSlice = billRepository.findByUserId(pageable, userId);
+        return getBillListResponse(billSlice);
+    }
 
     // TODO: 조회수 컬럼 접근에 대한 동시성 문제 해결 + 성능 이슈 업데이트 해야함.
     @Transactional
@@ -99,12 +103,22 @@ public class BillService {
                 .stream()
                 .map(Bill::getId)
                 .toList();
-        var userId = AuthenticationUtil.getUserId();
-        List<Bill> billList = billRepository.findBillInfoByIdList(billIdList);
+
+        var billList = billRepository.findBillInfoByIdList(billIdList);
 
         var billInfoList = billList.stream()
                 .map(this::getBillInfoFrom)
                 .toList();
+
+        var userIdOptional = AuthenticationUtil.getUserId();
+
+        if (userIdOptional.isPresent()) {
+
+            return BillListResponse.builder()
+                    .paginationResponse(pagination)
+                    .billList(billInfoList)
+                    .build();
+        }
 
         return BillListResponse.builder()
                 .paginationResponse(pagination)
@@ -126,16 +140,12 @@ public class BillService {
         var billInfoDto = BillInfoDto.from(bill);
 
         // Representative Entity
-        var representativeProposer = bill.getRepresentativeProposer();
+        var representativeProposerDto = RepresentativeProposerDto.from(bill.getRepresentativeProposer());
 
         // PublicProposer Entity
-        var publicProposers = bill.getPublicProposer();
-
-        var publicProposerDtoList = publicProposers.stream()
-                .map(PublicProposerDto::fromPublicProposer)
+        var publicProposerDtoList = bill.getPublicProposer().stream()
+                .map(PublicProposerDto::from)
                 .toList();
-
-        var representativeProposerDto = RepresentativeProposerDto.from(representativeProposer);
 
         return BillDto.builder()
                 .billInfoDto(billInfoDto)
@@ -158,7 +168,7 @@ public class BillService {
         var publicProposers = bill.getPublicProposer();
 
         var publicProposerDtoList = publicProposers.stream()
-                .map(PublicProposerDto::fromPublicProposer)
+                .map(PublicProposerDto::from)
                 .toList();
 
         var representativeProposerDto = RepresentativeProposerDto.from(representativeProposer);
