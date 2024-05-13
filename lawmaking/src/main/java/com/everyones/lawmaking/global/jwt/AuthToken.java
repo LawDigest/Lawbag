@@ -58,7 +58,7 @@ public class AuthToken {
 
 
     public boolean validate()  {
-        return this.getTokenClaims() != null;
+        return this.token != null && this.getTokenClaims() != null;
     }
 
     // ToDo(Exception 처리해야함)
