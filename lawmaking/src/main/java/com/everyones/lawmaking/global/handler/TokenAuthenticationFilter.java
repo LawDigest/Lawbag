@@ -37,43 +37,41 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             HttpServletResponse response,
             FilterChain filterChain)  throws ServletException, IOException {
         try{
-            String tokenStr = HeaderUtil.getAccessToken(request);
-            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
             //시큐리티컨텍스트홀더 초기화
             SecurityContextHolder.clearContext();
 
-            // 토큰이 없을 경우 게스트사용자 권한을 SecurityContext에 부여해주고
-            if( tokenStr == null || tokenStr.isEmpty() || (!request.getServletPath().contains("user") && !request.getServletPath().contains("logout"))){
-                setGuestAuthentication();
-            }
-            // 토큰이 있을 경우 검증을 해주고 검증이 되지 않으면 GUEST 권한을 주도록 하자.
-            else{
-                // token내용을 가지고 GUEST인지 MEMBER인지 검증함
-                var authentication = tokenProvider.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+            String tokenStr = HeaderUtil.getAccessToken(request);
+            AuthToken token = tokenProvider.convertAuthToken(tokenStr);
 
-            }
+            var authentication = tokenProvider.getAuthentication(token);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+
+
+            // 토큰이 없을 경우 게스트사용자 권한을 SecurityContext에 부여해주고
+
+
         }
         catch (ExpiredJwtException eje){
+            eje.printStackTrace();
             request.setAttribute("expiredJwtException", eje);
         }
         catch (SecurityException | MalformedJwtException | UnsupportedJwtException e) {
-            request.setAttribute("SecurityException", e);
-            setGuestAuthentication();
+            e.printStackTrace();
+            request.setAttribute("SecurityExceptionForJwt", e);
         }
         catch(IllegalArgumentException e){
+            request.setAttribute("IllegalArgumentException", e);
+            e.printStackTrace();
 
+        }
+        catch(Exception e){
+            request.setAttribute("Exception", e);
+            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);
 
-    }
-
-    private void setGuestAuthentication() {
-        var guestAuthority = new SimpleGrantedAuthority("ROLE_GUEST");
-        Collection<? extends GrantedAuthority> authorities = Collections.singleton(guestAuthority);
-        UserDetails principal = new User("anonymous", "", authorities);
-        var authentication = new UsernamePasswordAuthenticationToken(principal, null, authorities);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }
