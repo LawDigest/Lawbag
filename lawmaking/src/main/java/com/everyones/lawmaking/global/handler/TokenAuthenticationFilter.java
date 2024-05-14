@@ -74,11 +74,4 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
 
     }
-
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        // 'user', 'mainfeed', 'logout'가 설정되지 않은 패스에 대해서는 setGuest로 고정
-        String path = request.getServletPath();
-        return !path.contains("/user")&&!path.contains("/mainfeed")&&!path.contains("/logout");
-    }
 }
