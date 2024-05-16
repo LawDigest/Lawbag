@@ -143,10 +143,7 @@ public class BillController {
                     )}
             ),
     })
-    /*
-    TODO: patch와 post기능이 둘 다 있는데, Post로 정의하는 것이 맞는가에 대한 고민
-    like 관련을 따로 Controller를 파는게 맞는가에 대한 고민이 있다.
-    */
+
     @PostMapping("/user/bookmark")
     public BaseResponse<BillLikeResponse> likeBill(
             Authentication authentication,

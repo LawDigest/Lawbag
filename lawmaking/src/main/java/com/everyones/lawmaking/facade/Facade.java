@@ -145,6 +145,12 @@ public class Facade {
     public List<LikingCongressmanResponse> getLikingCongressman(long userId) {
         return congressmanService.getLikingCongressman(userId);
     }
+    // 북마크한 법안 조회
+    // 좋아요를 한 날짜 순서대로 조회하는게 맞나? 근데 그러면 너무 로직이 복잡해짐...
+    public BillListResponse getBookmarkedBills(Pageable pageable, long userId) {
+        var billListResponse = billService.getBookmarkingBills(pageable, userId);
+        return setBillListResponseBookMark(billListResponse);
+    }
 
     // 팔로우한 정당 조회
     public List<FollowingPartyResponse> getFollowingParty(long userId) {
@@ -239,6 +245,7 @@ public class Facade {
 
     private BillListResponse setBillListResponseBookMark(BillListResponse billListResponse) {
         var userId = AuthenticationUtil.getUserId();
+
         if (userId.isEmpty()) {
             return billListResponse;
         }
@@ -279,8 +286,8 @@ public class Facade {
 
     }
 
-public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
-    return authService.withdraw(userId,httpRequest, httpResponse);
+    public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
+        return authService.withdraw(userId,httpRequest, httpResponse);
 
     }
 

@@ -20,7 +20,7 @@ public class PublicProposerDto {
     private String publicProposerPartyName;
     private String publicProposerPartyImageUrl;
 
-    public static PublicProposerDto fromPublicProposer(BillProposer billProposer) {
+    public static PublicProposerDto from(BillProposer billProposer) {
         var congressman = billProposer.getCongressman();
         var party = congressman.getParty();
         return PublicProposerDto.builder()
