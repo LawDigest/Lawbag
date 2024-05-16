@@ -120,7 +120,6 @@ public class UserController {
     })
     @GetMapping("/bookmarking/bill")
     public BaseResponse<BillListResponse> getBookmarkedBills(
-            Authentication authentication,
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
             @RequestParam(name = "page") int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")

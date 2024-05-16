@@ -61,8 +61,11 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 유저가 스크랩한 법안 페이징해서 가져오는 쿼리
     @Query("SELECT b FROM Bill b " +
-            "JOIN BillLike bl on bl.user.id = :userId " +
-            "order by bl.modifiedDate DESC")
+            "JOIN FETCH b.representativeProposer rp " +
+            "JOIN b.billLike bl " +
+            "JOIN bl.user u " +
+            "where u.id = :userId " +
+            "order by bl.modifiedDate ")
     Slice<Bill> findByUserId(Pageable pageable, @Param("userId") long userId);
 
     // 단일 법안과 관련된 정보 가져오는 쿼리
@@ -88,17 +91,6 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "WHERE b.id in :billList "
     )
     List<Bill> findBillInfoByIdList(List<String> billList);
-
-//    @Query("SELECT b FROM Bill b " +
-//            "JOIN FETCH b.representativeProposer rp " +
-//            "JOIN FETCH b.publicProposer bp " +
-//            "JOIN FETCH rp.congressman rpc " +
-//            "JOIN FETCH bp.congressman bpc " +
-//            "JOIN FETCH rpc.party rpp " +
-//            "JOIN FETCH bpc.party bpp " +
-//            "WHERE b.id in :billList "
-//    )
-//    List<Bill> findBillInfoByIdList(List<String> billList, long userId);
 
     // 유사한 법안 조회 법안과 같은 이름을 가진 법안 조회
     @Query("SELECT b FROM Bill b " +

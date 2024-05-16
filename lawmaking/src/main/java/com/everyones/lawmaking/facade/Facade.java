@@ -245,7 +245,7 @@ public class Facade {
 
     private BillListResponse setBillListResponseBookMark(BillListResponse billListResponse) {
         var userId = AuthenticationUtil.getUserId();
-        System.out.println(userId);
+
         if (userId.isEmpty()) {
             return billListResponse;
         }
