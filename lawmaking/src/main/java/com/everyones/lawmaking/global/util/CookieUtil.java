@@ -30,7 +30,6 @@ public class CookieUtil {
         .secure(true)
         .maxAge(maxAge)
         .sameSite("None")
-//        .domain(".lawdigest.net")
         .build();
         response.addHeader("Set-Cookie",cookie.toString());
     }
@@ -41,7 +40,6 @@ public class CookieUtil {
                 .secure(true)
                 .maxAge(maxAge)
                 .sameSite("None")
-//                .domain(".lawdigest.net")
                 .build();
 
         response.addHeader("Set-Cookie",cookie.toString());
@@ -57,7 +55,6 @@ public class CookieUtil {
                 if (name.equals(cookie.getName())) {
                     var newCookie = ResponseCookie.from(name, null)
                             .path("/")
-//                            .domain(".lawdigest.net")
                             .value("")
                             .httpOnly(true)
                             .secure(true)
@@ -78,7 +75,6 @@ public class CookieUtil {
             for (Cookie cookie : cookies) {
                 if (name.equals(cookie.getName())) {
                     var newCookie = ResponseCookie.from(name, null)
-//                            .domain(".lawdigest.net")
                             .path("/")
                             .value("")
                             .secure(true)
