@@ -94,6 +94,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 유사한 법안 조회 법안과 같은 이름을 가진 법안 조회
     @Query("SELECT b FROM Bill b " +
+            "JOIN FETCH b.representativeProposer rp " +
             "WHERE b.billName = :billName")
     List<Bill> findSimilarBills(@Param("billName") String billName);
 
