@@ -34,12 +34,13 @@ public class CookieUtil {
         response.addHeader("Set-Cookie",cookie.toString());
     }
 
-    public static void addCookieForClient(HttpServletResponse response, String name, String value, int maxAge) {
+    public static void addCookieForClient(HttpServletResponse response, String name, String value,int maxAge,String domain ) {
         var cookie = ResponseCookie.from(name, value)
                 .path("/")
                 .secure(true)
                 .maxAge(maxAge)
                 .sameSite("None")
+                .domain(domain)
                 .build();
 
         response.addHeader("Set-Cookie",cookie.toString());
@@ -68,7 +69,7 @@ public class CookieUtil {
         }
     }
 
-    public static void deleteCookieForClient(HttpServletRequest request, HttpServletResponse response, String name) {
+    public static void deleteCookieForClient(HttpServletRequest request, HttpServletResponse response, String name,String domain) {
         Cookie[] cookies = request.getCookies();
 
         if (cookies != null && cookies.length > 0) {
@@ -80,6 +81,7 @@ public class CookieUtil {
                             .secure(true)
                             .maxAge(0)
                             .sameSite("None")
+                            .domain(domain)
                             .build();
                     response.addHeader("Set-Cookie",newCookie.toString());
 

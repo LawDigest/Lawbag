@@ -37,6 +37,9 @@ public class AppProperties {
         @Value("${app.auth.kakao-withdraw-uri}")
         private String kakaoWithdrawUri;
 
+        @Value("${app.auth.cookie-domain}")
+        private String cookieDomain;
+
     }
 
     @Getter

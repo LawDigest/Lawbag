@@ -69,10 +69,10 @@ public class AuthService {
         // userId기반으로 authInfo 가져와서 일괄 삭제
         authInfoRepository.delete(authInfoSaved);
 
-
+        var cookieDomain = appProperties.getAuth().getCookieDomain();
         // 로그아웃
         tokenService.invalidateToken();
-        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN);
+        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN,cookieDomain);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
 
@@ -118,12 +118,13 @@ public class AuthService {
         var minutes = 1000 * 60;
         var refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
         var accessTokenExpiry = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
+        var cookieDomain = appProperties.getAuth().getCookieDomain();
 
-        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN);
+        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN,cookieDomain);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
 
         CookieUtil.addCookie(httpServletResponse, REFRESH_TOKEN, tokenMap.get("refreshToken"), refreshTokenExpiry);
-        CookieUtil.addCookieForClient(httpServletResponse, ACCESS_TOKEN, tokenMap.get("accessToken"), accessTokenExpiry);
+        CookieUtil.addCookieForClient(httpServletResponse, ACCESS_TOKEN, tokenMap.get("accessToken"), accessTokenExpiry,cookieDomain);
     }
     }
