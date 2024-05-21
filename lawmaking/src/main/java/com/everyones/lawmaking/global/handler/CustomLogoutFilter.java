@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.global.handler;
 
+import com.everyones.lawmaking.global.config.AppProperties;
 import com.everyones.lawmaking.global.service.TokenService;
 import com.everyones.lawmaking.global.util.CookieUtil;
 import jakarta.servlet.FilterChain;
@@ -19,6 +20,7 @@ import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBased
 @RequiredArgsConstructor
 public class CustomLogoutFilter extends OncePerRequestFilter {
     private final TokenService tokenService;
+    private final AppProperties appProperties;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
@@ -42,12 +44,13 @@ public class CustomLogoutFilter extends OncePerRequestFilter {
         }
 
 
+        var cookieDomain = appProperties.getAuth().getCookieDomain();
         //refresh토큰 비활성화
         // 로그아웃 되면 토큰 재발급을 방지함.
         tokenService.invalidateToken();
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.deleteCookie(request, response, JSESSIONID);
-        CookieUtil.deleteCookieForClient(request,response,ACCESS_TOKEN);
+        CookieUtil.deleteCookieForClient(request,response,ACCESS_TOKEN,cookieDomain);
         SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(null);
         SecurityContextHolder.clearContext();
