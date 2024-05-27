@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.response.BillDetailResponse;
 import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
@@ -100,7 +101,7 @@ public class BillController {
             ),
     })
     @GetMapping("/detail/{bill_id}")
-    public BaseResponse<BillDto> getBillWtihDeatail(
+    public BaseResponse<BillDetailResponse> getBillWtihDeatail(
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @PathVariable("bill_id") String billId) {
         var result = facade.getBillByBillId(billId);

@@ -18,7 +18,7 @@ public class SimilarBill {
     public static SimilarBill from(Bill bill) {
         return SimilarBill.builder()
                 .billId(bill.getId())
-                .billName(bill.getBillName() + " (" + bill.getProposers() + ")")
+                .billName(bill.getBriefSummary() + " (" + bill.getProposers() + ")")
                 .build();
     }
 
