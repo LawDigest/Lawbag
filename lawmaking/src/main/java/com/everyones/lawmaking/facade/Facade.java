@@ -47,7 +47,7 @@ public class Facade {
     }
 
     // 법안 아이디를 기준으로, 하나의 법안 상세 조회
-    public BillDto getBillByBillId(String billId) {
+    public BillDetailResponse getBillByBillId(String billId) {
         var billDto =  billService.getBillWithDetail(billId);
         var userId = AuthenticationUtil.getUserId();
         if (userId.isEmpty()) {

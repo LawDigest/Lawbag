@@ -42,7 +42,7 @@ public class BillService {
         return getBillListResponse(billSlice);
     }
 
-    public BillDto getBillWithDetail(String billId) {
+    public BillDetailResponse getBillWithDetail(String billId) {
         var bill = billRepository.findBillInfoById(billId)
                 .orElseThrow(() -> new BillException.BillNotFound(Map.of(BILL_ID_KEY_STRING, billId)));
 
