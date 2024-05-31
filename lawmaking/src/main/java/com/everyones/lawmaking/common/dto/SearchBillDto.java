@@ -25,6 +25,9 @@ public class SearchBillDto implements SearchResponse {
     private String name;
 
     @NotNull
+    private String briefSummary;
+
+    @NotNull
     private String searchType;
 
     @NotNull
@@ -68,6 +71,7 @@ public class SearchBillDto implements SearchResponse {
         return SearchBillDto.builder()
                 .id(bill.getId())
                 .name(bill.getBillName())
+                .briefSummary(bill.getBriefSummary())
                 .searchType(SearchType.BILL.name())
                 .proposedDate(bill.getProposeDate())
                 .gptSummary(bill.getGptSummary())
