@@ -3,6 +3,7 @@ package com.everyones.lawmaking.repository;
 import com.everyones.lawmaking.domain.entity.Bill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,15 +19,15 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 단순한 법안 페이징으로 가져오기
     @Query("SELECT b FROM Bill b " +
-            "JOIN FETCH b.representativeProposer rp " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
+    @EntityGraph(attributePaths = {"representativeProposer"})
     Slice<Bill> findByPage(Pageable pageable);
 
     // 단계 + 법안 페이징으로 가져오기
     @Query("SELECT b FROM Bill b " +
-            "JOIN FETCH b.representativeProposer rp " +
            "WHERE b.stage = :stage " +
             "ORDER BY b.proposeDate DESC, b.id DESC ")
+    @EntityGraph(attributePaths = {"representativeProposer"})
     Slice<Bill> findByPage(Pageable pageable, @Param("stage") String stage);
 
     // 특정 의원이 대표 발의한 법안들
@@ -81,7 +82,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     Optional<Bill> findBillInfoById(String billId);
 
     // 피드 등 여러 법안들 가져오는 쿼리
-    @Query("SELECT b FROM Bill b " +
+    @Query("SELECT DISTINCT b FROM Bill b " +
             "JOIN FETCH b.representativeProposer rp " +
             "JOIN FETCH b.publicProposer bp " +
             "JOIN FETCH rp.congressman rpc " +
