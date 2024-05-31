@@ -8,7 +8,6 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
+@Table(name = "Bill", indexes = @Index(name = "idx_bill_id_propose_date", columnList = "propose_date DESC"))
 public class Bill {
     @Id
     @Column(name = "bill_id")
