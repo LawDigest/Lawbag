@@ -102,12 +102,13 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     @Query(value = "select bill_id\n" +
             "from\n" +
-            "(select bill_id ,match(gpt_summary) against(concat('*',:keyword,'*') in boolean mode) as gpt_summary_rel,\n" +
-            "match(keyword) against(concat('*',:keyword,'*') in boolean mode) as keyword_rel,\n" +
-            "match(bill_name) against(concat('*',:keyword,'*') in boolean mode) as bill_name_rel\n" +
+            "(select bill_id ,match(bill_name) against(concat('*',:keyword,'*') in boolean mode) as bill_name_rel,\n" +
+            "match(brief_summary) against(concat('*',:keyword,'*') in boolean mode) as brief_summary_rel,\n" +
+            "match(gpt_summary) against(concat('*',:keyword,'*') in boolean mode) as gpt_summary_rel,\n" +
+            "match(summary) against(concat('*',:keyword,'*') in boolean mode) as summary_rel\n" +
             "from Bill) search\n" +
-            "where keyword_rel >0 or gpt_summary_rel>0 or bill_name_rel > 0\n" +
-            "order by keyword_rel desc, bill_name_rel desc, gpt_summary_rel desc"
+            "where bill_name_rel >0 or brief_summary_rel>0 or gpt_summary_rel>0 or summary_rel > 0\n" +
+            "order by bill_name_rel desc, brief_summary_rel desc, gpt_summary_rel desc, summary_rel desc ;"
             , nativeQuery = true)
     Slice<String> findBillByKeyword(Pageable pageable,@Param("keyword") String keyword);
 
