@@ -47,7 +47,7 @@ public class BillService {
                 .orElseThrow(() -> new BillException.BillNotFound(Map.of(BILL_ID_KEY_STRING, billId)));
 
         var billDetailResponse = getBillDetailInfoFrom(bill);
-        var similarBills = billRepository.findSimilarBills(bill.getBillName())
+        var similarBills = billRepository.findSimilarBills(bill.getBillName(), bill.getId())
                 .stream()
                 .map(SimilarBill::from)
                 .toList();
