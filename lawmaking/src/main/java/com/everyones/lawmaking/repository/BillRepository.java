@@ -83,11 +83,8 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 피드 등 여러 법안들 가져오는 쿼리
     @Query("SELECT DISTINCT b FROM Bill b " +
-            "JOIN FETCH b.representativeProposer rp " +
             "JOIN FETCH b.publicProposer bp " +
-            "JOIN FETCH rp.congressman rpc " +
             "JOIN FETCH bp.congressman bpc " +
-            "JOIN FETCH rpc.party rpp " +
             "JOIN FETCH bpc.party bpp " +
             "WHERE b.id in :billList "
     )
