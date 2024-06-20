@@ -114,15 +114,6 @@ public class BillService {
                 .map(this::getBillInfoFrom)
                 .toList();
 
-        var userIdOptional = AuthenticationUtil.getUserId();
-
-        if (userIdOptional.isPresent()) {
-
-            return BillListResponse.builder()
-                    .paginationResponse(pagination)
-                    .billList(billInfoList)
-                    .build();
-        }
 
         return BillListResponse.builder()
                 .paginationResponse(pagination)
