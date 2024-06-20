@@ -1,6 +1,5 @@
 package com.everyones.lawmaking.facade;
 
-import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.User;
@@ -178,12 +177,16 @@ public class Facade {
     }
 
     // 검색 법안 조회
-    public SearchDataResponse searchBill(String searchWord,int page) {
+    public SearchBillResponse searchBill(String searchWord,int page) {
 
         Pageable pageable = PageRequest.of(page, 5);
+        var billList = billService.searchBill(searchWord, pageable);
+        var billListByUser = setBillListResponseBookMark(billList);
 
-        return billService.searchBill(searchWord, pageable);
-
+        return SearchBillResponse.builder()
+                .paginationResponse(billList.getPaginationResponse())
+                .searchResponse(billListByUser.getBillList())
+                .build();
     }
 
     // 알림 조회
@@ -259,6 +262,8 @@ public class Facade {
         billListResponse.setBillList(billList);
         return billListResponse;
     }
+
+
 
     // 정당 공약 조회
     public PartyPromiseResponse getPartyPromise(long partyId, Pageable pageable) {

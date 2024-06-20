@@ -1,7 +1,10 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.*;
-import com.everyones.lawmaking.common.dto.response.*;
+import com.everyones.lawmaking.common.dto.response.BillDetailResponse;
+import com.everyones.lawmaking.common.dto.response.BillListResponse;
+import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
+import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.error.BillException;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
@@ -13,6 +16,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -155,6 +159,8 @@ public class BillService {
                 .build();
     }
 
+
+
     //
     private BillDetailResponse getBillDetailInfoFrom(Bill bill) {
 
@@ -179,7 +185,7 @@ public class BillService {
 
 
     // 법원 검색
-    public SearchDataResponse searchBill(String searchWord,Pageable pageable) {
+    public BillListResponse searchBill(String searchWord,Pageable pageable) {
         var billSlice = billRepository.findBillByKeyword(pageable,searchWord);
 
         var pagination = PaginationResponse.from(billSlice);
@@ -188,14 +194,13 @@ public class BillService {
         var billIdList = billSlice.toList();
 
         var billList = billRepository.findBillInfoByIdList(billIdList);
-
-        var searchResponse = billList.stream()
-                .map(SearchBillDto::from)
+        List<BillDto> billDtoList = billList.stream()
+                .map(this::getBillInfoFrom)
                 .toList();
 
-        return SearchDataResponse.builder()
-                .searchResponse(searchResponse)
+        return BillListResponse.builder()
                 .paginationResponse(pagination)
+                .billList(billDtoList)
                 .build();
 
     }
