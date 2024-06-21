@@ -1,6 +1,5 @@
 package com.everyones.lawmaking.service;
 
-import com.everyones.lawmaking.common.dto.SearchBillDto;
 import com.everyones.lawmaking.common.dto.SearchCandidateDto;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.common.dto.response.SearchDataResponse;

@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.controller;
 
+import com.everyones.lawmaking.common.dto.response.SearchBillResponse;
 import com.everyones.lawmaking.common.dto.response.SearchDataResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
@@ -78,7 +79,7 @@ public class SearchController {
             ),
     })
     @GetMapping("/bill")
-    public BaseResponse<SearchDataResponse> searchBill (
+    public BaseResponse<SearchBillResponse> searchBill (
             @Parameter(example = "소방", description = "소방 관련 법안을 검색하려는 검색어")
             @RequestParam("search_word") String searchWord,
             @Parameter(example = "0", description = "검색 결과 페이징을 위한 페이지 넘버")
