@@ -31,7 +31,7 @@ public class LikeService {
         return congressmanLike.map(CongressManLike::isLikeChecked).orElse(false);
     }
     public Boolean getFollowParty(long partyId, long userId) {
-        var partyFollow = partyFollowRepository.findByUserIdAndPartyId(partyId, userId);
+        var partyFollow = partyFollowRepository.findByUserIdAndPartyId(userId,partyId);
         return partyFollow.map(PartyFollow::isFollowChecked).orElse(false);
     }
 
