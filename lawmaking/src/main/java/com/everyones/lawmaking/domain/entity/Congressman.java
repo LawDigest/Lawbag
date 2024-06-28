@@ -6,18 +6,19 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
 @Data
 @Builder
-@ToString
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Congressman {
+    @Version
+    private Long version;
+
     @Id
     @Column(name = "congressman_id")
     private String id;
@@ -68,4 +69,13 @@ public class Congressman {
     @ColumnDefault("22")
     @Column(name = "assembly_number")
     private int assemblyNumber;
+
+    @Override
+    public String toString() {
+        return "Congressman{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
+
 }
