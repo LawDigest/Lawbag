@@ -32,12 +32,14 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
             "FROM ProportionalCandidate pc ")
     Slice<Party> findProportionalParty(Pageable pageable);
 
-    @Query("SELECT distinct p " +
+    @Query("SELECT distinct p.partyImageUrl " +
             "from Party p " +
-            "join Congressman c on c.party.id = p.id " +
-            "join RepresentativeProposer rp on rp.congressman.id =c.id " +
+            "join Congressman rc on rc.party.id = p.id " +
+            "join RepresentativeProposer rp on rp.congressman.id =rc.id " +
+            "join Congressman pc on pc.party.id = p.id " +
+            "join BillProposer pp on pp.congressman.id =pc.id " +
             "where rp.bill.id =:billId")
-    Optional<Party> findPartyByBillId(@Param("billId") String billId);
+    List<String> findPartyByBillId(@Param("billId") String billId);
 
 
 

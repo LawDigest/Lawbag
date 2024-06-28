@@ -76,9 +76,12 @@ public class PartyService {
         return ProportionalPartyResponse.of(party,candidateNumber);
     }
 
-    public Party getPartyByBillId(String billId) {
-        return partyRepository.findPartyByBillId(billId)
-                .orElseThrow(() -> new BillException.BillNotFound(Map.of("billId", billId)));
+    public List<String> getPartyByBillId(String billId) {
+        List<String> partyImageList = partyRepository.findPartyByBillId(billId);
+        if (partyImageList.isEmpty()) {
+            throw new PartyException.PartyNotFound(Map.of("billId", billId));
+        }
+        return partyImageList;
 
     }
 

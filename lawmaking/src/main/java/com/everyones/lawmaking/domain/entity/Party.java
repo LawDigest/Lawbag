@@ -17,6 +17,9 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Party extends BaseEntity{
+    @Version
+    private Long version;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "party_id")
@@ -41,26 +44,46 @@ public class Party extends BaseEntity{
     private String websiteUrl;
 
     @Column(name = "follow_count")
-    private int followCount;
+    private int followCount = 0;
 
     @ColumnDefault("0")
+    @Builder.Default
     @Column(name = "proportional_congressman_count")
-    private int proportionalCongressmanCount;
+    private int proportionalCongressmanCount = 0;
 
     @ColumnDefault("0")
+    @Builder.Default
     @Column(name = "district_congressman_count")
-    private int districtCongressmanCount;
+    private int districtCongressmanCount = 0;
 
     @ColumnDefault("0")
+    @Builder.Default
     @Column(name = "total_bill_count")
-    private int totalBillCount;
+    private int totalBillCount = 0;
 
     @ColumnDefault("0")
+    @Builder.Default
     @Column(name = "representative_bill_count")
-    private int representativeBillCount;
+    private int representativeBillCount = 0;
 
     @ColumnDefault("0")
+    @Builder.Default
     @Column(name = "public_bill_count")
-    private int publicBillCount;
+    private int publicBillCount = 0;
+
+    @Override
+    public String toString() {
+        return "Party{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", districtCongressmanCount=" + districtCongressmanCount +
+                ", proportionalCongressmanCount=" + proportionalCongressmanCount +
+
+                '}';
+    }
+
+
+
+
 
 }
