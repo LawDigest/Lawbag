@@ -14,7 +14,7 @@ public class RepresentativeProposer {
     @Column(name = "representative_proposer_id")
     private long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "bill_id")
     private Bill bill;
 
