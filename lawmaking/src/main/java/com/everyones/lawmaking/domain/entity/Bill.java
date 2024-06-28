@@ -8,7 +8,9 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Entity
@@ -26,6 +28,11 @@ public class Bill {
     @Column(name = "bill_number", unique = true)
     private int billNumber;
 
+    // 법안의 제안시점 정당 데이터용으로 partyId 필요
+    @Column(name = "partyIdList")
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<Long> partyIdList;
+
     @NotNull
     @Column(name = "assembly_number")
     private int assemblyNumber;
@@ -39,8 +46,8 @@ public class Bill {
     @OneToMany(mappedBy = "bill")
     private List<BillProposer> publicProposer;
 
-    @OneToOne(mappedBy = "bill", fetch = FetchType.LAZY)
-    private RepresentativeProposer representativeProposer;
+    @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
+    private Set<RepresentativeProposer> representativeProposer = new HashSet<>();
 
     @OneToMany(mappedBy = "bill")
     private List<BillLike> billLike;
@@ -69,6 +76,10 @@ public class Bill {
 
     @Column(name ="bill_link")
     private String billLink;
+
+    @Column(name ="age")
+    @ColumnDefault("0")
+    private int age;
 
     @ColumnDefault("0")
     private int viewCount;

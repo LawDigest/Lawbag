@@ -7,7 +7,6 @@ import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.error.BillException;
-import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -135,8 +134,9 @@ public class BillService {
         var billInfoDto = BillInfoDto.from(bill);
 
         // Representative Entity
-        var representativeProposerDto = RepresentativeProposerDto.from(bill.getRepresentativeProposer());
-
+        var representativeProposerDto = bill.getRepresentativeProposer().stream()
+                .map(RepresentativeProposerDto::from)
+                .toList();
         // PublicProposer Entity
         var publicProposerDtoList = bill.getPublicProposer().stream()
                 .map(PublicProposerDto::from)
@@ -144,7 +144,7 @@ public class BillService {
 
         return BillDto.builder()
                 .billInfoDto(billInfoDto)
-                .representativeProposerDto(representativeProposerDto)
+                .representativeProposerDtoList(representativeProposerDto)
                 .publicProposerDtoList(publicProposerDtoList)
                 .isBookMark(false)
                 .build();
@@ -159,7 +159,7 @@ public class BillService {
         var billInfoDto = BillDetailInfo.from(bill);
 
         // Representative Entity
-        var representativeProposer = bill.getRepresentativeProposer();
+        var representativeProposers = bill.getRepresentativeProposer();
 
         // PublicProposer Entity
         var publicProposers = bill.getPublicProposer();
@@ -168,9 +168,12 @@ public class BillService {
                 .map(PublicProposerDto::from)
                 .toList();
 
-        var representativeProposerDto = RepresentativeProposerDto.from(representativeProposer);
 
-        return new BillDetailResponse(billInfoDto, representativeProposerDto, publicProposerDtoList, false);
+        var representativeProposerDtoList = representativeProposers.stream()
+                .map(RepresentativeProposerDto::from)
+                .toList();
+
+        return new BillDetailResponse(billInfoDto, representativeProposerDtoList, publicProposerDtoList, false);
     }
 
 

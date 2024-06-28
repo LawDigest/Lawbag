@@ -5,11 +5,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -70,7 +68,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     Slice<Bill> findByUserId(Pageable pageable, @Param("userId") long userId);
 
     // 단일 법안과 관련된 정보 가져오는 쿼리
-    @Query("SELECT b FROM Bill b " +
+    @Query("SELECT distinct b FROM Bill b " +
             "JOIN FETCH b.representativeProposer rp " +
             "JOIN FETCH b.publicProposer bp " +
             "JOIN FETCH rp.congressman rpc " +
