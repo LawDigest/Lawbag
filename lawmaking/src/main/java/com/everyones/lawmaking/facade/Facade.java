@@ -118,7 +118,6 @@ public class Facade {
     public BillLikeResponse likeBill(long userId, String billId, boolean likeChecked) {
         var user = userService.findById(userId);
         var bill = billService.findById(billId);
-        billService.updateBillLikeCount(bill, likeChecked);
         return likeService.likeBill(user, bill, likeChecked);
     }
 

@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
+import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
 import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
 import com.everyones.lawmaking.domain.entity.*;
@@ -42,15 +43,31 @@ public class LikeService {
 
     public BillLikeResponse likeBill(User user, Bill bill, boolean likeChecked) {
         var billLike = billLikeRepository.findByUserIdAndBillId(user.getId(), bill.getId());
-
-        return billLike.isPresent() ? updateBillLike(billLike.get(), likeChecked) : createBillLike(user, bill, likeChecked);
+        if (billLike.isPresent()) {
+            if (likeChecked) {
+                throw new LikeException.UpdateParameterException(Map.of("likeChecked", Boolean.toString(likeChecked)));
+            }
+            return deleteBillLike(billLike.get());
+        }
+        if(!likeChecked) {
+            throw new LikeException.UpdateParameterException(Map.of("likeChecked", Boolean.toString(likeChecked)));
+        }
+        return createBillLike(user, bill);
     }
 
 
     public CongressmanLikeResponse likeCongressman(User user, Congressman congressman, boolean likeChecked) {
         var congressmanLike = congressmanLikeRepository.findByUserIdAndCongressmanId(user.getId(), congressman.getId());
-
-        return congressmanLike.isPresent() ? updateCongressmanLike(congressmanLike.get(), likeChecked) : createCongressmanLike(user ,congressman, likeChecked);
+        if (congressmanLike.isPresent()) {
+            if (likeChecked) {
+                throw new LikeException.UpdateParameterException(Map.of("likeChecked", Boolean.toString(likeChecked)));
+            }
+            return deleteCongressmanLike(congressmanLike.get());
+        }
+        if(!likeChecked) {
+            throw new LikeException.UpdateParameterException(Map.of("likeChecked", Boolean.toString(likeChecked)));
+        }
+        return createCongressmanLike(user, congressman);
     }
 
 
@@ -81,53 +98,31 @@ public class LikeService {
     }
 
 
-    private CongressmanLikeResponse createCongressmanLike(User user, Congressman congressman, boolean likeChecked) {
-        isEqual(false, likeChecked);
+    private CongressmanLikeResponse createCongressmanLike(User user, Congressman congressman) {
         var congressmanLike = CongressManLike.builder()
                 .congressman(congressman)
                 .user(user)
-                .likeChecked(likeChecked)
                 .build();
         congressmanLikeRepository.save(congressmanLike);
-
-        return CongressmanLikeResponse.from(congressmanLike);
+        return CongressmanLikeResponse.from(true);
     }
 
-    private CongressmanLikeResponse updateCongressmanLike(CongressManLike congressmanLike, boolean likeChecked) {
-        isEqual(congressmanLike.isLikeChecked(), likeChecked);
-        var updatedCongressmanLike = CongressManLike.builder()
-                .id(congressmanLike.getId())
-                .congressman(congressmanLike.getCongressman())
-                .user(congressmanLike.getUser())
-                .likeChecked(likeChecked)
-                .build();
-        congressmanLikeRepository.save(updatedCongressmanLike);
-        return CongressmanLikeResponse.from(updatedCongressmanLike);
+    private CongressmanLikeResponse deleteCongressmanLike(CongressManLike congressmanLike) {
+        congressmanLikeRepository.deleteById(congressmanLike.getId());
     }
 
-    private BillLikeResponse createBillLike(User user, Bill bill, boolean likeChecked) {
-        isEqual(false, likeChecked);
+    private BillLikeResponse createBillLike(User user, Bill bill) {
         var billLike = BillLike.builder()
                 .bill(bill)
                 .user(user)
-                .likeChecked(likeChecked)
                 .build();
         billLikeRepository.save(billLike);
-
-        return BillLikeResponse.from(billLike);
+        return BillLikeResponse.from(true);
     }
 
-
-    private BillLikeResponse updateBillLike(BillLike billLike, boolean likeChecked) {
-        isEqual(billLike.isLikeChecked(), likeChecked);
-        var updatedBillLike = BillLike.builder()
-                .id(billLike.getId())
-                .bill(billLike.getBill())
-                .user(billLike.getUser())
-                .likeChecked(likeChecked)
-                .build();
-        billLikeRepository.save(updatedBillLike);
-        return BillLikeResponse.from(updatedBillLike);
+    private BillLikeResponse deleteBillLike(BillLike billLike) {
+        billLikeRepository.deleteById(billLike.getId());
+        return BillLikeResponse.from(false);
     }
 
     private void isEqual(boolean dbValue, boolean parameterValue) {

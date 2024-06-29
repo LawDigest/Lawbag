@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.common.dto.response;
 
+import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.domain.entity.BillLike;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -21,11 +22,10 @@ public class BillLikeResponse {
     private boolean likeChecked;
 
 
-    public static BillLikeResponse from(BillLike billLike) {
+    public static BillLikeResponse from(boolean likeChecked) {
         return BillLikeResponse.builder()
-                .billId(billLike.getBill().getId())
-                .likeChecked(billLike.isLikeChecked())
+                .likeChecked(likeChecked)
                 .build();
-
     }
+
 }

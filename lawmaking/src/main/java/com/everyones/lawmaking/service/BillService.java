@@ -120,13 +120,6 @@ public class BillService {
                 .build();
     }
 
-
-    public void updateBillLikeCount(Bill bill, boolean likeChecked) {
-        var likeCount = likeChecked ? bill.getLikeCount() + 1 : bill.getLikeCount() - 1;
-        bill.setLikeCount(likeCount);
-        billRepository.save(bill);
-    }
-
     // 메인피드 등 법안들의 리스트를 반환할 때 사용
     private BillDto getBillInfoFrom(Bill bill) {
 

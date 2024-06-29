@@ -26,8 +26,4 @@ public class BillLike extends BaseEntity {
     @JoinColumn(name = "bill_id")
     private Bill bill;
 
-    @NotNull
-    @Column(name = "like_checked")
-    private boolean likeChecked;
-
 }

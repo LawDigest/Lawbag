@@ -15,15 +15,11 @@ import lombok.Getter;
 public class CongressmanLikeResponse {
 
     @NotNull
-    private String congressmanId;
-
-    @NotNull
     private boolean likeChecked;
 
-    public static CongressmanLikeResponse from(CongressManLike congressmanLike){
+    public static CongressmanLikeResponse from(boolean likeChecked){
         return CongressmanLikeResponse.builder()
-                .congressmanId(congressmanLike.getCongressman().getId())
-                .likeChecked(congressmanLike.isLikeChecked())
+                .likeChecked(likeChecked)
                 .build();
     }
 

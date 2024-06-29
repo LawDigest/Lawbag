@@ -24,9 +24,5 @@ public class CongressManLike {
     @JoinColumn(name = "congress_man_id")
     private Congressman congressman;
 
-    @NotNull
-    @Column(name = "like_checked")
-    private boolean likeChecked;
-
 
 }
