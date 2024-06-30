@@ -259,13 +259,16 @@ public class TableEventListener {
                 }
             }
         });
-//        executorService().submit(() -> {
-//            try {
-//                logClient.connect();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        });
+        Thread thread = new Thread(() -> {
+            try {
+                logClient.connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+
+
+        thread.start();
 
 
         return logClient;
