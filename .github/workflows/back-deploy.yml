@@ -58,7 +58,7 @@ jobs:
         uses: appleboy/ssh-action@master
         id: deploy-prod
         with:
-          host: 52.79.63.140
+          host: 13.237.246.23
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
