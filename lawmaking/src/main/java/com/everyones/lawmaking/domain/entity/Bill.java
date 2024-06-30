@@ -5,12 +5,11 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 @Entity
@@ -47,7 +46,7 @@ public class Bill {
     private List<BillProposer> publicProposer;
 
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
-    private Set<RepresentativeProposer> representativeProposer = new HashSet<>();
+    private List<RepresentativeProposer> representativeProposer;
 
     @OneToMany(mappedBy = "bill")
     private List<BillLike> billLike;

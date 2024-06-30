@@ -3,7 +3,6 @@ package com.everyones.lawmaking.repository;
 import com.everyones.lawmaking.domain.entity.Bill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,14 +17,12 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     // 단순한 법안 페이징으로 가져오기
     @Query("SELECT b FROM Bill b " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
-    @EntityGraph(attributePaths = {"representativeProposer"})
     Slice<Bill> findByPage(Pageable pageable);
 
     // 단계 + 법안 페이징으로 가져오기
     @Query("SELECT b FROM Bill b " +
            "WHERE b.stage = :stage " +
             "ORDER BY b.proposeDate DESC, b.id DESC ")
-    @EntityGraph(attributePaths = {"representativeProposer"})
     Slice<Bill> findByPage(Pageable pageable, @Param("stage") String stage);
 
     // 특정 의원이 대표 발의한 법안들
@@ -37,7 +34,6 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 특정의원이 공동 발의한 법안들
     @Query("SELECT b FROM Bill b " +
-            "JOIN FETCH b.representativeProposer rp " +
             "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.id = :congressmanId)")
     Slice<Bill> findBillByPublicProposer(String congressmanId, Pageable pageable);
 
@@ -53,7 +49,6 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     // 정당 소속 의원들이 공동 발의한 법안
     // TODO: 쿼리 개선 필요
     @Query("SELECT b FROM Bill b " +
-           "JOIN FETCH b.representativeProposer rp " +
             "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.party.id = :partyId) " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
     Slice<Bill> findPublicBillsByParty(Pageable pageable, @Param("partyId") long partyId);
@@ -68,13 +63,10 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     Slice<Bill> findByUserId(Pageable pageable, @Param("userId") long userId);
 
     // 단일 법안과 관련된 정보 가져오는 쿼리
-    @Query("SELECT distinct b FROM Bill b " +
+    @Query("SELECT  b FROM Bill b " +
             "JOIN FETCH b.representativeProposer rp " +
-            "JOIN FETCH b.publicProposer bp " +
             "JOIN FETCH rp.congressman rpc " +
-            "JOIN FETCH bp.congressman bpc " +
             "JOIN FETCH rpc.party rpp " +
-            "JOIN FETCH bpc.party bpp " +
             "WHERE b.id = :billId "
     )
     Optional<Bill> findBillInfoById(String billId);
