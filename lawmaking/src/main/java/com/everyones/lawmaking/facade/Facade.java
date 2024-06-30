@@ -213,9 +213,9 @@ public class Facade {
         return List.of(billId, billRepProposer, billProposers, billName,congressman.getParty().getPartyImageUrl());
     }
     public List<String> updateBillStage(List<String> raw) {
-        var party = partyService.getPartyByBillId(raw.get(0));
+        var partyImageList = partyService.getPartyByBillId(raw.get(0));
 
-        return Stream.concat(raw.stream(), Stream.of(party.getPartyImageUrl()))
+        return Stream.concat(raw.stream(), partyImageList.stream())
                 .toList();
     }
 

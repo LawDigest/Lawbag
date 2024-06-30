@@ -4,15 +4,13 @@ import com.everyones.lawmaking.common.dto.response.NotificationResponse;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.Notification;
 import com.everyones.lawmaking.global.error.CommonException;
-import com.everyones.lawmaking.global.error.CustomException;
-import com.everyones.lawmaking.global.error.ErrorCode;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -46,25 +44,25 @@ public class NotificationConverter {
         String target = data.get(0);
         String title = null;
         String content = null;
-        String notificationImageUrl = null;
+        List<String> notificationImageUrlList = new ArrayList<>();
         switch (columnEventType) {
             case RP_INSERT:
                 // List.of(billId, billRepProposer, billProposers, billName, partyImage) <-정당이미지
                 title = data.get(1) + " 의원";
                 content = data.get(2) + "이 '" + data.get(3) + "'을/를 발의했어요!";
-                notificationImageUrl = data.get(4);
+                notificationImageUrlList.add(data.get(4));
                 break;
             case BILL_STAGE_UPDATE:
                 // List.of("bill_id", "bill_name", "proposers", "stage", "partyImage") <-정당이미지
                 title = data.get(1) + "(" + data.get(2) + ")";
                 content = "스크랩한 법안이 본회의에서 '"+data.get(3)+"'되었어요!";
-                notificationImageUrl = data.get(4);
+                notificationImageUrlList.addAll(data.subList(4, data.size()));
                 break;
             case CONGRESSMAN_PARTY_UPDATE:
                 // List.of(congressmanId, partyName, congressmanName, partyImage); <-정당이미지
                 title = data.get(1);
                 content = "'"+data.get(2)+"'의원의 당적이 '"+data.get(1)+"'(으)로 변동했어요!";
-                notificationImageUrl = data.get(3);
+                notificationImageUrlList.add(data.get(4));
                 break;
         }
 
@@ -80,7 +78,7 @@ public class NotificationConverter {
                 .type(type)
                 // 알림으로 이동할 대상 id값
                 .target(target)
-                .notificationImageUrl(notificationImageUrl)
+                .notificationImageUrlList(notificationImageUrlList)
                 .title(title)
                 .content(content)
                 .createdDate(createdDate)

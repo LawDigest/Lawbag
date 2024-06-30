@@ -5,14 +5,12 @@ import com.everyones.lawmaking.domain.entity.Notification;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.error.CommonException;
-import com.everyones.lawmaking.global.error.CustomException;
-import com.everyones.lawmaking.global.ResponseCode;
-import com.everyones.lawmaking.global.error.ErrorCode;
 import com.everyones.lawmaking.repository.NotificationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +24,7 @@ public class NotificationCreator {
     private final Facade facade;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @Transactional
     public void createNotification(List<Map<String, List<String>>> filteredValuesByRows) {
         List<Notification> notifications = new ArrayList<>();
         filteredValuesByRows.forEach((eventDataByEventTypeMap) -> {
