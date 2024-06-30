@@ -34,10 +34,8 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 
     @Query("SELECT distinct p.partyImageUrl " +
             "from Party p " +
-            "join Congressman rc on rc.party.id = p.id " +
-            "join RepresentativeProposer rp on rp.congressman.id =rc.id " +
-            "join Congressman pc on pc.party.id = p.id " +
-            "join BillProposer pp on pp.congressman.id =pc.id " +
+            "join Congressman c on c.party.id = p.id " +
+            "join RepresentativeProposer rp on rp.congressman.id =c.id " +
             "where rp.bill.id =:billId")
     List<String> findPartyByBillId(@Param("billId") String billId);
 
