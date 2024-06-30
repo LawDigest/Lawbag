@@ -53,10 +53,10 @@ public class TableEventListener {
 
     private final NotificationCreator notificationCreator;
 
-    @Bean
-    public ExecutorService executorService() {
-        return Executors.newFixedThreadPool(10); // 스레드 풀 크기 10으로 설정
-    }
+//    @Bean
+//    public ExecutorService executorService() {
+//        return Executors.newFixedThreadPool(10); // 스레드 풀 크기 10으로 설정
+//    }
 
     /**
      * 테이블별 (컬럼네임,컬럼 인덱스) 정보 가져오는 메서드
