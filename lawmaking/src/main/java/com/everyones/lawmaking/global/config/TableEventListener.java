@@ -99,7 +99,7 @@ public class TableEventListener {
     }
 
 
-    @Bean(destroyMethod = "disconnect")
+//    @Bean(destroyMethod = "disconnect")
     BinaryLogClient binaryLogClient() throws IOException {
         final Map<String, Map<String, Integer>> columnOrdersByTable = fetchColumnOrdersByTable();
 
