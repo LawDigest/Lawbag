@@ -113,7 +113,6 @@ public class BillService {
                 .map(this::getBillInfoFrom)
                 .toList();
 
-
         return BillListResponse.builder()
                 .paginationResponse(pagination)
                 .billList(billInfoList)

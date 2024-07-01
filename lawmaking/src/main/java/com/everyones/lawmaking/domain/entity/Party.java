@@ -43,9 +43,6 @@ public class Party extends BaseEntity{
     @Column(name = "website_url")
     private String websiteUrl;
 
-    @Column(name = "follow_count")
-    private int followCount = 0;
-
     @ColumnDefault("0")
     @Builder.Default
     @Column(name = "proportional_congressman_count")

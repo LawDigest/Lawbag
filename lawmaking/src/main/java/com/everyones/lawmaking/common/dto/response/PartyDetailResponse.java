@@ -34,8 +34,9 @@ public class PartyDetailResponse {
     @NotNull
     private String websiteUrl;
 
-    // TODO: isFollowed의 경우, User를 거치는 경우와 안 거치는 경우를 나눠서 해야함.
+
     public static PartyDetailResponse from(Party party) {
+        var partyFollow = party.getPartyFollow();
         return PartyDetailResponse.builder()
                 .partyId(party.getId())
                 .partyName(party.getName())
@@ -45,7 +46,7 @@ public class PartyDetailResponse {
                 .districtCongressmanCount(party.getDistrictCongressmanCount())
                 .representativeBillCount(party.getRepresentativeBillCount())
                 .publicBillCount(party.getPublicBillCount())
-                .followCount(party.getFollowCount())
+                .followCount(partyFollow.size())
                 .isFollowed(false)
                 .build();
     }

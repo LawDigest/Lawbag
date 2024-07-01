@@ -63,9 +63,6 @@ public class Congressman {
     @Column(name = "congressman_image_url")
     private String congressmanImageUrl;
 
-    @ColumnDefault("0")
-    private int likeCount;
-
     @ColumnDefault("22")
     @Column(name = "assembly_number")
     private int assemblyNumber;
