@@ -1,7 +1,6 @@
 package com.everyones.lawmaking.domain.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 @Entity
@@ -9,11 +8,12 @@ import lombok.*;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class CongressManLike {
+@Table(uniqueConstraints = @UniqueConstraint(name = "ix_congressman_like_unique", columnNames = {"user_id", "congressman_id"}))
+public class CongressmanLike extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "congress_man_like_id")
+    @Column(name = "congressman_like_id")
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -21,7 +21,7 @@ public class CongressManLike {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "congress_man_id")
+    @JoinColumn(name = "congressman_id")
     private Congressman congressman;
 
 

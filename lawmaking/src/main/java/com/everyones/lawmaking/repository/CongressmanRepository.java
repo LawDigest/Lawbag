@@ -18,8 +18,8 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
     Optional<Congressman> findByIdWithParty(@Param("congressmanId") String congressmanId);
 
     @Query("SELECT c FROM Congressman c JOIN FETCH c.party " +
-            "JOIN c.congressManLike cl " +
-            "WHERE cl.user.id = :userId and cl.likeChecked = true ")
+            "JOIN c.congressmanLike cl " +
+            "WHERE cl.user.id = :userId")
     List<Congressman> findLikingCongressmanByUserId(@Param("userId") long userId);
 
     @Query("SELECT c FROM Congressman c " +

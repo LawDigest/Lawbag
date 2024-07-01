@@ -45,13 +45,6 @@ public class PartyService {
                 .toList();
     }
 
-    @Transactional
-    public void updatePartyFollowCount(Party party, boolean followChecked) {
-        var followCount = followChecked ? party.getFollowCount() + 1 : party.getFollowCount() - 1;
-        party.setFollowCount(followCount);
-        partyRepository.save(party);
-    }
-
     // 검색 파티
     public List<SearchResponse> searchParty(String searchWord) {
         var searchPartyList= partyRepository.findBySearchWord(searchWord);

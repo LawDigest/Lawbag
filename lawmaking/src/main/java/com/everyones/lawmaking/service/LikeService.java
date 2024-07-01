@@ -1,7 +1,6 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
-import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
 import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
 import com.everyones.lawmaking.domain.entity.*;
@@ -29,16 +28,16 @@ public class LikeService {
 
     public Boolean getCongressmanLike(String congressmanId, long userId) {
         var congressmanLike = congressmanLikeRepository.findByUserIdAndCongressmanId(userId, congressmanId);
-        return congressmanLike.map(CongressManLike::isLikeChecked).orElse(false);
+        return congressmanLike.isPresent();
     }
     public Boolean getFollowParty(long partyId, long userId) {
         var partyFollow = partyFollowRepository.findByUserIdAndPartyId(userId,partyId);
-        return partyFollow.map(PartyFollow::isFollowChecked).orElse(false);
+        return partyFollow.isPresent();
     }
 
     public Boolean getBillLikeChecked(String billId, long userId) {
         var billLike = billLikeRepository.findByUserIdAndBillId(userId, billId);
-        return billLike.map(BillLike::isLikeChecked).orElse(false);
+        return billLike.isPresent();
     }
 
     public BillLikeResponse likeBill(User user, Bill bill, boolean likeChecked) {
@@ -73,33 +72,36 @@ public class LikeService {
 
     public PartyFollowResponse followParty(User user, Party party, boolean followChecked) {
         var partyFollow = partyFollowRepository.findByUserIdAndPartyId(user.getId(), party.getId());
+        if (partyFollow.isPresent()) {
+            if (followChecked) {
+                throw new LikeException.UpdateParameterException(Map.of("likeChecked", Boolean.toString(followChecked)));
+            }
+            return deletePartyFollow(partyFollow.get());
+        }
+        if(!followChecked) {
+            throw new LikeException.UpdateParameterException(Map.of("followChecked", Boolean.toString(followChecked)));
+        }
+        return createPartyFollow(user, party);
 
-        return partyFollow.isPresent() ? updatePartyFollow(partyFollow.get(), followChecked) : createPartyFollow(user, party, followChecked);
     }
 
 
-    private PartyFollowResponse createPartyFollow(User user, Party party, boolean followChecked) {
-        isEqual(false, followChecked);
+    private PartyFollowResponse createPartyFollow(User user, Party party) {
         var partyFollow = PartyFollow.builder()
                 .party(party)
                 .user(user)
-                .followChecked(followChecked)
                 .build();
         partyFollowRepository.save(partyFollow);
-        return PartyFollowResponse.from(partyFollow);
+        return PartyFollowResponse.from(true);
     }
-
-    private PartyFollowResponse updatePartyFollow(PartyFollow partyFollow, boolean followChecked) {
-        isEqual(partyFollow.isFollowChecked(), followChecked);
-        partyFollow.setFollowChecked(followChecked);
-        partyFollowRepository.save(partyFollow);
-
-        return PartyFollowResponse.from(partyFollow);
+    private PartyFollowResponse deletePartyFollow(PartyFollow partyFollow) {
+        partyFollowRepository.deleteById(partyFollow.getId());
+        return PartyFollowResponse.from(false);
     }
 
 
     private CongressmanLikeResponse createCongressmanLike(User user, Congressman congressman) {
-        var congressmanLike = CongressManLike.builder()
+        var congressmanLike = com.everyones.lawmaking.domain.entity.CongressmanLike.builder()
                 .congressman(congressman)
                 .user(user)
                 .build();
@@ -107,8 +109,9 @@ public class LikeService {
         return CongressmanLikeResponse.from(true);
     }
 
-    private CongressmanLikeResponse deleteCongressmanLike(CongressManLike congressmanLike) {
+    private CongressmanLikeResponse deleteCongressmanLike(CongressmanLike congressmanLike) {
         congressmanLikeRepository.deleteById(congressmanLike.getId());
+        return CongressmanLikeResponse.from(false);
     }
 
     private BillLikeResponse createBillLike(User user, Bill bill) {
@@ -124,13 +127,5 @@ public class LikeService {
         billLikeRepository.deleteById(billLike.getId());
         return BillLikeResponse.from(false);
     }
-
-    private void isEqual(boolean dbValue, boolean parameterValue) {
-        if (dbValue == parameterValue) {
-            throw new LikeException.UpdateParameterException(Map.of(UPDATE_PARAMETER ,Boolean.toString(parameterValue)));
-        }
-    }
-
-
 
 }

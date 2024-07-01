@@ -1,10 +1,7 @@
 package com.everyones.lawmaking.common.dto.response;
 
-import com.everyones.lawmaking.domain.entity.CongressManLike;
-import com.everyones.lawmaking.domain.entity.PartyFollow;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,14 +12,11 @@ import lombok.Getter;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PartyFollowResponse {
 
-    private long partyId;
-
     private boolean followChecked;
 
-    public static PartyFollowResponse from(PartyFollow partyFollow){
+    public static PartyFollowResponse from(boolean followChecked){
         return PartyFollowResponse.builder()
-                .partyId(partyFollow.getParty().getId())
-                .followChecked(partyFollow.isFollowChecked())
+                .followChecked(followChecked)
                 .build();
     }
 }

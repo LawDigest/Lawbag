@@ -26,7 +26,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findUserBySocialIdAndProvider(@Param("socialId") String socialId, @Param("provider") Provider provider);
 
 
-    @Query("SELECT cl.user FROM CongressManLike cl " +
+    @Query("SELECT cl.user FROM CongressmanLike cl " +
             "WHERE cl.congressman.id = :congressmanId")
     List<User> findAllByCongressmanId(@Param("congressmanId") String congressmanId);
 

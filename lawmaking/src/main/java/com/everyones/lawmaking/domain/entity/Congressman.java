@@ -36,7 +36,7 @@ public class Congressman {
     private List<RepresentativeProposer> representativeProposer;
 
     @OneToMany(mappedBy = "congressman")
-    private List<CongressManLike> congressManLike;
+    private List<CongressmanLike> congressmanLike;
 
     @Column(name = "elect_sort")
     private String electSort;

@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface PartyFollowRepository extends JpaRepository<PartyFollow, Long> {
 
     @Query("select pf from PartyFollow pf " +
-            "where pf.party.id = :partyId AND pf.user.id = :userId")
+            "where pf.party.id = :partyId AND pf.user.id = :userId ")
     Optional<PartyFollow> findByUserIdAndPartyId(@Param("userId") long userId, @Param("partyId") long partyId);
 }
