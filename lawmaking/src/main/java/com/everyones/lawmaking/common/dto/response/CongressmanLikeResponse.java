@@ -1,6 +1,5 @@
 package com.everyones.lawmaking.common.dto.response;
 
-import com.everyones.lawmaking.domain.entity.CongressManLike;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
@@ -15,15 +14,11 @@ import lombok.Getter;
 public class CongressmanLikeResponse {
 
     @NotNull
-    private String congressmanId;
-
-    @NotNull
     private boolean likeChecked;
 
-    public static CongressmanLikeResponse from(CongressManLike congressmanLike){
+    public static CongressmanLikeResponse from(boolean likeChecked){
         return CongressmanLikeResponse.builder()
-                .congressmanId(congressmanLike.getCongressman().getId())
-                .likeChecked(congressmanLike.isLikeChecked())
+                .likeChecked(likeChecked)
                 .build();
     }
 

@@ -83,7 +83,4 @@ public class Bill {
     @ColumnDefault("0")
     private int viewCount;
 
-    @ColumnDefault("0")
-    private int likeCount;
-
 }

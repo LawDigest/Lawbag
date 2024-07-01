@@ -37,12 +37,13 @@ public class BillInfoDto {
         this.summary = bill.getSummary();
         this.gptSummary = bill.getGptSummary();
         this.viewCount = bill.getViewCount();
-        this.billLikeCount = bill.getLikeCount();
+        this.billLikeCount = bill.getBillLike().size();
         this.billStage = bill.getStage();
         this.briefSummary = bill.getBriefSummary();
     }
 
     public static BillInfoDto from(Bill bill) {
+        var billLikeCount = bill.getBillLike().size();
         return BillInfoDto.builder()
                 .billId(bill.getId())
                 .billName(bill.getBillName())
@@ -50,7 +51,7 @@ public class BillInfoDto {
                 .summary(bill.getSummary())
                 .gptSummary(bill.getGptSummary())
                 .viewCount(bill.getViewCount())
-                .billLikeCount(bill.getLikeCount())
+                .billLikeCount(billLikeCount)
                 .billStage(bill.getStage())
                 .briefSummary(bill.getBriefSummary())
                 .build();

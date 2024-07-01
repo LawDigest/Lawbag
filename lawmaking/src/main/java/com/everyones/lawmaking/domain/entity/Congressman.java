@@ -36,7 +36,7 @@ public class Congressman {
     private List<RepresentativeProposer> representativeProposer;
 
     @OneToMany(mappedBy = "congressman")
-    private List<CongressManLike> congressManLike;
+    private List<CongressmanLike> congressmanLike;
 
     @Column(name = "elect_sort")
     private String electSort;
@@ -62,9 +62,6 @@ public class Congressman {
 
     @Column(name = "congressman_image_url")
     private String congressmanImageUrl;
-
-    @ColumnDefault("0")
-    private int likeCount;
 
     @ColumnDefault("22")
     @Column(name = "assembly_number")

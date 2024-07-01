@@ -13,7 +13,8 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class PartyFollow {
+@Table(uniqueConstraints = @UniqueConstraint(name = "ix_party_follow_unique", columnNames = {"user_id", "party_id"}))
+public class PartyFollow extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,9 +28,5 @@ public class PartyFollow {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "party_id")
     private Party party;
-
-    @NotNull
-    @Column(name = "follow_checked")
-    private boolean followChecked;
 
 }

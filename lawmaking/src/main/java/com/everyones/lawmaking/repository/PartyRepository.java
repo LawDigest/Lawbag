@@ -21,7 +21,7 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
 
     @Query("SELECT p FROM Party p " +
             "JOIN p.partyFollow pf " +
-            "WHERE pf.user.id = :userId and pf.followChecked = true ")
+            "WHERE pf.user.id = :userId")
     List<Party> findFollowingPartyByUserId(@Param("userId") long userId);
 
     @Query("SELECT p FROM Party p " +

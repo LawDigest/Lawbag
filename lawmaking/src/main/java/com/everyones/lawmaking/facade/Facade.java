@@ -118,7 +118,6 @@ public class Facade {
     public BillLikeResponse likeBill(long userId, String billId, boolean likeChecked) {
         var user = userService.findById(userId);
         var bill = billService.findById(billId);
-        billService.updateBillLikeCount(bill, likeChecked);
         return likeService.likeBill(user, bill, likeChecked);
     }
 
@@ -127,7 +126,6 @@ public class Facade {
     public CongressmanLikeResponse likeCongressman(long userId, String congressmanId, boolean likeChecked) {
         var user = userService.findById(userId);
         var congressman = congressmanService.findById(congressmanId);
-        congressmanService.updateCongressmanLikeCount(congressman, likeChecked);
         return likeService.likeCongressman(user, congressman, likeChecked);
     }
 
@@ -136,7 +134,6 @@ public class Facade {
     public PartyFollowResponse followParty(long userId, long partyId, boolean followChecked) {
         var user = userService.findById(userId);
         var party = partyService.findById(partyId);
-        partyService.updatePartyFollowCount(party, followChecked);
         return likeService.followParty(user, party, followChecked);
     }
 
@@ -200,7 +197,7 @@ public class Facade {
     }
 
     // 알림 데이터를 각 테이블에 해당하는 실제 데이터로 변환 (ex : bill_id
-
+    // TODO: 컨벤션에 맞게 메소드명 변경 필요
     public List<String> rpInsert(List<String> raw) {
         var congressman = congressmanService.findById(raw.get(0));
         var billRepProposer = congressman.getName();

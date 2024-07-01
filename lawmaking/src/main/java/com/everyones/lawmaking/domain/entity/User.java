@@ -29,7 +29,7 @@ public class User extends BaseEntity {
     private AuthInfo authInfo;
 
     @OneToMany(mappedBy = "user")
-    private List<CongressManLike> congressManLike;
+    private List<CongressmanLike> congressManLike;
 
     @OneToMany(mappedBy = "user")
     private List<PartyFollow> partyFollow;

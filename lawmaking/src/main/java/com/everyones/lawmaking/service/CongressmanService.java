@@ -44,14 +44,6 @@ public class CongressmanService {
         return PartyCongressmanResponse.of(congresssmanList, pagination);
     }
 
-    @Transactional
-    public void updateCongressmanLikeCount(Congressman congressman, boolean likeChecked) {
-
-        var likeCount = likeChecked ? congressman.getLikeCount() + 1 : congressman.getLikeCount() - 1;
-        congressman.setLikeCount(likeCount);
-        congressmanRepository.save(congressman);
-    }
-
     public List<LikingCongressmanResponse> getLikingCongressman(long userId){
         var likingCongressman = congressmanRepository.findLikingCongressmanByUserId(userId);
         return likingCongressman.stream()
