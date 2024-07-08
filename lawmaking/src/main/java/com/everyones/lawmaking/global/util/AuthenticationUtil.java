@@ -8,13 +8,10 @@ import java.util.Optional;
 public class AuthenticationUtil {
 
     public static Optional<Long> getUserId() {
-        Optional<Long> userId;
         var userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if (userDetails.getUsername().equals("anonymous")) {
-            userId = Optional.empty();
-        } else {
-            userId = Optional.of(Long.parseLong(userDetails.getUsername()));
+            return Optional.empty();
         }
-        return userId;
+            return Optional.of(Long.parseLong(userDetails.getUsername()));
     }
 }

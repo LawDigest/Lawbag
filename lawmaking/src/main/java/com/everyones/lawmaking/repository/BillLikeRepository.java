@@ -16,6 +16,8 @@ public interface BillLikeRepository extends JpaRepository<BillLike, Long > {
             "where bl.bill.id = :billId AND bl.user.id = :userId")
     Optional<BillLike> findByUserIdAndBillId(@Param("userId") long userId, @Param("billId") String billId);
 
+    Long countByUserId(long userId);
+
 //    void deleteById(@Param("billLikeId") long billLikeId);
 
 
