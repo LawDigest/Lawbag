@@ -1,9 +1,6 @@
 package com.everyones.lawmaking.controller;
 
-import com.everyones.lawmaking.common.dto.response.BillListResponse;
-import com.everyones.lawmaking.common.dto.response.FollowingPartyResponse;
-import com.everyones.lawmaking.common.dto.response.LikingCongressmanResponse;
-import com.everyones.lawmaking.common.dto.response.UserMyPageInfoResponse;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import com.everyones.lawmaking.global.error.UserException;
@@ -105,6 +102,25 @@ public class UserController {
 
     }
 
+    @Operation(summary = "팔로우한 의원 수 반환", description = "마이페이지에서 팔로우한 의원 수 반환")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @GetMapping("/liking/congressman/count")
+    public BaseResponse<CountDto> getCongressmanLikeCount() {
+        var result = facade.getCongressmanLikeCount();
+        return BaseResponse.ok(result);
+    }
+
     @Operation(summary = "스크랩한 법안 가져오기", description = "스크랩탭에서 유저가 북마크한 목록 제공 api ")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -130,6 +146,24 @@ public class UserController {
 
         Pageable pageable = PageRequest.of(page, size);
         var result = facade.getBookmarkedBills(pageable, userId);
+        return BaseResponse.ok(result);
+    }
+    @Operation(summary = "스크랩한 법안 수 가져오기", description = "스크랩탭에서 유저가 북마크한 법안 수 제공 api ")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @GetMapping("/bookmarking/bill/count")
+    public BaseResponse<CountDto> getBookmarkedBillCount() {
+        var result = facade.getBookmarkedBillCount();
         return BaseResponse.ok(result);
     }
 

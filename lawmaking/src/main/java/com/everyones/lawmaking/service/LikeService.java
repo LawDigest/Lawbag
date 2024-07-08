@@ -2,6 +2,7 @@ package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.CongressmanLikeResponse;
+import com.everyones.lawmaking.common.dto.response.CountDto;
 import com.everyones.lawmaking.common.dto.response.PartyFollowResponse;
 import com.everyones.lawmaking.domain.entity.*;
 import com.everyones.lawmaking.global.error.LikeException;
@@ -126,6 +127,14 @@ public class LikeService {
     private BillLikeResponse deleteBillLike(BillLike billLike) {
         billLikeRepository.deleteById(billLike.getId());
         return BillLikeResponse.from(false);
+    }
+
+    public CountDto getCongressmanLikeCount(long userId) {
+        return CountDto.from(congressmanLikeRepository.countByUserId(userId));
+    }
+
+    public CountDto getBookmarkedBillCount(long userId) {
+        return CountDto.from(billLikeRepository.countByUserId(userId));
     }
 
 }

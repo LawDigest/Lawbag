@@ -3,6 +3,7 @@ package com.everyones.lawmaking.facade;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.User;
+import com.everyones.lawmaking.global.error.AuthException;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.service.*;
 import jakarta.servlet.http.HttpServletRequest;
@@ -84,6 +85,13 @@ public class Facade {
         var congressmanLike = likeService.getCongressmanLike(congressmanId, userId.get());
         congressmanResponse.setLikeChecked(congressmanLike);
         return congressmanResponse;
+    }
+    public CountDto getCongressmanLikeCount() {
+        var userId = AuthenticationUtil.getUserId();
+        if (userId.isEmpty()) {
+            throw new AuthException.AuthInfoNotFound();
+        }
+        return likeService.getCongressmanLikeCount(userId.get());
     }
 
     // 정당 상세 조회
@@ -171,6 +179,11 @@ public class Facade {
         }
         return searchDataResponse;
 
+    }
+
+    public CountDto getBookmarkedBillCount() {
+        var userId = AuthenticationUtil.getUserId();
+        return likeService.getBookmarkedBillCount(userId.get());
     }
 
     // 검색 법안 조회
