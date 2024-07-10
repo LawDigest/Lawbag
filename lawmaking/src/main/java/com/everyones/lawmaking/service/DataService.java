@@ -34,8 +34,6 @@ public class DataService {
     @Transactional
     public void insertBillInfoDf(List<BillDfRequest> billDfRequestList) {
 
-//        ExecutorService executorService = Executors.newFixedThreadPool(5);
-
         // stream으로 dto 각각을 맞는 부분에 넣어야함.
         // 중간에 로직이 필요하면 로직을 거쳐서 들어가자.
         // 시점 파티 데이터 넣기
@@ -44,10 +42,7 @@ public class DataService {
         billDfRequestList
             .forEach(bi -> {
 
-                //낙관적 락
-
                 //partyName으로 partyId조회해서 리스트 반환하기
-
                 List<Long> partyIdList = new ArrayList<>();
                 List<String> partyNameList = bi.getRstProposerPartyNameList();
                 for (String name : partyNameList) {
@@ -61,7 +56,7 @@ public class DataService {
 
 
 
-                    //이름으로 congressmanId를 찾아서 billProposer 저장하기
+                //이름으로 congressmanId를 찾아서 billProposer 저장하기
                 bi.getPublicProposers()
                         .forEach(congressmanName -> {
                             billProposerUpdate(newBill, assemblyNumber, congressmanName);
@@ -198,7 +193,6 @@ public class DataService {
                 updated = true;
             //트랜잭션관리를 위해서 예외처리
             } catch (OptimisticLockException e) {
-                // 충돌 발생 시 재시도
                 log.warn("Optimistic lock conflict", e);
             }
         }
