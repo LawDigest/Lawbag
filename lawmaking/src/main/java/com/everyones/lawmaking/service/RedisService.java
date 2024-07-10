@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +39,7 @@ public class RedisService {
         // 점수에 따라 상위 10개 추출
         return postScores.entrySet()
                 .stream()
-                .sorted((e1, e2) -> e2.getValue().compareTo(e1.getValue()))
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
                 .limit(10)
                 .map(Map.Entry::getKey)
                 .toList();
