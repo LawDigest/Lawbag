@@ -79,10 +79,6 @@ public class Bill {
     @Column(name ="bill_link")
     private String billLink;
 
-    @Column(name ="age")
-    @ColumnDefault("0")
-    private int age;
-
     @ColumnDefault("0")
     private int viewCount;
 
