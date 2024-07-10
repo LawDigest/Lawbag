@@ -40,30 +40,30 @@ public class DataService {
         Integer assemblyNumber = billDfRequestList.get(0).getAssemblyNumber();
         log.debug(billDfRequestList.toString());
         billDfRequestList
-            .forEach(bi -> {
+            .forEach(billDfRequest -> {
 
                 //partyName으로 partyId조회해서 리스트 반환하기
                 List<Long> partyIdList = new ArrayList<>();
-                List<String> partyNameList = bi.getRstProposerPartyNameList();
+                List<String> partyNameList = billDfRequest.getRstProposerPartyNameList();
                 for (String name : partyNameList) {
-                    Party party = partyRepository.findPartyDetailByName(name)
+                    Party party = partyRepository.findPartyByName(name)
                             .orElseThrow(() -> new PartyException.PartyNotFound(Map.of("party", name)));
                     partyIdList.add(party.getId());
                 }
                     // 미완성 Bill 객체 생성하여 다른 필요한 자식들에게 넣어주기.
-                    Bill newBill = Bill.of(bi,partyIdList);
+                    Bill newBill = Bill.of(billDfRequest,partyIdList);
                     billRepository.save(newBill);
 
 
 
                 //이름으로 congressmanId를 찾아서 billProposer 저장하기
-                bi.getPublicProposers()
+                billDfRequest.getPublicProposers()
                         .forEach(congressmanName -> {
                             billProposerUpdate(newBill, assemblyNumber, congressmanName);
                                 }
                         );
                     //대표발의자 이름 검색해서 RP 찾기
-                    var representativeProposerName = bi.getRstProposerNameList();
+                    var representativeProposerName = billDfRequest.getRstProposerNameList();
                 representativeProposerName.forEach((rpName) -> {
                     updateRepresentativeProposer(newBill, rpName, assemblyNumber);
                         }
@@ -78,14 +78,14 @@ public class DataService {
     public List<Long> updateBillStageDf(List<BillStageDfRequest> billStageDfRequestList) {
         List<Long> result = new ArrayList<>();
         billStageDfRequestList.forEach(
-                bsr -> {
-                    var billNumber = bsr.getBillNumber();
-                    var foundBill = billRepository.findBillByNumber(billNumber)
+                billStageDfRequest -> {
+                    var billNumber = billStageDfRequest.getBillNumber();
+                    var foundBill = billRepository.findBillByBillNumber(billNumber)
                             .orElse(null);
                     if (foundBill == null) {
                         result.add(billNumber);
                     } else {
-                        foundBill.setStage(bsr.getStage());
+                        foundBill.setStage(billStageDfRequest.getStage());
                     }
                 }
         );
@@ -96,11 +96,11 @@ public class DataService {
     public void updateBillResultDf(List<BillResultDfRequest> billResultDfRequestList) {
         billResultDfRequestList.forEach(
                 // bill number로 bill을 찾고 내용 수정하자!
-                (bsr) -> {
-                    var billNumber = bsr.getBillNumber();
-                    var foundBill = billRepository.findBillByNumber(billNumber)
+                (billResultDfRequest) -> {
+                    var billNumber = billResultDfRequest.getBillNumber();
+                    var foundBill = billRepository.findBillByBillNumber(billNumber)
                             .orElseThrow(() -> new BillException.BillNotFound(Map.of("bill", String.valueOf(billNumber))));
-                    foundBill.setBillResult(bsr.getBillProposeResult());
+                    foundBill.setBillResult(billResultDfRequest.getBillProposeResult());
                 }
         );
     }
@@ -119,7 +119,7 @@ public class DataService {
         while (!publicProposersUpdated) {
             try{
 
-                var congressman = congressmanRepository.findCongressmanByCongressmanName(congressmanName,assemblyNumber)
+                var congressman = congressmanRepository.findCongressmanByNameAndAssemblyNumber(congressmanName,assemblyNumber)
                         .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", congressmanName)));
                 var newBillProposer = BillProposer.builder()
                         .bill(newBill)
@@ -143,7 +143,7 @@ public class DataService {
         boolean representativeUpdated = false;
         while (!representativeUpdated) {
             try {
-                var congressmanForRep = congressmanRepository.findCongressmanByCongressmanName(rpName,assemblyNumber)
+                var congressmanForRep = congressmanRepository.findCongressmanByNameAndAssemblyNumber(rpName,assemblyNumber)
                         .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", rpName)));
 
                 var repProposer = RepresentativeProposer.builder()
@@ -171,7 +171,7 @@ public class DataService {
             try {
                 var congressman = congressmanRepository.findCongressmanById(ldr.getCongressmanId()).orElse(null);
                 String partyName = ldr.getPartyName();
-                var party = partyRepository.findPartyDetailByName(partyName).orElse(null);
+                var party = partyRepository.findPartyByName(partyName).orElse(null);
 
                 if (party == null) {
                     party = Party.create(partyName, ldr.getDistrict());
