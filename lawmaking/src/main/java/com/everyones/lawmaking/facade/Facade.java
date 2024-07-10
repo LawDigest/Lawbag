@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.facade;
 
+import com.everyones.lawmaking.common.dto.BillDto;
 import com.everyones.lawmaking.common.dto.request.BillDfRequest;
 import com.everyones.lawmaking.common.dto.request.BillResultDfRequest;
 import com.everyones.lawmaking.common.dto.request.BillStageDfRequest;
@@ -39,6 +40,7 @@ public class Facade {
     private final DistrictService districtService;
     private final CandidateService candidateService;
     private final DataService dataService;
+    private final RedisService redisService;
 
     public BillListResponse findByPage(Pageable pageable) {
         var billListResponse = billService.findByPage(pageable);
@@ -65,6 +67,7 @@ public class Facade {
 
     // 법안 조회수 증가
     public BillViewCountResponse updateViewCount(String billId) {
+        redisService.addToViewsQueue(billId);
         return billService.updateViewCount(billId);
     }
 
@@ -131,6 +134,9 @@ public class Facade {
     public BillLikeResponse likeBill(long userId, String billId, boolean likeChecked) {
         var user = userService.findById(userId);
         var bill = billService.findById(billId);
+        if (likeChecked) {
+            redisService.addToLikesQueue(billId);
+        }
         return likeService.likeBill(user, bill, likeChecked);
     }
 
@@ -377,6 +383,20 @@ public class Facade {
 
     public void updateLawmakerDf(List<LawmakerDfRequest> lawmakerDfRequestList) {
         dataService.updateLawmakerDf(lawmakerDfRequestList);
+    }
+
+    public List<BillDto> getPopularBills() {
+        var popularBillIds = redisService.getPopularBills();
+        var billList = billService.getBillListResponse(popularBillIds);
+        var userIdOptional = AuthenticationUtil.getUserId();
+
+        return userIdOptional.map(userId -> billList.stream()
+                .map(billDto -> {
+                    var isBookMark = likeService.getBillLikeChecked(billDto.getBillInfoDto().getBillId(), userId);
+                    billDto.setIsBookMark(isBookMark);
+                    return billDto;
+                })
+                .toList()).orElse(billList);
     }
 
 
