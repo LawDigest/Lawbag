@@ -16,11 +16,7 @@ import lombok.Getter;
 public class BillLikeResponse {
 
     @NotNull
-    private String billId;
-
-    @NotNull
     private boolean likeChecked;
-
 
     public static BillLikeResponse from(boolean likeChecked) {
         return BillLikeResponse.builder()
