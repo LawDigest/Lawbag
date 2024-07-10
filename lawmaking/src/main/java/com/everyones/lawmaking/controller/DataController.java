@@ -53,7 +53,6 @@ public class DataController {
     public BaseResponse<String> insertBill(
             @Parameter(description = "발의법률안 삽입 데이터", required = true)
             @RequestBody BillListDfRequest billListDfRequest) {
-        System.out.println(billListDfRequest);
         var billDfRequestList = billListDfRequest.getBillRequestList();
         facade.insertBillInfoDf(billDfRequestList);
 
@@ -134,56 +133,6 @@ public class DataController {
         return BaseResponse.ok("200");
 
     }
-    //@Todo Bill의 새로운 컬럼(PROC_RESULT_CD) 추가 후 -> bill_vote, bill_vote/individual
-
-
-
-//@Todo 새로 추가되는 타임라인 기능 -> bill_vote, bill_vote/individual
-//
-//    @Operation(summary = "당일 본회의 투표수 수집 삽입 요청 API", description = "당일 본회의 투표수 수집 삽입 요청한다.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "조회 성공"),
-//            @ApiResponse(
-//                    responseCode = "500",
-//                    description = "서버 오류 (문제 지속시 BE팀 문의)",
-//                    content = {@Content(
-//                            mediaType = "application/json;charset=UTF-8",
-//                            schema = @Schema(implementation = BaseResponse.class),
-//                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
-//                    )}
-//            ),
-//    })
-//    @PostMapping("/bill_vote")
-//    public BaseResponse<String> getCongressmanDetails(
-//            @Parameter(description = "당일 본회의 투표수 수집 삽입 요청 데이터", required = true)
-//            @RequestBody BillInfoListRequest  billInfoListRequest) {
-//        log.debug("data={}", billInfoListRequest.getBillInfoRequestList().get(0).getBillId());
-//        return BaseResponse.ok("200");
-//
-//    }
-//
-//    @Operation(summary = "개별 국회의원별 찬성, 반대 표결 결과 수집 삽입 요청 API", description = "개별 국회의원별 찬성, 반대 표결 결과 수집 삽입 요청한다.")
-//    @ApiResponses(value = {
-//            @ApiResponse(responseCode = "200", description = "조회 성공"),
-//            @ApiResponse(
-//                    responseCode = "500",
-//                    description = "서버 오류 (문제 지속시 BE팀 문의)",
-//                    content = {@Content(
-//                            mediaType = "application/json;charset=UTF-8",
-//                            schema = @Schema(implementation = BaseResponse.class),
-//                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
-//                    )}
-//            ),
-//    })
-//    @PostMapping("/bill_vote/individual")
-//    public BaseResponse<String> getCongressmanDetails(
-//            @Parameter(description = "개별 국회의원별 찬성, 반대 표결 결과 수집 삽입 api", required = true)
-//            @RequestBody BillInfoListRequest  billInfoListRequest) {
-//        log.debug("data={}", billInfoListRequest.getBillInfoRequestList().get(0).getBillId());
-//        return BaseResponse.ok("200");
-//
-//    }
-//
 
 
 }
