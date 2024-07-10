@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.domain.entity;
 
+import com.everyones.lawmaking.common.dto.request.LawmakerDfRequest;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
@@ -74,5 +75,46 @@ public class Congressman {
                 ", name='" + name + '\'' +
                 '}';
     }
+
+
+    public static Congressman of(LawmakerDfRequest lawmakerDfRequest,Party party){
+        String electSort = Congressman.getElectSort(lawmakerDfRequest.getDistrict());
+        String congressmanId = lawmakerDfRequest.getCongressmanId();
+        int assemblyNumber = lawmakerDfRequest.getAssemblyNumber();
+        String congressmanImageUrl = "/congressman/" + assemblyNumber + "/" + congressmanId + ".jpg";
+        return Congressman.builder()
+                .id(congressmanId)
+                .name(lawmakerDfRequest.getCongressmanName())
+                .party(party)
+                .assemblyNumber(22)
+                .commits(lawmakerDfRequest.getCommits())
+                .elected(lawmakerDfRequest.getElected())
+                .homepage(lawmakerDfRequest.getHomepage())
+                .district(lawmakerDfRequest.getDistrict())
+                .electSort(electSort)
+                .congressmanImageUrl(congressmanImageUrl)
+                .build();
+
+    }
+
+    public Congressman update(LawmakerDfRequest lawmakerDfRequest,Party party){
+        String electSort = Congressman.getElectSort(lawmakerDfRequest.getDistrict());
+        this.setId(lawmakerDfRequest.getCongressmanId());
+        this.setName(lawmakerDfRequest.getCongressmanName());
+        this.setParty(party);
+        this.setAssemblyNumber(22);
+        this.setCommits(lawmakerDfRequest.getCommits());
+        this.setElected(lawmakerDfRequest.getElected());
+        this.setHomepage(lawmakerDfRequest.getHomepage());
+        this.setDistrict(lawmakerDfRequest.getDistrict());
+        this.setElectSort(electSort);
+        return this;
+
+    }
+
+    private static String getElectSort(String district) {
+        return district.equals("비례대표") ? "비례대표" : "지역구";
+    }
+
 
 }

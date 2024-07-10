@@ -100,4 +100,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     Slice<String> findBillByKeyword(Pageable pageable,@Param("keyword") String keyword);
 
 
+    Optional<Bill> findBillByBillNumber(long billNumber);
+
+
 }

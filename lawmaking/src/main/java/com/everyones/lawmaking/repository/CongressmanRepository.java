@@ -33,4 +33,10 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
             "ORDER BY c.name ")
     Slice<Congressman> findByPage(@Param("partyId") long partyId, Pageable pageable);
 
+
+    Optional<Congressman> findCongressmanByNameAndAssemblyNumber(String congressmanName, int assemblyNumber);
+
+
+    Optional<Congressman> findCongressmanById(String congressmanId);
+
 }

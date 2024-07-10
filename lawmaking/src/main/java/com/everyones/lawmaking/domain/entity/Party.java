@@ -68,19 +68,32 @@ public class Party extends BaseEntity{
     @Column(name = "public_bill_count")
     private int publicBillCount = 0;
 
+    public static Party create(String partyName,String district){
+        int districtCongressmanCount = district.equals("비례대표") ? 0 : 1;
+        int proportionalCongressmanCount = district.equals("비례대표") ? 1 : 0;
+
+
+        return Party.builder()
+                .name(partyName)
+                .districtCongressmanCount(districtCongressmanCount)
+                .proportionalCongressmanCount(proportionalCongressmanCount)
+                .build();
+    }
+
+    public void update(String district){
+        int districtCongressmanCount = district.equals("비례대표") ? 0 : 1;
+        int proportionalCongressmanCount = district.equals("비례대표") ? 1 : 0;
+        this.setDistrictCongressmanCount(this.districtCongressmanCount+districtCongressmanCount);
+        this.setProportionalCongressmanCount(this.proportionalCongressmanCount+proportionalCongressmanCount);
+    }
+
     @Override
     public String toString() {
         return "Party{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", districtCongressmanCount=" + districtCongressmanCount +
-                ", proportionalCongressmanCount=" + proportionalCongressmanCount +
-
                 '}';
     }
-
-
-
-
 
 }

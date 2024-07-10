@@ -39,6 +39,8 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
             "where rp.bill.id =:billId")
     List<String> findPartyByBillId(@Param("billId") String billId);
 
+    Optional<Party> findPartyByName(String partyName);
+
 
 
 }

@@ -1,11 +1,11 @@
 package com.everyones.lawmaking.domain.entity;
 
+import com.everyones.lawmaking.common.dto.request.BillDfRequest;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
@@ -59,6 +59,9 @@ public class Bill {
     @Column(name = "stage")
     private String stage;
 
+    @Column(name = "bill_result")
+    private String billResult;
+
     @Column(columnDefinition = "TEXT")
     private String summary;
 
@@ -76,11 +79,24 @@ public class Bill {
     @Column(name ="bill_link")
     private String billLink;
 
-    @Column(name ="age")
-    @ColumnDefault("0")
-    private int age;
-
     @ColumnDefault("0")
     private int viewCount;
+
+    public static Bill of(BillDfRequest billDfRequest,List<Long> partyIdList){
+        return Bill.builder()
+                .id(billDfRequest.getBillId())
+                .billNumber(billDfRequest.getBillNumber())
+                .partyIdList(partyIdList)
+                .billName(billDfRequest.getBillName())
+                .proposeDate(billDfRequest.getProposeDate())
+                .proposers(billDfRequest.getProposers())
+                .assemblyNumber(billDfRequest.getAssemblyNumber())
+                .stage(billDfRequest.getStage())
+                .gptSummary(billDfRequest.getGptSummary())
+                .summary(billDfRequest.getSummary())
+                .briefSummary(billDfRequest.getBriefSummary())
+                .billLink("https://likms.assembly.go.kr/bill/billDetail.do?billId="+billDfRequest.getBillId())
+                .build();
+    }
 
 }
