@@ -21,6 +21,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
 @RequiredArgsConstructor
@@ -144,7 +146,6 @@ public class BillController {
                     )}
             ),
     })
-
     @PostMapping("/user/bookmark")
     public BaseResponse<BillLikeResponse> likeBill(
             Authentication authentication,
@@ -160,8 +161,24 @@ public class BillController {
 
         return BaseResponse.ok(result);
     }
-
-
+    @Operation(summary = "인기 법안 조회", description = "인기 법안 조회 기능")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @GetMapping("/popular")
+    public BaseResponse<List<BillDto>> getPopularBills() {
+        var result = facade.getPopularBills();
+        return BaseResponse.ok(result);
+    }
 
 
 }

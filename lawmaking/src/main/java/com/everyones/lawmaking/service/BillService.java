@@ -98,7 +98,7 @@ public class BillService {
 
     }
 
-    private BillListResponse getBillListResponse(Slice<Bill> billSlice) {
+    public BillListResponse getBillListResponse(Slice<Bill> billSlice) {
 
         var pagination = PaginationResponse.from(billSlice);
 
@@ -117,6 +117,13 @@ public class BillService {
                 .paginationResponse(pagination)
                 .billList(billInfoList)
                 .build();
+    }
+    public List<BillDto> getBillListResponse(List<String> billIdList) {
+        var billList = billRepository.findBillInfoByIdList(billIdList);
+
+        return billList.stream()
+                .map(this::getBillInfoFrom)
+                .toList();
     }
 
     // 메인피드 등 법안들의 리스트를 반환할 때 사용
