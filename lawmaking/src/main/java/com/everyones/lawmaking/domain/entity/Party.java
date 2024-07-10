@@ -69,8 +69,8 @@ public class Party extends BaseEntity{
     private int publicBillCount = 0;
 
     public static Party create(String partyName,String district){
-        int districtCongressmanCount = district.equals("비례대표") ? 1 : 0;
-        int proportionalCongressmanCount = district.equals("비례대표") ? 0 : 1;
+        int districtCongressmanCount = district.equals("비례대표") ? 0 : 1;
+        int proportionalCongressmanCount = district.equals("비례대표") ? 1 : 0;
 
 
         return Party.builder()
