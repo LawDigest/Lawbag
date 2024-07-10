@@ -1,5 +1,9 @@
 package com.everyones.lawmaking.facade;
 
+import com.everyones.lawmaking.common.dto.request.BillDfRequest;
+import com.everyones.lawmaking.common.dto.request.BillResultDfRequest;
+import com.everyones.lawmaking.common.dto.request.BillStageDfRequest;
+import com.everyones.lawmaking.common.dto.request.LawmakerDfRequest;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.User;
@@ -34,6 +38,7 @@ public class Facade {
     private final AuthService authService;
     private final DistrictService districtService;
     private final CandidateService candidateService;
+    private final DataService dataService;
 
     public BillListResponse findByPage(Pageable pageable) {
         var billListResponse = billService.findByPage(pageable);
@@ -353,6 +358,25 @@ public class Facade {
 
     public void reissueToken(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse) throws Exception {
         authService.reissueToken(httpServletRequest, httpServletResponse);
+    }
+
+    public void insertBillInfoDf(List<BillDfRequest> billDfRequestList) {
+        dataService.insertBillInfoDf(billDfRequestList);
+    }
+
+
+    public List<Long> updateBillStageDf(List<BillStageDfRequest> billStageDfRequestList) {
+        // list 길이가 1이상이면
+        return dataService.updateBillStageDf(billStageDfRequestList);
+    }
+
+    public void updateBillResultDf(List<BillResultDfRequest> billResultDfRequestList) {
+        // list 길이가 1이상이면
+        dataService.updateBillResultDf(billResultDfRequestList);
+    }
+
+    public void updateLawmakerDf(List<LawmakerDfRequest> lawmakerDfRequestList) {
+        dataService.updateLawmakerDf(lawmakerDfRequestList);
     }
 
 

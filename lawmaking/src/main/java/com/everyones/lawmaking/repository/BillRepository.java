@@ -99,5 +99,9 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             , nativeQuery = true)
     Slice<String> findBillByKeyword(Pageable pageable,@Param("keyword") String keyword);
 
+    @Query("select b From Bill b " +
+            "where b.billNumber=:billNumber")
+    Optional<Bill> findBillByNumber(@Param("billNumber") Long billNumber);
+
 
 }
