@@ -16,12 +16,10 @@ import java.time.LocalDate;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BillDetailInfo extends BillInfoDto{
 
-    private String[] keyword;
     private String billLink;
 
     public BillDetailInfo(Bill bill) {
         super(bill);
-        this.keyword = bill.getKeyword().split(", ");
         this.billLink = bill.getBillLink();
     }
 
