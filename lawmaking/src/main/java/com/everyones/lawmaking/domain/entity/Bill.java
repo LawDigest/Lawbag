@@ -68,7 +68,6 @@ public class Bill {
     @Column(name = "gpt_summary", columnDefinition = "TEXT")
     private String gptSummary;
 
-    private String keyword;
 
     @Column(name = "bill_pdf_url")
     private String billPdfUrl; // PDF 파일의 경로 또는 식별자
