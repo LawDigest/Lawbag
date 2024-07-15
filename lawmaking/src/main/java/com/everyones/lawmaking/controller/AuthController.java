@@ -15,10 +15,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
@@ -69,7 +66,7 @@ public class AuthController {
                     )}
             ),
     })
-    @PatchMapping("/reissue/token")
+    @PostMapping("/reissue/token")
     public BaseResponse<String> reissueToken(
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
