@@ -6,6 +6,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -17,7 +18,7 @@ public class CorsConfig implements WebMvcConfigurer {
 
         var corsConfig = new CorsConfiguration();
         corsConfig.setAllowedHeaders(List.of("*"));
-        corsConfig.setAllowedMethods(List.of("*"));
+        corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         corsConfig.setAllowedOrigins(List.of("http://localhost.lawdigest.net:3000","https://localhost.lawdigest.net:3000","https://api.lawdigest.net","http://localhost:3000", "https://localhost:3000","https://lawdigest.store","https://lawdigest.net","https://www.lawdigest.net", "https://lawDigest.net:3000","https://law-digest-fe.vercel.app/","https://law-digest-fe.vercel.app*"));
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(3600L);
