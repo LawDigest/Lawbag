@@ -59,7 +59,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "JOIN b.billLike bl " +
             "JOIN bl.user u " +
             "where u.id = :userId " +
-            "order by bl.modifiedDate ")
+            "order by b.proposeDate desc")
     Slice<Bill> findByUserId(Pageable pageable, @Param("userId") long userId);
 
     // 단일 법안과 관련된 정보 가져오는 쿼리
@@ -79,6 +79,14 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "WHERE b.id in :billList "
     )
     List<Bill> findBillInfoByIdList(List<String> billList);
+
+    @Query("SELECT DISTINCT b FROM Bill b " +
+            "JOIN FETCH b.publicProposer bp " +
+            "JOIN FETCH bp.congressman bpc " +
+            "JOIN FETCH bpc.party bpp " +
+            "WHERE b.id in :billList "
+    )
+    List<Bill> findBillByModifiedDateWithIdList(List<String> billList);
 
     // 유사한 법안 조회 법안과 같은 이름을 가진 법안 조회
     @Query("SELECT b FROM Bill b " +
