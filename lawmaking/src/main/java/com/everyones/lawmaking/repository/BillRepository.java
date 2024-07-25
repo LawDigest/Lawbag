@@ -80,14 +80,6 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     )
     List<Bill> findBillInfoByIdList(List<String> billList);
 
-    @Query("SELECT DISTINCT b FROM Bill b " +
-            "JOIN FETCH b.publicProposer bp " +
-            "JOIN FETCH bp.congressman bpc " +
-            "JOIN FETCH bpc.party bpp " +
-            "WHERE b.id in :billList "
-    )
-    List<Bill> findBillByModifiedDateWithIdList(List<String> billList);
-
     // 유사한 법안 조회 법안과 같은 이름을 가진 법안 조회
     @Query("SELECT b FROM Bill b " +
             "JOIN FETCH b.representativeProposer rp " +
