@@ -6,6 +6,7 @@ import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
+import com.everyones.lawmaking.global.constant.BillOrderType;
 import com.everyones.lawmaking.global.error.BillException;
 import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,14 +36,14 @@ public class BillService {
     // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
     public BillListResponse findByPage(Pageable pageable) {
         var billSlice = billRepository.findByPage(pageable);
-        return getBillListResponse(billSlice);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
 
     // 단계 추가
     public BillListResponse findByPage(Pageable pageable, String stage) {
         var billSlice = billRepository.findByPage(pageable, stage);
-        return getBillListResponse(billSlice);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
     }
 
     public BillDetailResponse getBillWithDetail(String billId) {
@@ -61,7 +62,7 @@ public class BillService {
     // 유저가 좋아요한 법안 목록 슬라이스로 가져오기
     public BillListResponse getBookmarkingBills(Pageable pageable, long userId) {
         var billSlice = billRepository.findByUserId(pageable, userId);
-        return getBillListResponse(billSlice);
+        return getBillListResponse(billSlice, BillOrderType.BILL_LIKE_ORDER);
     }
 
     // TODO: 조회수 컬럼 접근에 대한 동시성 문제 해결 + 성능 이슈 업데이트 해야함.
@@ -76,29 +77,29 @@ public class BillService {
 
     public BillListResponse getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findByRepresentativeProposer(congressmanId, pageable);
-        return getBillListResponse(billSlice);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
 
     public BillListResponse getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable);
-        return getBillListResponse(billSlice);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
 
     public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findRepresentativeBillsByParty(pageable, partyId);
-        return getBillListResponse(billSlice);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
 
     public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findPublicBillsByParty(pageable, partyId);
-        return getBillListResponse(billSlice);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
 
-    public BillListResponse getBillListResponse(Slice<Bill> billSlice) {
+    public BillListResponse getBillListResponse(Slice<Bill> billSlice, BillOrderType billOrderType) {
 
         var pagination = PaginationResponse.from(billSlice);
 
@@ -107,7 +108,7 @@ public class BillService {
                 .map(Bill::getId)
                 .toList();
 
-        var billList = billRepository.findBillInfoByIdList(billIdList);
+        var billList = getSortedBillByOrderType(billIdList, billOrderType);
 
         var billInfoList = billList.stream()
                 .map(this::getBillInfoFrom)
@@ -118,6 +119,13 @@ public class BillService {
                 .billList(billInfoList)
                 .build();
     }
+
+    public List<Bill> getSortedBillByOrderType(List<String> billIdList, BillOrderType billOrderType) {
+        return billRepository.findBillInfoByIdList(billIdList);
+    }
+
+
+
     public List<BillDto> getBillListResponse(List<String> billIdList) {
         var billList = billRepository.findBillInfoByIdList(billIdList);
 
