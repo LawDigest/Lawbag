@@ -146,7 +146,7 @@ public class BillController {
                     )}
             ),
     })
-    @PostMapping("/user/bookmark")
+    @PatchMapping("/user/bookmark")
     public BaseResponse<BillLikeResponse> likeBill(
             Authentication authentication,
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
