@@ -53,6 +53,25 @@ public class Congressman {
     @Column(name = "homepage")
     private String homepage;
 
+    @Column(name = "state",columnDefinition = "boolean default false")
+    private Boolean state;
+
+    @Column(name = "congressman_age")
+    private String congressmanAge;
+
+    @Column(name = "sex")
+    private String sex;
+
+    @Column(name = "congressma_telephone")
+    private String congressmanTelephone;
+
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "congressman_office")
+    private String congressmanOffice;
+
+
     @ColumnDefault("0")
     @Column(name = "represent_count")
     private int representCount;
@@ -78,7 +97,6 @@ public class Congressman {
 
 
     public static Congressman of(LawmakerDfRequest lawmakerDfRequest,Party party){
-        String electSort = Congressman.getElectSort(lawmakerDfRequest.getDistrict());
         String congressmanId = lawmakerDfRequest.getCongressmanId();
         int assemblyNumber = lawmakerDfRequest.getAssemblyNumber();
         String congressmanImageUrl = "/congressman/" + assemblyNumber + "/" + congressmanId + ".jpg";
@@ -91,14 +109,18 @@ public class Congressman {
                 .elected(lawmakerDfRequest.getElected())
                 .homepage(lawmakerDfRequest.getHomepage())
                 .district(lawmakerDfRequest.getDistrict())
-                .electSort(electSort)
                 .congressmanImageUrl(congressmanImageUrl)
+                .congressmanAge(lawmakerDfRequest.getCongressmanBirth())
+                .congressmanOffice(lawmakerDfRequest.getCongressmanOffice())
+                .congressmanTelephone(lawmakerDfRequest.getCongressmanTelephone())
+                .sex(lawmakerDfRequest.getSex())
+                .email(lawmakerDfRequest.getEmail())
+                .state(true)
                 .build();
 
     }
 
-    public Congressman update(LawmakerDfRequest lawmakerDfRequest,Party party){
-        String electSort = Congressman.getElectSort(lawmakerDfRequest.getDistrict());
+    public void update(LawmakerDfRequest lawmakerDfRequest,Party party){
         this.setId(lawmakerDfRequest.getCongressmanId());
         this.setName(lawmakerDfRequest.getCongressmanName());
         this.setParty(party);
@@ -107,14 +129,22 @@ public class Congressman {
         this.setElected(lawmakerDfRequest.getElected());
         this.setHomepage(lawmakerDfRequest.getHomepage());
         this.setDistrict(lawmakerDfRequest.getDistrict());
-        this.setElectSort(electSort);
-        return this;
+        this.setCongressmanAge(lawmakerDfRequest.getCongressmanBirth());
+        this.setCongressmanOffice(lawmakerDfRequest.getCongressmanOffice());
+        this.setCongressmanTelephone(lawmakerDfRequest.getCongressmanTelephone());
+        this.setSex(lawmakerDfRequest.getSex());
+        this.setEmail(lawmakerDfRequest.getEmail());
 
     }
 
-    private static String getElectSort(String district) {
-        return district.equals("비례대표") ? "비례대표" : "지역구";
+    public void updateState(Boolean changedState){
+        this.setState(changedState);
+        if(!changedState){
+            this.setElectSort("");
+            this.setDistrict("");
+        }
     }
+
 
 
 }
