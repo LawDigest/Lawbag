@@ -94,8 +94,13 @@ public class Bill {
                 .gptSummary(billDfRequest.getGptSummary())
                 .summary(billDfRequest.getSummary())
                 .briefSummary(billDfRequest.getBriefSummary())
-                .billLink("https://likms.assembly.go.kr/bill/billDetail.do?billId="+billDfRequest.getBillId())
                 .build();
+    }
+
+    public void update(BillDfRequest billDfRequest){
+        this.setSummary(billDfRequest.getSummary());
+        this.setGptSummary(billDfRequest.getGptSummary());
+        this.setBriefSummary(billDfRequest.getBriefSummary());
     }
 
 }

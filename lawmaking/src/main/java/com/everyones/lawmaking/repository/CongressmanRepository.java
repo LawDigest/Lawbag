@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface CongressmanRepository extends JpaRepository<Congressman, String> {
@@ -33,10 +34,14 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
             "ORDER BY c.name ")
     Slice<Congressman> findByPage(@Param("partyId") long partyId, Pageable pageable);
 
-
-    Optional<Congressman> findCongressmanByNameAndAssemblyNumber(String congressmanName, int assemblyNumber);
+    @Query("SELECT c FROM Congressman c " +
+            "Where c.state = true and c.name =:congressmanName ")
+    Optional<Congressman> findLawmakerByName(String congressmanName);
 
 
     Optional<Congressman> findCongressmanById(String congressmanId);
+
+    @Query("SELECT c.id FROM Congressman c ")
+    Set<String> findAllCongressmanId();
 
 }

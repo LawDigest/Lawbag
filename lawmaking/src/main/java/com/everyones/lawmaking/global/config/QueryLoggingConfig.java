@@ -20,7 +20,7 @@ public class QueryLoggingConfig {
     }
 
 
-    @After("execution(* com.everyones.lawmaking.service.*.*(..))")
+    @After("execution(* com.everyones.lawmaking.service..*(..)) && !execution(* com.everyones.lawmaking.service.dataservice..*(..))")
     public void enableQueryLoggingConfig() {
         hibernateSqlLogger.setLevel(Level.DEBUG);
     }
