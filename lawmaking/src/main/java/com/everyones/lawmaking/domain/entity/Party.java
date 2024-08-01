@@ -80,11 +80,22 @@ public class Party extends BaseEntity{
                 .build();
     }
 
-    public void update(String district){
-        int districtCongressmanCount = district.equals("비례대표") ? 0 : 1;
-        int proportionalCongressmanCount = district.equals("비례대표") ? 1 : 0;
-        this.setDistrictCongressmanCount(this.districtCongressmanCount+districtCongressmanCount);
-        this.setProportionalCongressmanCount(this.proportionalCongressmanCount+proportionalCongressmanCount);
+    public void addCongressmanCount(String district){
+        if (district.equals("비례대표")){
+            this.setDistrictCongressmanCount(this.districtCongressmanCount+1);
+        }
+        else{
+            this.setProportionalCongressmanCount(this.proportionalCongressmanCount+1);
+        }
+    }
+
+    public void subCongressmanCount(String district){
+        if (district.equals("비례대표")){
+            this.setDistrictCongressmanCount(this.districtCongressmanCount-1);
+        }
+        else{
+            this.setProportionalCongressmanCount(this.proportionalCongressmanCount-1);
+        }
     }
 
     @Override
@@ -93,6 +104,7 @@ public class Party extends BaseEntity{
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", districtCongressmanCount=" + districtCongressmanCount +
+                ", proportionalCongressmanCount=" + proportionalCongressmanCount +
                 '}';
     }
 
