@@ -8,6 +8,8 @@ import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.constant.BillOrderType;
 import com.everyones.lawmaking.global.error.BillException;
+import com.everyones.lawmaking.global.error.UserException;
+import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.repository.BillRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,6 +101,15 @@ public class BillService {
 
     }
 
+    public BillListResponse findByUserAndCongressmanLike(Pageable pageable) {
+        var userId = AuthenticationUtil.getUserId();
+        if (userId.isEmpty()) {
+            throw new UserException.UserNotFoundException();
+        }
+        var billList = billRepository.findByUserAndCongressmanLike(pageable, userId.get());
+        return getBillListResponse(billList, BillOrderType.BASIC);
+    }
+
     public BillListResponse getBillListResponse(Slice<Bill> billSlice, BillOrderType billOrderType) {
 
         var pagination = PaginationResponse.from(billSlice);
@@ -156,10 +167,10 @@ public class BillService {
                 .isBookMark(false)
                 .build();
     }
+    
 
 
 
-    //
     private BillDetailResponse getBillDetailInfoFrom(Bill bill) {
 
         // Bill Entity To DTO

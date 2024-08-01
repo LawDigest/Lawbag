@@ -399,6 +399,13 @@ public class Facade {
                 .toList()).orElse(billList);
     }
 
+    // 팔로우한 의원들의 대표발의안을 최신순으로 페이징해서 가져옴
+    public BillListResponse getBillsFromFollowingTab(Pageable pageable) {
+        var billList =  billService.findByUserAndCongressmanLike(pageable);
+        return setBillListResponseBookMark(billList);
+    }
+
+
 
 
 }
