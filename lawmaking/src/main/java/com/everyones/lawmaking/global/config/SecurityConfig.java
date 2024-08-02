@@ -90,8 +90,7 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
     @Bean
     public CustomLogoutFilter customLogoutFilter() {
         return new CustomLogoutFilter(
-                tokenService,
-                appProperties
+                tokenService
         );
     }
 

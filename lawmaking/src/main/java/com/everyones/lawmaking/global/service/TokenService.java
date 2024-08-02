@@ -11,9 +11,13 @@ import com.everyones.lawmaking.global.util.CookieUtil;
 import com.everyones.lawmaking.repository.TokenRepository;
 import com.everyones.lawmaking.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -21,7 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.*;
 
 @Service
 @RequiredArgsConstructor
@@ -89,7 +93,7 @@ public class TokenService {
         return authTokenMap;
     }
 
-    public Map<String, String> reissueToken(String refreshTokenFromCookie ) {
+    public Map<String, String> reissueToken(String refreshTokenFromCookie ) throws AuthException{
 
         // 쿠키에서 가져온 refresh token으로 token 행 가져오기
         var savedToken = tokenRepository.findTokenByRefreshToken(refreshTokenFromCookie)
@@ -100,12 +104,8 @@ public class TokenService {
         // 가져온 refreshToken 검증
         var refreshTokenForAuthToken = tokenProvider.convertAuthToken(refreshTokenForUse);
 
-        if (!refreshTokenForAuthToken.validate()) {
-            throw new AuthException.TokenNotValid();
-        }
-
-        // refreshToken 매칭검사
-        if (!refreshTokenForUse.equals(refreshTokenFromCookie)) {
+        //refreshToken 검사
+        if (!refreshTokenForAuthToken.validate() || !refreshTokenForUse.equals(refreshTokenFromCookie)) {
             throw new AuthException.TokenNotValid();
         }
 
@@ -176,6 +176,24 @@ public class TokenService {
             }
         }
         return false;
+    }
+
+    public void logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse){
+
+        HttpSession session = httpServletRequest.getSession(false); // 기존 세션 가져오기
+        if (session != null) {
+            session.invalidate();
+        }
+        var cookieDomain = appProperties.getAuth().getCookieDomain();
+        invalidateToken();
+        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN,cookieDomain);
+        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
+        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        context.setAuthentication(null);
+        SecurityContextHolder.clearContext();
+
     }
 
 
