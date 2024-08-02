@@ -10,13 +10,10 @@ import com.everyones.lawmaking.repository.AuthInfoRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
@@ -69,62 +66,68 @@ public class AuthService {
         // userId기반으로 authInfo 가져와서 일괄 삭제
         authInfoRepository.delete(authInfoSaved);
 
-        var cookieDomain = appProperties.getAuth().getCookieDomain();
         // 로그아웃
-        tokenService.invalidateToken();
-        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN,cookieDomain);
-        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
-        CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
-
-        HttpSession session = httpServletRequest.getSession(false); // 기존 세션 가져오기
-        if (session != null) {
-            session.invalidate();
-        }
-
-        SecurityContext context = SecurityContextHolder.getContext();
-        context.setAuthentication(null);
-        SecurityContextHolder.clearContext();
-
-
-
+        tokenService.logout(httpServletRequest,httpServletResponse);
 
         return WithdrawResponse.of(authInfoSaved);
     }
 
     @Transactional
-    public void reissueToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
+    public void reissueToken(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
         // 쿠키에서 Refresh Token 가져오기
-        Cookie[] cookies = httpServletRequest.getCookies();
 
-        String refreshTokenCookie = null;
-        if (cookies == null) {
-            throw new AuthException.CookieNotFound();
-        }
-        for (Cookie cookie : cookies) {
-            if ("refreshToken".equals(cookie.getName())) {
-                refreshTokenCookie = cookie.getValue();
-                break;
-            }
-        }
+        String refreshTokenCookie = getCookieValue(httpServletRequest,REFRESH_TOKEN);
+
 
         if (refreshTokenCookie == null) {
-            throw new AuthException.CookieNotFound();
+            //로그아웃
+            tokenService.logout(httpServletRequest,httpServletResponse);
+            return;
         }
 
         //토큰 재발급
-        var tokenMap = tokenService.reissueToken(refreshTokenCookie);
+        Map<String, String> tokenMap;
 
-        // 쿠키 설정
-        var minutes = 1000 * 60;
-        var refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
-        var accessTokenExpiry = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
+        try {
+            tokenMap = tokenService.reissueToken(refreshTokenCookie);
+        } catch (AuthException e) {
+            // 예외 발생 시 로그아웃 메서드 호출
+            tokenService.logout(httpServletRequest, httpServletResponse);
+            return;
+        } catch (Exception e){
+            log.error("Unexpected exception was caused"+e);
+            // 예외 발생 시 로그아웃 메서드 호출
+            tokenService.logout(httpServletRequest, httpServletResponse);
+            return;
+        }
         var cookieDomain = appProperties.getAuth().getCookieDomain();
 
-        CookieUtil.deleteCookieForClient(httpServletRequest,httpServletResponse,ACCESS_TOKEN,cookieDomain);
+        // 쿠키 설정
+        setCookies(httpServletRequest, httpServletResponse, tokenMap, appProperties, cookieDomain);
+    }
+
+    private void setCookies(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse, Map<String, String> tokenMap, AppProperties appProperties, String cookieDomain) {
+        int minutes = 1000 * 60;
+        int refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
+        int accessTokenExpiry = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
+
+        CookieUtil.deleteCookieForClient(httpServletRequest, httpServletResponse, ACCESS_TOKEN, cookieDomain);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
 
         CookieUtil.addCookie(httpServletResponse, REFRESH_TOKEN, tokenMap.get("refreshToken"), refreshTokenExpiry);
-        CookieUtil.addCookieForClient(httpServletResponse, ACCESS_TOKEN, tokenMap.get("accessToken"), accessTokenExpiry,cookieDomain);
+        CookieUtil.addCookieForClient(httpServletResponse, ACCESS_TOKEN, tokenMap.get("accessToken"), accessTokenExpiry, cookieDomain);
     }
+    private String getCookieValue(HttpServletRequest httpServletRequest, String name) {
+        Cookie[] cookies = httpServletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (name.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
     }
