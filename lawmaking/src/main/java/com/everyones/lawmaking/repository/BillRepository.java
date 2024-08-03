@@ -102,5 +102,12 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     Optional<Bill> findBillByBillNumber(long billNumber);
 
+    @Query("select b from Bill b " +
+            "JOIN b.representativeProposer rp " +
+            "JOIN rp.congressman c " +
+            "JOIN c.congressmanLike cl " +
+            "where cl.user.id = :userId " +
+            "ORDER BY b.proposeDate desc ")
+    Slice<Bill> findByUserAndCongressmanLike(Pageable pageable, long userId);
 
 }
