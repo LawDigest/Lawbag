@@ -32,8 +32,7 @@ public class Party extends BaseEntity{
     @OneToMany(mappedBy = "party")
     private List<PartyFollow> partyFollow;
 
-    @OneToMany(mappedBy = "party")
-    private List<ProportionalCandidate> proportionalCandidate;
+
 
     private String name;
 
