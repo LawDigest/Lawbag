@@ -95,7 +95,7 @@ public class AuthService {
             tokenService.logout(httpServletRequest, httpServletResponse);
             return;
         } catch (Exception e){
-            log.error("Unexpected exception was caused"+e);
+            log.error("Unexpected exception was caused",e);
             // 예외 발생 시 로그아웃 메서드 호출
             tokenService.logout(httpServletRequest, httpServletResponse);
             return;
