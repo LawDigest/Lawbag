@@ -39,11 +39,11 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 정당 소속 의원들이 대표 발의한 법안
     @Query("SELECT b FROM Bill b " +
-            "JOIN FETCH b.representativeProposer rp " +
+            "JOIN b.representativeProposer rp " +
             "JOIN rp.congressman c " +
             "JOIN c.party p " +
-            "WHERE b.id = rp.bill.id " +
-            "AND p.id = :partyId ")
+            "WHERE p.id = :partyId " +
+            "ORDER BY b.proposeDate desc, b.id desc")
     Slice<Bill> findRepresentativeBillsByParty(Pageable pageable, @Param("partyId") long partyId);
 
     // 정당 소속 의원들이 공동 발의한 법안
