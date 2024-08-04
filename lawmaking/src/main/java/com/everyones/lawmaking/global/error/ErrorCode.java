@@ -25,8 +25,6 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(404, "해당 유저를 찾을 수 없습니다."),
 
-    CANDIDATE_NOT_FOUND(404, "해당 후보자를 찾을 수 없습니다."),
-
     CONGRESSMAN_NOT_FOUND(404, "해당 의원을 찾을 수 없습니다."),
 
     BILL_NOT_FOUND(404, "해당 법안을 찾을 수 없습니다."),

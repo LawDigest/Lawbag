@@ -92,29 +92,5 @@ public class SearchController {
 
     }
 
-    @Operation(summary = "후보자 검색", description = "후보자 검색한 결과를 주는 API입니다. ")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "서버 오류 (문제 지속시 BE팀 문의)",
-                    content = {@Content(
-                            mediaType = "application/json;charset=UTF-8",
-                            schema = @Schema(implementation = BaseResponse.class),
-                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
-                    )}
-            ),
-    })
-    @GetMapping("/candidate")
-    public BaseResponse<SearchDataResponse> searchCandidate (
-            @Parameter(example = "소방", description = "소방 관련 법안을 검색하려는 검색어")
-            @RequestParam("search_word") String searchWord,
-            @Parameter(example = "0", description = "검색 결과 페이징을 위한 페이지 넘버")
-            @RequestParam("page") int page) {
-        var pageable = PageRequest.of(page, 5);
 
-        var result = facade.searchCandidate(searchWord,pageable);
-        return BaseResponse.ok(result);
-
-    }
 }

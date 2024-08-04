@@ -33,12 +33,7 @@ public class Facade {
     private final LikeService likeService;
     private final UserService userService;
     private final NotificationService notificationService;
-    private final PartyPromiseService partyPromiseService;
-    private final ProportionalCandidateService proportionalCandidateService;
-    private final DistrictCandidateService districtCandidateService;
     private final AuthService authService;
-    private final DistrictService districtService;
-    private final CandidateService candidateService;
     private final DataService dataService;
     private final RedisService redisService;
 
@@ -286,81 +281,11 @@ public class Facade {
 
 
 
-    // 정당 공약 조회
-    public PartyPromiseResponse getPartyPromise(long partyId, Pageable pageable) {
-
-        return partyPromiseService.getPartyPromise(partyId, pageable);
-    }
-
-    public ProportionalCandidateListResponse getProportionalCandidateList(long partyId, Pageable pageable){
-        return proportionalCandidateService.getProportionalCandidateList(partyId, pageable);
-    }
-
-
-
-    public ProportionalPartyImageListResponse getProPartyImage(Pageable pageable){
-        return partyService.getProportionalPartyImageList(pageable);
-    }
-
-    public CandidateDetailResponse proportionalCandidateDetail(long candidateId){
-        return     proportionalCandidateService.getProportionalCandidateDetail(candidateId);
-
-    }
-
-    public CandidateDetailResponse districtCandidateDetail(long candidateId){
-        return     districtCandidateService.getDistrictCandidateDetail(candidateId);
-
-    }
-
     public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
         return authService.withdraw(userId,httpRequest, httpResponse);
 
     }
 
-    public DistrictCandidateListResponse getDistrictCandidateList(long districtId, Pageable pageable){
-        return districtCandidateService.getDistrictCandidateList(districtId, pageable);
-    }
-
-    public List<DistrictResponse> getDistrictList(String cityName, String guName){
-
-        if(cityName != null && !cityName.isEmpty()){
-            // 도시이름 받음
-            if(guName != null && !guName.isEmpty()){
-            // 도시이름이랑 지역구 받음
-                return districtService.getDistrictList(cityName,guName);
-            }
-            else{
-                //도시 이름만 받음
-                return districtService.getGuNameList(cityName);
-            }
-        }
-        else{
-            // 아무것도 안받음.
-            return districtService.getAllCity();
-
-        }
-
-}
-
-    public DistrictIdResponse getDistrictId(String cityName, String guName,String districtName){
-
-
-            return districtService.getDistrictId(cityName,guName,districtName);
-
-
-    }
-
-    public SearchDataResponse searchCandidate(String searchWord,Pageable pageable ) {
-
-        return candidateService.searchCandidate(searchWord, pageable);
-
-    }
-
-    public ProportionalPartyResponse getPartyInfoWithProportionalPage(long partyId) {
-
-        return partyService.getPartyInfoWithProportionalPage(partyId);
-
-    }
 
     public void reissueToken(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse) throws Exception {
         authService.reissueToken(httpServletRequest, httpServletResponse);

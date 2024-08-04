@@ -1,8 +1,6 @@
 package com.everyones.lawmaking.repository;
 
 import com.everyones.lawmaking.domain.entity.Party;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -28,9 +26,6 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
             "WHERE p.name LIKE %:searchWord% ")
     List<Party> findBySearchWord(@Param("searchWord") String searchWord);
 
-    @Query("select distinct pc.party " +
-            "FROM ProportionalCandidate pc ")
-    Slice<Party> findProportionalParty(Pageable pageable);
 
     @Query("SELECT distinct p.partyImageUrl " +
             "from Party p " +
