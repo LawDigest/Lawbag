@@ -104,7 +104,7 @@ public class Congressman {
                 .id(congressmanId)
                 .name(lawmakerDfRequest.getCongressmanName())
                 .party(party)
-                .assemblyNumber(22)
+                .assemblyNumber(assemblyNumber)
                 .commits(lawmakerDfRequest.getCommits())
                 .elected(lawmakerDfRequest.getElected())
                 .homepage(lawmakerDfRequest.getHomepage())
@@ -124,7 +124,7 @@ public class Congressman {
         this.setId(lawmakerDfRequest.getCongressmanId());
         this.setName(lawmakerDfRequest.getCongressmanName());
         this.setParty(party);
-        this.setAssemblyNumber(22);
+        this.setAssemblyNumber(lawmakerDfRequest.getAssemblyNumber());
         this.setCommits(lawmakerDfRequest.getCommits());
         this.setElected(lawmakerDfRequest.getElected());
         this.setHomepage(lawmakerDfRequest.getHomepage());
