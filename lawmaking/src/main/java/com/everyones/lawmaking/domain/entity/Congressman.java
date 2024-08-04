@@ -62,7 +62,7 @@ public class Congressman {
     @Column(name = "sex")
     private String sex;
 
-    @Column(name = "congressma_telephone")
+    @Column(name = "congressman_telephone")
     private String congressmanTelephone;
 
     @Column(name = "email")
