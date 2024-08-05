@@ -20,7 +20,7 @@ import java.util.List;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 @Table(name = "Bill", indexes = {
         @Index(name = "idx_bill_id_propose_date", columnList = "propose_date DESC"),
-        @Index(name = "idx_propose_date_id", columnList = "propose_date, id")
+        @Index(name = "idx_propose_date_id", columnList = "propose_date, bill_id")
 })public class Bill {
     @Id
     @Column(name = "bill_id")
