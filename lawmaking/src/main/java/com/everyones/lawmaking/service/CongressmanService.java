@@ -30,9 +30,9 @@ public class CongressmanService {
                 .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of(CONGRESSMAN_ID_KEY_STRING, congressmanId)));
     }
 
-    public CongressmanResponse getCongressman(String congressmanId) {
+    public Congressman getCongressman(String congressmanId) {
         var congressman = findById(congressmanId);
-        return CongressmanResponse.from(congressman);
+        return congressman;
     }
 
     public PartyCongressmanResponse getPartyCongressman(long partyId, Pageable pageable) {

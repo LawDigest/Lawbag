@@ -137,4 +137,8 @@ public class LikeService {
         return CountDto.from(billLikeRepository.countByUserId(userId));
     }
 
+    public Integer getCongressmanFollowerCount(String congressmanId) {
+        return congressmanLikeRepository.countByCongressmanId(congressmanId).intValue();
+    }
+
 }

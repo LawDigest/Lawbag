@@ -36,6 +36,8 @@ public class Facade {
     private final AuthService authService;
     private final DataService dataService;
     private final RedisService redisService;
+    private final RepresentativeProposerService representativeProposerService;
+    private final BillProposerService billProposerService;
 
     public BillListResponse findByPage(Pageable pageable) {
         var billListResponse = billService.findByPage(pageable);
@@ -80,14 +82,16 @@ public class Facade {
 
     // 의원 상세 조회
     public CongressmanResponse getCongressman(String congressmanId) {
-        var congressmanResponse = congressmanService.getCongressman(congressmanId);
+        var congressman = congressmanService.getCongressman(congressmanId);
+        var followCount = likeService.getCongressmanFollowerCount(congressmanId);
+        var representCount = representativeProposerService.countBillByCongressmanAsPublicProposer(congressmanId);
+        var publicCount = billProposerService.countBillByCongressmanAsPublicProposer(congressmanId);
         var userId = AuthenticationUtil.getUserId();
         if (userId.isEmpty()) {
-            return congressmanResponse;
+            return CongressmanResponse.of(congressman, followCount, representCount, publicCount);
         }
         var congressmanLike = likeService.getCongressmanLike(congressmanId, userId.get());
-        congressmanResponse.setLikeChecked(congressmanLike);
-        return congressmanResponse;
+        return CongressmanResponse.of(congressman, followCount, representCount, publicCount, congressmanLike);
     }
     public CountDto getCongressmanLikeCount() {
         var userId = AuthenticationUtil.getUserId();

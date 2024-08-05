@@ -19,6 +19,8 @@ public interface CongressmanLikeRepository extends JpaRepository<CongressmanLike
 
     Long countByUserId(long userId);
 
+    Long countByCongressmanId(String congressmanId);
+
 
 
 }

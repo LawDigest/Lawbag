@@ -24,10 +24,13 @@ public class CongressmanResponse {
     private Integer age;
     private String email;
     private String office;
-    private Integer representCount;
-    private Integer publicCount;
     private String congressmanImageUrl;
     private Boolean likeChecked;
+
+    private Integer followCount;
+    private Integer representCount;
+    private Integer publicCount;
+
     // Party 관련 필드들
     private Long partyId;
     private String partyName;
@@ -36,7 +39,7 @@ public class CongressmanResponse {
 
 
 
-    public static CongressmanResponse from(Congressman congressman)  {
+    public static CongressmanResponseBuilder getBuilder(Congressman congressman)  {
         return CongressmanResponse.builder()
                 .congressmanId(congressman.getId())
                 .congressmanName(congressman.getName())
@@ -48,16 +51,29 @@ public class CongressmanResponse {
                 .commits(congressman.getCommits())
                 .elected(congressman.getElected())
                 .homepage(congressman.getHomepage())
-                .representCount(congressman.getRepresentCount())
-                .publicCount(congressman.getPublicCount())
                 .congressmanImageUrl(congressman.getCongressmanImageUrl())
                 .age(DateUtil.calculateAge(congressman.getCongressmanAge()))
                 .email(congressman.getEmail())
                 .gender(congressman.getSex())
-                .office(congressman.getCongressmanOffice())
+                .office(congressman.getCongressmanOffice());
+    }
+    public static CongressmanResponse of(Congressman congressman, Integer followCount, Integer representCount, Integer publicCount) {
+        return CongressmanResponse.getBuilder(congressman)
+                .followCount(followCount)
+                .representCount(representCount)
+                .publicCount(publicCount)
                 .likeChecked(false)
                 .build();
     }
+    public static CongressmanResponse of(Congressman congressman, Integer followCount, Integer representCount, Integer publicCount, boolean likeChecked) {
+        return CongressmanResponse.getBuilder(congressman)
+                .followCount(followCount)
+                .representCount(representCount)
+                .publicCount(publicCount)
+                .likeChecked(likeChecked)
+                .build();
+    }
+
 
 
 }

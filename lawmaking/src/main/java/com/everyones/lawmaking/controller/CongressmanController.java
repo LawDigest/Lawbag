@@ -116,4 +116,5 @@ public class CongressmanController {
         var result = facade.likeCongressman(userId, congressmanId, likeChecked);
         return BaseResponse.ok(result);
     }
+
 }

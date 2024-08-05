@@ -71,15 +71,6 @@ public class Congressman {
     @Column(name = "congressman_office")
     private String congressmanOffice;
 
-
-    @ColumnDefault("0")
-    @Column(name = "represent_count")
-    private int representCount;
-
-    @ColumnDefault("0")
-    @Column(name = "public_count")
-    private int publicCount;
-
     @Column(name = "congressman_image_url")
     private String congressmanImageUrl;
 
