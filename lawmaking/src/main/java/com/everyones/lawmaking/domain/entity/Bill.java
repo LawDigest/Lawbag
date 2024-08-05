@@ -18,8 +18,10 @@ import java.util.List;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-@Table(name = "Bill", indexes = @Index(name = "idx_bill_id_propose_date", columnList = "propose_date DESC"))
-public class Bill {
+@Table(name = "Bill", indexes = {
+        @Index(name = "idx_bill_id_propose_date", columnList = "propose_date DESC"),
+        @Index(name = "idx_propose_date_id", columnList = "propose_date, id")
+})public class Bill {
     @Id
     @Column(name = "bill_id")
     private String id;
