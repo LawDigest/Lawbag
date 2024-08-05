@@ -27,7 +27,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 특정 의원이 대표 발의한 법안들
     @Query("SELECT b FROM Bill b " +
-           "JOIN FETCH b.representativeProposer rp " +
+           "JOIN b.representativeProposer rp " +
            "WHERE b.id = rp.bill.id " +
            "AND rp.congressman.id = :congressmanId ")
     Slice<Bill> findByRepresentativeProposer(String congressmanId, Pageable pageable);
@@ -55,7 +55,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 유저가 스크랩한 법안 페이징해서 가져오는 쿼리
     @Query("SELECT b FROM Bill b " +
-            "JOIN FETCH b.representativeProposer rp " +
+            "JOIN b.representativeProposer rp " +
             "JOIN b.billLike bl " +
             "JOIN bl.user u " +
             "where u.id = :userId " +
@@ -64,25 +64,25 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 단일 법안과 관련된 정보 가져오는 쿼리
     @Query("SELECT distinct b FROM Bill b " +
-            "JOIN FETCH b.representativeProposer rp " +
-            "JOIN FETCH rp.congressman rpc " +
-            "JOIN FETCH rpc.party rpp " +
+            "JOIN b.representativeProposer rp " +
+            "JOIN rp.congressman rpc " +
+            "JOIN rpc.party rpp " +
             "WHERE b.id = :billId "
     )
     Optional<Bill> findBillInfoById(String billId);
 
     // 피드 등 여러 법안들 가져오는 쿼리
     @Query("SELECT DISTINCT b FROM Bill b " +
-            "JOIN FETCH b.publicProposer bp " +
-            "JOIN FETCH bp.congressman bpc " +
-            "JOIN FETCH bpc.party bpp " +
+            "JOIN b.publicProposer bp " +
+            "JOIN bp.congressman bpc " +
+            "JOIN bpc.party bpp " +
             "WHERE b.id in :billList "
     )
     List<Bill> findBillInfoByIdList(List<String> billList);
 
     // 유사한 법안 조회 법안과 같은 이름을 가진 법안 조회
     @Query("SELECT b FROM Bill b " +
-            "JOIN FETCH b.representativeProposer rp " +
+            "JOIN b.representativeProposer rp " +
             "WHERE b.billName = :billName " +
             "AND b.id != :billId ")
     List<Bill> findSimilarBills(@Param("billName") String billName, @Param("billId") String billId);
