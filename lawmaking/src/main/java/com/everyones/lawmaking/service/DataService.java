@@ -177,7 +177,6 @@ public class DataService {
 
                 billProposerRepository.save(newBillProposer);
 
-                billProposer.setPublicCount(billProposer.getPublicCount() + 1);
                 congressmanRepository.save(billProposer);
 
                 publicProposersUpdated = true;
@@ -202,11 +201,7 @@ public class DataService {
                         .congressman(representativeProposer)
                         .build();
 
-                representativeProposer.setRepresentCount(representativeProposer.getRepresentCount() + 1);
-
-
                 //RP 저장
-
                 representativeProposerRepository.save(repProposer);
                 congressmanRepository.save(representativeProposer);
                 representativeUpdated = true;
