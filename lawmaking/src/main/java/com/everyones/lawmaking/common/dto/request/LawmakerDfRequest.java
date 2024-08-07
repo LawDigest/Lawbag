@@ -23,6 +23,7 @@ public class LawmakerDfRequest {
     private String email;
     private String congressmanOffice;
     private String congressmanTelephone;
+    private String briefHistory;
     private int assemblyNumber;
 
 }
