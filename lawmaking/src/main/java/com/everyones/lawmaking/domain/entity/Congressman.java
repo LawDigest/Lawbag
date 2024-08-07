@@ -78,6 +78,9 @@ public class Congressman {
     @Column(name = "assembly_number")
     private int assemblyNumber;
 
+    @Column(name = "brief_history",columnDefinition = "TEXT")
+    private String briefHistory;
+
     @Override
     public String toString() {
         return "Congressman{" +
@@ -106,6 +109,7 @@ public class Congressman {
                 .congressmanTelephone(lawmakerDfRequest.getCongressmanTelephone())
                 .sex(lawmakerDfRequest.getSex())
                 .email(lawmakerDfRequest.getEmail())
+                .briefHistory(lawmakerDfRequest.getBriefHistory())
                 .state(true)
                 .build();
 
@@ -125,6 +129,7 @@ public class Congressman {
         this.setCongressmanTelephone(lawmakerDfRequest.getCongressmanTelephone());
         this.setSex(lawmakerDfRequest.getSex());
         this.setEmail(lawmakerDfRequest.getEmail());
+        this.setBriefHistory(lawmakerDfRequest.getBriefHistory());
 
     }
 
