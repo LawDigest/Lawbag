@@ -51,22 +51,21 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 
         }
-        catch (ExpiredJwtException eje){
-            eje.printStackTrace();
+        catch (ExpiredJwtException eje) {
+            logger.warn("JWT Token has expired: {}", eje);
             request.setAttribute("expiredJwtException", eje);
         }
         catch (SecurityException | MalformedJwtException | UnsupportedJwtException e) {
-            e.printStackTrace();
+            logger.error("JWT Token is invalid: {}", e);
             request.setAttribute("SecurityExceptionForJwt", e);
         }
-        catch(IllegalArgumentException e){
+        catch (IllegalArgumentException e) {
+            logger.error("Illegal argument provided: {}", e);
             request.setAttribute("IllegalArgumentException", e);
-            e.printStackTrace();
-
         }
-        catch(Exception e){
+        catch (Exception e) {
+            logger.error("An unexpected error occurred: {}", e);
             request.setAttribute("Exception", e);
-            e.printStackTrace();
         }
 
         filterChain.doFilter(request, response);
