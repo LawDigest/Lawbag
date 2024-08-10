@@ -65,6 +65,7 @@ jobs:
             docker ps -q --filter "name=lawmaking-back" | grep -q . && docker stop lawmaking-back && docker rm lawmaking-back | true
             docker pull ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker run -d -p 8080:8080 --name=lawmaking-back \
+             -v spring-log:/var/logs \
              -e "ACTIVE=${{ secrets.ACTIVE }}" \
              -e "DB_HOSTNAME=${{ secrets.DB_HOSTNAME }}" \
              -e "DB_NAME=${{ secrets.DB_NAME }}" \
