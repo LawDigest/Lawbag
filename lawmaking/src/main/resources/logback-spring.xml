@@ -20,7 +20,7 @@
     <springProfile name="prod">
         <property resource="application-prod.properties"/>
         <property name="CONSOLE_PATTERN" value="%d{yy-MM-dd HH:mm:ss} %highlight(%-5level) [%thread] [%logger{0}-%M:%line] - %msg%n" />
-        <property name="ROLLING_PATTERN" value="%d{yy-MM-dd HH:mm:ss.SSS} %logger{0} - %msg %n" />
+        <property name="ROLLING_PATTERN" value="%d{yy-MM-dd HH:mm:ss.SSS} %-5level %logger{0} - %msg %n" />
         <property name="FILE_NAME" value="/var/logs/spring.log" />
         <property name="LOG_NAME_PATTERN" value="/var/logs/spring-%d{yyyy-MM-dd-HH-mm}.%i.log" />
         <property name="MAX_FILE_SIZE" value="100MB" />
