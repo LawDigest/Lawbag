@@ -24,8 +24,8 @@
         <property name="FILE_NAME" value="/var/logs/spring.log" />
         <property name="LOG_NAME_PATTERN" value="/var/logs/spring-%d{yyyy-MM-dd-HH-mm}.%i.log" />
         <property name="MAX_FILE_SIZE" value="100MB" />
-        <property name="TOTAL_SIZE" value="300MB" />
-        <property name="MAX_HISTORY" value="2" />
+        <property name="TOTAL_SIZE" value="2000MB" />
+        <property name="MAX_HISTORY" value="20" />
 
         <!-- Console appender 설정 -->
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
