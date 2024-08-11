@@ -23,6 +23,7 @@
         <property name="ROLLING_PATTERN" value="%d{yy-MM-dd HH:mm:ss.SSS} %-5level %logger{0} - %msg %n" />
         <property name="FILE_NAME" value="/var/logs/spring.log" />
         <property name="LOG_NAME_PATTERN" value="/var/logs/spring-%d{yyyy-MM-dd}.%i.log" />
+        <property name="MAX_FILE_SIZE" value="400MB" />
         <property name="TOTAL_SIZE" value="3000MB" />
         <property name="MAX_HISTORY" value="7" />
 
@@ -38,6 +39,7 @@
             <file>${FILE_NAME}</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
                 <fileNamePattern>${LOG_NAME_PATTERN}</fileNamePattern>
+                <maxFileSize>${MAX_FILE_SIZE}</maxFileSize>
                 <totalSizeCap>${TOTAL_SIZE}</totalSizeCap>
                 <maxHistory>${MAX_HISTORY}</maxHistory>
             </rollingPolicy>
