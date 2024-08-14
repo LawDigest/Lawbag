@@ -25,10 +25,12 @@ public class LikingCongressmanResponse {
     private String congressmanImageUrl;
 
     @NotNull
-    private long partyId;
+    private Long partyId;
 
     @NotNull
     private String partyName;
+
+    private String partyImageUrl;
 
     public static LikingCongressmanResponse from(Congressman congressman) {
         Party party = congressman.getParty();
@@ -38,6 +40,7 @@ public class LikingCongressmanResponse {
                 .congressmanImageUrl(congressman.getCongressmanImageUrl())
                 .partyId(party.getId())
                 .partyName(party.getName())
+                .partyImageUrl(party.getPartyImageUrl())
                 .build();
     }
 
