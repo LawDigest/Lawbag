@@ -38,7 +38,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
 
     // mysql
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    implementation 'mysql:mysql-connector-java:8.0.33'
 
     // mysql bin log connector
     implementation group: 'com.zendesk', name: 'mysql-binlog-connector-java', version: '0.29.0'
