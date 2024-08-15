@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.domain.entity;
 
 import com.everyones.lawmaking.common.dto.request.BillDfRequest;
+import com.everyones.lawmaking.common.dto.request.BillStageDfRequest;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -53,6 +55,12 @@ import java.util.List;
     @OneToMany(mappedBy = "bill")
     private List<BillLike> billLike;
 
+    @OneToMany(mappedBy = "bill")
+    private List<VoteParty> votePartyList;
+
+    @OneToOne(mappedBy = "bill")
+    private VoteRecord voteRecord;
+
     private String committee;
 
     @Column(name = "propose_date")
@@ -83,6 +91,9 @@ import java.util.List;
     @ColumnDefault("0")
     private int viewCount;
 
+    @OneToMany(mappedBy = "bill")
+    private List<BillTimeline> billTimelineList = new ArrayList<>();
+
     public static Bill of(BillDfRequest billDfRequest,List<Long> partyIdList){
         return Bill.builder()
                 .id(billDfRequest.getBillId())
@@ -99,10 +110,15 @@ import java.util.List;
                 .build();
     }
 
-    public void update(BillDfRequest billDfRequest){
+    public void updateContent(BillDfRequest billDfRequest){
         this.setSummary(billDfRequest.getSummary());
         this.setGptSummary(billDfRequest.getGptSummary());
         this.setBriefSummary(billDfRequest.getBriefSummary());
+    }
+
+    public void updateStatusByStep(BillStageDfRequest billStageDfRequest){
+        this.setStage(billStageDfRequest.getStage());
+        this.setCommittee(billStageDfRequest.getCommittee());
     }
 
 }
