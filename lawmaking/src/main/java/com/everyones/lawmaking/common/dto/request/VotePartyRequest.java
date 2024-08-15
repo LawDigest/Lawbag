@@ -7,10 +7,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BillResultDfRequest {
-    private int age;
+public class VotePartyRequest {
 
     private String billId;
 
-    private String billProposeResult;
+    private String partyName;
+
+    private int voteForCount;
+
 }

@@ -4,13 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class BillResultDfRequest {
-    private int age;
-
-    private String billId;
-
-    private String billProposeResult;
+public class VoteListRequest {
+    public List<VoteDfRequest> voteDfRequestList;
 }

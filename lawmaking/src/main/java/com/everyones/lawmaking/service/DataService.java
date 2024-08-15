@@ -1,11 +1,7 @@
 package com.everyones.lawmaking.service;
 
-import com.everyones.lawmaking.common.dto.request.BillDfRequest;
-import com.everyones.lawmaking.common.dto.request.BillResultDfRequest;
-import com.everyones.lawmaking.common.dto.request.BillStageDfRequest;
-import com.everyones.lawmaking.common.dto.request.LawmakerDfRequest;
+import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.domain.entity.*;
-import com.everyones.lawmaking.global.error.BillException;
 import com.everyones.lawmaking.global.error.CongressmanException;
 import com.everyones.lawmaking.global.error.PartyException;
 import com.everyones.lawmaking.repository.*;
@@ -28,6 +24,9 @@ public class DataService {
     private final BillProposerRepository billProposerRepository;
     private final RepresentativeProposerRepository representativeProposerRepository;
     private final PartyRepository partyRepository;
+    private final BillTimelineRepository billTimelineRepository;
+    private final VoteRecordRepository voteRecordRepository;
+    private final VotePartyRepository votePartyRepository;
 
     @Transactional
     public void insertBillInfoDf(List<BillDfRequest> billDfRequestList) {
@@ -40,7 +39,7 @@ public class DataService {
                 var oldBill = billRepository.findBillInfoById(billDfRequest.getBillId())
                         .orElse(null);
                 if (oldBill != null){
-                    oldBill.update(billDfRequest);
+                    oldBill.updateContent(billDfRequest);
                 }
                 else {
 
@@ -85,21 +84,42 @@ public class DataService {
     }
 
     @Transactional
-    public List<Long> updateBillStageDf(List<BillStageDfRequest> billStageDfRequestList) {
-        List<Long> result = new ArrayList<>();
+    public Map<String, List<String>> updateBillStageDf(List<BillStageDfRequest> billStageDfRequestList) {
+        // 법안 number나 법안 id로 법안을 찾아
+        // stage를 수정하고 act status와 statusUpdateDate를 가지고 billTimeline 객체를 만든다.
+        Map<String, List<String>> resultMap = new HashMap<>();
+        resultMap.put("notFoundBill", new ArrayList<>());
+        resultMap.put("duplicateBill", new ArrayList<>());
+
+
         billStageDfRequestList.forEach(
                 billStageDfRequest -> {
-                    var billNumber = billStageDfRequest.getBillNumber();
-                    var foundBill = billRepository.findBillByBillNumber(billNumber)
+                    var billId = billStageDfRequest.getBillId();
+                    var foundBill = billRepository.findBillInfoById(billId)
                             .orElse(null);
-                    if (foundBill == null) {
-                        result.add(billNumber);
-                    } else {
-                        foundBill.setStage(billStageDfRequest.getStage());
+                    var equalBill = billTimelineRepository.findBillTimelineByInfo(billStageDfRequest.getBillId(),
+                            billStageDfRequest.getActStatusValue(),
+                            billStageDfRequest.getStage(),
+                            billStageDfRequest.getCommittee(),
+                            billStageDfRequest.getStatusUpdateDate());
+
+                    if(equalBill.isPresent()){
+                        resultMap.get("duplicateBill").add(equalBill.get());
                     }
+                    else if(foundBill == null){
+                        resultMap.get("notFoundBill").add(billStageDfRequest.getBillId());
+                    }
+                    else{
+                        foundBill.updateStatusByStep(billStageDfRequest);
+                        // billTimeline 객체 만들기
+                        var billTimeline = BillTimeline.of(foundBill, billStageDfRequest);
+                        billTimelineRepository.save(billTimeline);
+                    }
+
                 }
         );
-        return result;
+
+        return resultMap;
     }
 
     @Transactional
@@ -107,10 +127,9 @@ public class DataService {
         billResultDfRequestList.forEach(
                 // bill number로 bill을 찾고 내용 수정하자!
                 (billResultDfRequest) -> {
-                    var billNumber = billResultDfRequest.getBillNumber();
-                    var foundBill = billRepository.findBillByBillNumber(billNumber)
-                            .orElseThrow(() -> new BillException.BillNotFound(Map.of("bill", String.valueOf(billNumber))));
-                    foundBill.setBillResult(billResultDfRequest.getBillProposeResult());
+                    var billId = billResultDfRequest.getBillId();
+                    var foundBill = billRepository.findBillById(billId);
+                    foundBill.ifPresent(bill -> bill.setBillResult(billResultDfRequest.getBillProposeResult()));
                 }
         );
     }
@@ -163,6 +182,53 @@ public class DataService {
             lawmakerStateToTrue(lawmakerApiData.get(updateStateTrueCongressmanId),congressmanUpdateToTrue);
         });
 
+    }
+
+    @Transactional
+    public List<String> insertAssemblyVote(List<VoteDfRequest> voteDfRequestList){
+        List<String> result = new ArrayList<>();
+
+        voteDfRequestList.forEach((voteDfRequest)->{
+            var billId = voteDfRequest.getBillId();
+            var foundBill = billRepository.findBillInfoById(billId)
+                    .orElse(null);
+            if (foundBill == null) {
+                result.add(billId);
+            }
+            else{
+                var voteRecordId = voteRecordRepository.findVoteRecordIdByBillId(foundBill.getId());
+                if(voteRecordId.isEmpty()){
+                    var voteRecord = VoteRecord.of(foundBill, voteDfRequest);
+                    voteRecordRepository.save(voteRecord);
+                }
+            }
+        });
+        return result;
+    }
+
+    @Transactional
+    public List<String> insertVoteParty(List<VotePartyRequest> votePartyRequestList){
+        List<String> result = new ArrayList<>();
+
+        votePartyRequestList.forEach((votePartyRequest)->{
+            var party = partyRepository.findPartyByName(votePartyRequest.getPartyName())
+                    .orElse(null);
+            var foundBill = billRepository.findBillInfoById(votePartyRequest.getBillId())
+                    .orElse(null);
+
+            if (party == null || foundBill == null) {
+                result.add(votePartyRequest.getBillId());
+            }
+            else{
+                var foundVoteParty = votePartyRepository.findByBillAndParty(foundBill.getId(), party.getId())
+                        .orElse(null);
+                if (foundVoteParty == null){
+                    var voteParty = VoteParty.of(foundBill,party, votePartyRequest);
+                    votePartyRepository.save(voteParty);
+                }
+            }
+        });
+        return result;
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
