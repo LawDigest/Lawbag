@@ -1,10 +1,7 @@
 package com.everyones.lawmaking.facade;
 
 import com.everyones.lawmaking.common.dto.BillDto;
-import com.everyones.lawmaking.common.dto.request.BillDfRequest;
-import com.everyones.lawmaking.common.dto.request.BillResultDfRequest;
-import com.everyones.lawmaking.common.dto.request.BillStageDfRequest;
-import com.everyones.lawmaking.common.dto.request.LawmakerDfRequest;
+import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.User;
@@ -21,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 @Service
@@ -300,7 +298,7 @@ public class Facade {
     }
 
 
-    public List<Long> updateBillStageDf(List<BillStageDfRequest> billStageDfRequestList) {
+    public Map<String, List<String>> updateBillStageDf(List<BillStageDfRequest> billStageDfRequestList) {
         // list 길이가 1이상이면
         return dataService.updateBillStageDf(billStageDfRequestList);
     }
@@ -313,6 +311,18 @@ public class Facade {
     public void updateLawmakerDf(List<LawmakerDfRequest> lawmakerDfRequestList) {
         dataService.updateLawmakerDf(lawmakerDfRequestList);
     }
+
+    public List<String> insertAssemblyVote(List<VoteDfRequest> voteDfRequestList){
+        return dataService.insertAssemblyVote(voteDfRequestList);
+
+    }
+
+    public List<String> insertVoteIndividual(List<VotePartyRequest> votePartyRequestList){
+        return dataService.insertVoteParty(votePartyRequestList);
+
+    }
+
+
 
     public List<BillDto> getPopularBills() {
         var popularBillIds = redisService.getPopularBills();

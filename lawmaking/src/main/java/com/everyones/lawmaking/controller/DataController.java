@@ -1,10 +1,7 @@
 package com.everyones.lawmaking.controller;
 
 
-import com.everyones.lawmaking.common.dto.request.BillListDfRequest;
-import com.everyones.lawmaking.common.dto.request.BillResultListDfRequest;
-import com.everyones.lawmaking.common.dto.request.BillStageListDfRequest;
-import com.everyones.lawmaking.common.dto.request.LawmakerListDfRequest;
+import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
@@ -75,13 +73,12 @@ public class DataController {
                     )}
             ),
     })
-    @PostMapping("/bill_stage")
-    public BaseResponse<List<Long>> updateBillStageDf(
+    @PostMapping("/bill/timeline")
+    public BaseResponse<Map<String, List<String>>> updateBillStageDf(
             @Parameter(description = "날짜별 법안 처리상태 변동 수집 수정 데이터", required = true)
             @RequestBody BillStageListDfRequest billStageListDfRequest) {
         var billStageDfRequestList = billStageListDfRequest.getBillStageRequestList();
         var result = facade.updateBillStageDf(billStageDfRequestList);
-
         return BaseResponse.ok(result);
 
     }
@@ -131,6 +128,56 @@ public class DataController {
 
         facade.updateLawmakerDf(lawmakerDfRequestList);
         return BaseResponse.ok("200");
+
+    }
+
+    @Operation(summary = "당일 본회의 투표수 삽입 API", description = "당일 본회의 투표 수를 데이터베이스에 저장")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PostMapping("/vote")
+    public BaseResponse<List<String>> insertAssemblyVote(
+            @Parameter(description = "당일 본회의 투표수 삽입 API", required = true)
+            @RequestBody VoteListRequest voteListRequest) {
+        var voteDfRequestList=voteListRequest.getVoteDfRequestList();
+
+        // 존재하지 않는 법안 ID 리스트
+        var result = facade.insertAssemblyVote(voteDfRequestList);
+        return BaseResponse.ok(result);
+
+    }
+
+    @Operation(summary = "본회의 정당별 투표수 삽입 API", description = "본회의 정당별 투표수 삽입 API 데이터베이스 저장")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PostMapping("/vote/party")
+    public BaseResponse<List<String>> insertVoteIndividual(
+            @Parameter(description = "본회의 정당별 투표수 삽입 API", required = true)
+            @RequestBody VotePartyListRequest votePartyListRequest) {
+        var voteDfRequestList=votePartyListRequest.getVotePartyRequestList();
+
+        // 존재하지 않는 법안 ID 리스트
+        var result = facade.insertVoteIndividual(voteDfRequestList);
+        return BaseResponse.ok(result);
 
     }
 
