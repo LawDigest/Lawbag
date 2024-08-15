@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 public class BillResultDfRequest {
     private int age;
 
-    private Long billNumber;
+    private String billId;
 
     private String billProposeResult;
 }
