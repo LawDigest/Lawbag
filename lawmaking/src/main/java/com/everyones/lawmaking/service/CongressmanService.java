@@ -35,13 +35,12 @@ public class CongressmanService {
         return congressman;
     }
 
-    public PartyCongressmanResponse getPartyCongressman(long partyId, Pageable pageable) {
-        var congressman = congressmanRepository.findByPage(partyId, pageable);
-        var pagination = PaginationResponse.from(congressman);
+    public PartyCongressmanResponse getPartyCongressman(long partyId) {
+        var congressman = congressmanRepository.findByPage(partyId);
         var congresssmanList = congressman.stream()
                 .map(PartyCongressmanDto::from)
                 .toList();
-        return PartyCongressmanResponse.of(congresssmanList, pagination);
+        return PartyCongressmanResponse.of(congresssmanList);
     }
 
     public List<LikingCongressmanResponse> getLikingCongressman(long userId){

@@ -93,12 +93,8 @@ public class PartyController {
     })
     @GetMapping("/congressman")
     public BaseResponse<PartyCongressmanResponse> getPartyCongressman(@Parameter(example = "1", description = "정당 id")
-                                                                      @RequestParam("party_id") long partyId,
-                                                                      @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
-                                                                      @RequestParam(name = "page") int page) {
-        var pageable = PageRequest.of(page, 16);
-        var result = facade.getPartyCongressman(partyId, pageable);
-
+                                                                      @RequestParam("party_id") long partyId){
+        var result = facade.getPartyCongressman(partyId);
         return BaseResponse.ok(result);
 
     }

@@ -32,7 +32,7 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
     @Query("SELECT c FROM Congressman c " +
             "JOIN c.party p WHERE p.id = :partyId " +
             "ORDER BY c.name ")
-    Slice<Congressman> findByPage(@Param("partyId") long partyId, Pageable pageable);
+    Slice<Congressman> findByPage(@Param("partyId") long partyId);
 
     @Query("SELECT c FROM Congressman c " +
             "Where c.state = true and c.name =:congressmanName ")
