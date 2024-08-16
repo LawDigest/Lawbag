@@ -122,8 +122,8 @@ public class Facade {
         return setBillListResponseBookMark(billListResponse);
     }
 
-    public PartyCongressmanResponse getPartyCongressman(long partyId, Pageable pageable) {
-        return congressmanService.getPartyCongressman(partyId, pageable);
+    public PartyCongressmanResponse getPartyCongressman(long partyId) {
+        return congressmanService.getPartyCongressman(partyId);
     }
 
     // 법안 좋아요 기능

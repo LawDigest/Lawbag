@@ -18,13 +18,10 @@ public class PartyCongressmanResponse {
 
     @NotNull
     private List<PartyCongressmanDto> partyCongressman;
-    @NotNull
-    private PaginationResponse paginationResponse;
 
-    public static PartyCongressmanResponse of(List<PartyCongressmanDto> partyCongressmanList, PaginationResponse paginationResponse) {
+    public static PartyCongressmanResponse of(List<PartyCongressmanDto> partyCongressmanList) {
         return PartyCongressmanResponse.builder()
                 .partyCongressman(partyCongressmanList)
-                .paginationResponse(paginationResponse)
                 .build();
     }
 }
