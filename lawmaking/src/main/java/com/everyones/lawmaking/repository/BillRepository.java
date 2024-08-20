@@ -29,12 +29,14 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     @Query("SELECT b FROM Bill b " +
            "JOIN b.representativeProposer rp " +
            "WHERE b.id = rp.bill.id " +
-           "AND rp.congressman.id = :congressmanId ")
+           "AND rp.congressman.id = :congressmanId " +
+            "ORDER BY b.proposeDate desc, b.id desc ")
     Slice<Bill> findByRepresentativeProposer(String congressmanId, Pageable pageable);
 
     // 특정의원이 공동 발의한 법안들
     @Query("SELECT b FROM Bill b " +
-            "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.id = :congressmanId)")
+            "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.id = :congressmanId) " +
+            "ORDER BY b.proposeDate desc, b.id desc")
     Slice<Bill> findBillByPublicProposer(String congressmanId, Pageable pageable);
 
     // 정당 소속 의원들이 대표 발의한 법안
@@ -76,7 +78,8 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "JOIN b.publicProposer bp " +
             "JOIN bp.congressman bpc " +
             "JOIN bpc.party bpp " +
-            "WHERE b.id in :billList "
+            "WHERE b.id in :billList " +
+            "ORDER BY b.proposeDate desc, b.id"
     )
     List<Bill> findBillInfoByIdList(List<String> billList);
 
