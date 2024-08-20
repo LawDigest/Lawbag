@@ -3,7 +3,7 @@
 <configuration scan="true" scanPeriod="15 seconds">
     <!-- Local(When Dev in Local) Log Config -->
     <springProfile name="local">
-        <property name="LOG_PATTERN" value=" %d{yy-MM-dd HH:mm:ss} %highlight(%-5level) [%thread] [%logger{0}-%M:%line] - %msg%n "/>
+        <property name="LOG_PATTERN" value=" %d{yy-MM-dd HH:mm:ss, Asia/Seoul} %highlight(%-5level) [%thread] [%logger{0}-%M:%line] - %msg%n "/>
         <!-- Console Appender -->
         <appender name="LOCAL_CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
@@ -19,8 +19,8 @@
 
     <springProfile name="prod">
         <property resource="application-prod.properties"/>
-        <property name="CONSOLE_PATTERN" value="%d{yy-MM-dd HH:mm:ss} %highlight(%-5level) [%thread] [%logger{0}-%M:%line] - %msg%n" />
-        <property name="ROLLING_PATTERN" value="%d{yy-MM-dd HH:mm:ss.SSS} %-5level %logger{0} - %msg %n" />
+        <property name="CONSOLE_PATTERN" value="%d{yy-MM-dd HH:mm:ss, Asia/Seoul} %highlight(%-5level) [%thread] [%logger{0}-%M:%line] - %msg%n" />
+        <property name="ROLLING_PATTERN" value="%d{yy-MM-dd HH:mm:ss.SSS, Asia/Seoul} %-5level %logger{0} - %msg %n" />
         <property name="FILE_NAME" value="/var/logs/spring.log" />
         <property name="LOG_NAME_PATTERN" value="/var/logs/spring-%d{yyyy-MM-dd}.%i.log" />
         <property name="MAX_FILE_SIZE" value="400MB" />
