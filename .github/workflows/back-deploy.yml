@@ -83,6 +83,7 @@ jobs:
              -e "BIN_LOG_PORT=${{ secrets.BIN_LOG_PORT }}" \
              -e "APP_ADMIN_KEY=${{ secrets.APP_ADMIN_KEY }}" \
              -e "ELASTIC_CACHE_HOST=${{ secrets.ELASTIC_CACHE_HOST }}" \
+             -e TZ=Asia/Seoul \
             ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker rmi -f $(docker images -f "dangling=true" -q) || true
           
