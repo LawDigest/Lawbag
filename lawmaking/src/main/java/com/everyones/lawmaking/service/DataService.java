@@ -352,7 +352,6 @@ public class DataService {
                         ()-> new PartyException.PartyNotFound(Map.of("party",partyName))
                 );
                 // 정당 정보 업데이트
-                party.subCongressmanCount(congressmanStateUpdateTrue.getDistrict());
                 if (partyName.equals(ldr.getPartyName())){
                     party.addCongressmanCount(ldr.getDistrict());
                     congressmanStateUpdateTrue.update(ldr, party);
