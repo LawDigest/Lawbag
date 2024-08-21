@@ -15,8 +15,6 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.sql.*;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -53,10 +51,6 @@ public class TableEventListener {
 
     private final NotificationCreator notificationCreator;
 
-//    @Bean
-//    public ExecutorService executorService() {
-//        return Executors.newFixedThreadPool(10); // 스레드 풀 크기 10으로 설정
-//    }
 
     /**
      * 테이블별 (컬럼네임,컬럼 인덱스) 정보 가져오는 메서드
@@ -99,7 +93,7 @@ public class TableEventListener {
     }
 
 
-//    @Bean(destroyMethod = "disconnect")
+    @Bean(destroyMethod = "disconnect")
     BinaryLogClient binaryLogClient() throws IOException {
         final Map<String, Map<String, Integer>> columnOrdersByTable = fetchColumnOrdersByTable();
 
