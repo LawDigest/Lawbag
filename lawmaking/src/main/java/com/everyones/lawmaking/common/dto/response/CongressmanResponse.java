@@ -26,6 +26,7 @@ public class CongressmanResponse {
     private String office;
     private String congressmanImageUrl;
     private String telephone;
+    private String briefHistory;
     private Boolean likeChecked;
 
     private Integer followCount;
@@ -57,7 +58,8 @@ public class CongressmanResponse {
                 .email(congressman.getEmail())
                 .gender(congressman.getSex())
                 .office(congressman.getCongressmanOffice())
-                .telephone(congressman.getCongressmanTelephone());
+                .telephone(congressman.getCongressmanTelephone())
+                .briefHistory(congressman.getBriefHistory());
     }
     public static CongressmanResponse of(Congressman congressman, Integer followCount, Integer representCount, Integer publicCount) {
         return CongressmanResponse.getBuilder(congressman)
