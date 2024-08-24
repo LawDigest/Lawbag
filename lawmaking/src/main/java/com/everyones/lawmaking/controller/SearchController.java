@@ -51,15 +51,13 @@ public class SearchController {
     @GetMapping("/congressman/party")
     public BaseResponse<SearchDataResponse> searchCongressmanAndParty (
             @Parameter(example = "국민", description = "국민의 힘 정당 노리는 검색어")
-            @RequestParam("search_word") String searchWord,
-            @Parameter(example = "0", description = "검색 결과 페이징을 위한 페이지 넘버")
-            @RequestParam("page") int page) {
+            @RequestParam("search_word") String searchWord){
 
         if(searchWord == null || searchWord.trim().isEmpty()) {
             throw new CongressmanException.SearchParameterInvalid(Map.of("searchWord", searchWord));
         }
 
-        var result = facade.searchCongressmanAndParty(searchWord, page);
+        var result = facade.searchCongressmanAndParty(searchWord);
         return BaseResponse.ok(result);
 
     }

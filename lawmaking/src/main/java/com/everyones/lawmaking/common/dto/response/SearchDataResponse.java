@@ -16,12 +16,10 @@ public class SearchDataResponse {
 
     private List<SearchResponse> searchResponse;
 
-    private PaginationResponse paginationResponse;
 
-    public SearchDataResponse of(List<SearchResponse> searchResponse, PaginationResponse paginationResponse) {
+    public SearchDataResponse of(List<SearchResponse> searchResponse) {
         return SearchDataResponse.builder()
                 .searchResponse(searchResponse)
-                .paginationResponse(paginationResponse)
                 .build();
     }
 

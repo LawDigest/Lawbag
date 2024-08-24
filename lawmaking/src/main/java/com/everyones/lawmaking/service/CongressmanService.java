@@ -51,16 +51,14 @@ public class CongressmanService {
 
     }
 
-    public SearchDataResponse searchCongressman(String searchWord, Pageable pageable) {
-        var congressmanList = congressmanRepository.findBySearchWord(searchWord, pageable);
-        var pagination = PaginationResponse.from(congressmanList);
+    public SearchDataResponse searchCongressman(String searchWord) {
+        var congressmanList = congressmanRepository.findBySearchWord(searchWord);
         var searchResponse =  congressmanList.stream()
                 .map(SearchCongressmanDto::from)
                 .toList();
 
         return SearchDataResponse.builder()
                 .searchResponse(searchResponse)
-                .paginationResponse(pagination)
                 .build();
     }
 
