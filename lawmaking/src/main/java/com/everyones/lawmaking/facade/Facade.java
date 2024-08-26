@@ -175,16 +175,12 @@ public class Facade {
     }
 
     // 검색 정당 및 의원 조회
-    public SearchDataResponse searchCongressmanAndParty(String searchWord, int page) {
-        Pageable pageable = PageRequest.of(page, 5);
-        var searchDataResponse = congressmanService.searchCongressman(searchWord, pageable);
-
-        if (page == 0) {
+    public SearchDataResponse searchCongressmanAndParty(String searchWord) {
+        var searchDataResponse = congressmanService.searchCongressman(searchWord);
             var searchPartyList = partyService.searchParty(searchWord);
             searchDataResponse.setSearchResponse(Stream
                     .concat(searchDataResponse.getSearchResponse().stream(), searchPartyList.stream())
                     .toList());
-        }
         return searchDataResponse;
 
     }
