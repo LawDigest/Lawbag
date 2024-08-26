@@ -240,8 +240,9 @@ public class Facade {
 
         var party = partyService.findById(Long.parseLong(raw.get(1)));
         var partyName = party.getName();
+        String partyImageUrl = (congressman.getParty() != null) & (congressman.getParty().getPartyImageUrl()!=null) ? congressman.getParty().getPartyImageUrl() : "defaultImageUrl";
 
-        return List.of(congressmanId, partyName, congressmanName,congressman.getParty().getPartyImageUrl());
+        return List.of(congressmanId, partyName, congressmanName, partyImageUrl);
     }
 
     public List<String> getProcessedData(ColumnEventType cet,List<String> eventData) {

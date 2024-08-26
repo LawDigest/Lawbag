@@ -166,13 +166,11 @@ public class DataService {
                 this.insertLawmaker(lawmakerApiData.get(insertLawmaker)));
 
         //상태 false로 만들기 진행
-        congressmanSet.forEach(
-
-                (updateStateFalseCongressman)-> {
-                    var congressmanUpdateToFalse = congressmanRepository.findCongressmanById(updateStateFalseCongressman)
-                            .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", updateStateFalseCongressman)));
-                    lawmakerStateToFalse(congressmanUpdateToFalse);
-                });
+        congressmanSet.forEach(updateStateFalseCongressman ->
+                congressmanRepository.findCongressmanById(updateStateFalseCongressman)
+                        .filter(Congressman::getState)
+                        .ifPresent(this::lawmakerStateToFalse)
+        );
 
         //수정 과정 진행
         //API로 들어온 의원리스트로 기존 의원 데이터 최신화 시키기
@@ -232,10 +230,10 @@ public class DataService {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public void billProposerUpdate(Bill newBill, Congressman billProposer){
+    public void billProposerUpdate(Bill newBill, Congressman billProposer) {
         boolean publicProposersUpdated = false;
         while (!publicProposersUpdated) {
-            try{
+            try {
                 var newBillProposer = BillProposer.builder()
                         .bill(newBill)
                         .congressman(billProposer)
@@ -249,7 +247,7 @@ public class DataService {
 
             }
             //트랜잭션관리를 위해서 예외처리
-            catch(ObjectOptimisticLockingFailureException e){
+            catch (ObjectOptimisticLockingFailureException e) {
                 log.warn("pP update lock conflict", e);
             }
 
@@ -257,7 +255,7 @@ public class DataService {
     }
 
     @Transactional(propagation = Propagation.MANDATORY)
-    public void updateRepresentativeProposer(Bill newBill, Congressman representativeProposer){
+    public void updateRepresentativeProposer(Bill newBill, Congressman representativeProposer) {
         boolean representativeUpdated = false;
         while (!representativeUpdated) {
             try {
@@ -283,106 +281,66 @@ public class DataService {
         }
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional
     public void insertLawmaker(LawmakerDfRequest ldr) {
-        boolean partyUpdated = false;
-        while (!partyUpdated) {
-            try {
-                String partyName = ldr.getPartyName();
-                var party = partyRepository.findPartyByName(partyName).orElse(null);
 
-                if (party == null) {
-                    party = Party.create(partyName, ldr.getDistrict());
-                } else {
-                    // 정당 정보 업데이트
-                    party.addCongressmanCount(ldr.getDistrict());
-                }
+        String partyName = ldr.getPartyName();
+        var party = partyRepository.findPartyByName(partyName).orElse(null);
 
-                var congressman = Congressman.of(ldr, party);
-
-                //party는 flush가 되는게 좋으므로 가독성을 위해 flush처리
-                partyRepository.saveAndFlush(party);
-                congressmanRepository.save(congressman);
-                partyUpdated = true;
-            } catch (ObjectOptimisticLockingFailureException e) {
-                log.warn("party update lock conflict", e);
-
-            }
+        if (party == null) {
+            party = Party.create(partyName);
         }
+
+        var congressman = Congressman.of(ldr, party);
+
+        partyRepository.save(party);
+        congressmanRepository.save(congressman);
+
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional
     public void lawmakerStateToFalse(Congressman lawmaker) {
-        boolean partyUpdated = false;
-        boolean congressmanUpdate = false;
-        while (!partyUpdated & !congressmanUpdate) {
-            try {
-                String partyName = lawmaker.getParty().getName();
-                var party = partyRepository.findPartyByName(partyName).orElseThrow(
-                        ()-> new PartyException.PartyNotFound(Map.of("party",partyName))
-                );
-
-                // 정당 정보 업데이트
-                party.subCongressmanCount(lawmaker.getDistrict());
-                lawmaker.updateState(false);
-
-                //party는 flush가 되는게 좋으므로 가독성을 위해 flush처리
-                partyRepository.saveAndFlush(party);
-                congressmanRepository.save(lawmaker);
-                partyUpdated = true;
-                congressmanUpdate = true;
-
-            } catch (ObjectOptimisticLockingFailureException e) {
-                log.warn("party update lock conflict", e);
-
-            }
+        // 정당 정보 업데이트
+        if(lawmaker.getState()){
+            lawmaker.updateState(false);
         }
+        congressmanRepository.save(lawmaker);
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
-    public void lawmakerStateToTrue(LawmakerDfRequest ldr,Congressman congressmanStateUpdateTrue) {
-        boolean partyUpdated = false;
-        boolean congressmanUpdate = false;
-        while (!partyUpdated & !congressmanUpdate) {
-            try {
-                //과거 정당에서 의원유형별 의원수 변경
-                //의원 정보만 업데이트 할 수도 있음
-                String partyName = congressmanStateUpdateTrue.getParty().getName();
-                var party = partyRepository.findPartyByName(partyName).orElseThrow(
-                        ()-> new PartyException.PartyNotFound(Map.of("party",partyName))
-                );
-                // 정당 정보 업데이트
-                if (partyName.equals(ldr.getPartyName())){
-                    party.addCongressmanCount(ldr.getDistrict());
-                    congressmanStateUpdateTrue.update(ldr, party);
-                }
-                else{
-                    //달라진 정당에 의원 수 수정
-                    var newParty = partyRepository.findPartyByName(ldr.getPartyName()).orElseThrow(
-                            ()-> new PartyException.PartyNotFound(Map.of("party",partyName))
-                    );
-                    newParty.addCongressmanCount(ldr.getDistrict());
-                    congressmanStateUpdateTrue.update(ldr, newParty);
-                    partyRepository.saveAndFlush(newParty);
 
-                }
-
-                //의원 상태 변경
-                congressmanStateUpdateTrue.updateState(true);
-
-                //flush처리 되지만 가독성을 위해 flush처리
-                partyRepository.saveAndFlush(party);
-                congressmanRepository.save(congressmanStateUpdateTrue);
-                partyUpdated = true;
-                congressmanUpdate = true;
-
-            } catch (ObjectOptimisticLockingFailureException e) {
-                log.warn("party update lock conflict", e);
-
-            }
+    @Transactional
+    public void lawmakerStateToTrue(LawmakerDfRequest ldr, Congressman congressmanStateUpdateTrue) {
+        var party = congressmanStateUpdateTrue.getParty();
+        if (party == null) {
+            throw new PartyException.PartyNotFound(Map.of("party", "null"));
         }
-    }
+        //정당이 같고 의원유형이 같은경우
+        if (congressmanStateUpdateTrue.getState() & party.getName().equals(ldr.getPartyName()) & congressmanStateUpdateTrue.getDistrict().equals(ldr.getDistrict())) {
+            return;
+        }
+        var partyName = party.getName();
+        // 정당 정보 업데이트
 
+        if (partyName.equals(ldr.getPartyName())) {
+            congressmanStateUpdateTrue.update(ldr, party);
+            partyRepository.save(party);
+        } else {
+            var newParty = partyRepository.findPartyByName(ldr.getPartyName())
+                    .orElse(null);
+            if (newParty == null) {
+                newParty = Party.create(ldr.getPartyName());
+            }
+            congressmanStateUpdateTrue.update(ldr, newParty);
+            partyRepository.save(newParty);
+
+        }
+        //의원 상태 변경
+        congressmanStateUpdateTrue.updateState(true);
+
+        //flush처리 되지만 가독성을 위해 flush처리
+        congressmanRepository.save(congressmanStateUpdateTrue);
+    }
 }
+
 
 
