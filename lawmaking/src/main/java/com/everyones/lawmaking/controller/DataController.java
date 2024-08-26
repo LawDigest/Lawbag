@@ -103,7 +103,7 @@ public class DataController {
             @RequestBody BillResultListDfRequest billResultListDfRequest) {
         var billDfRequestList=billResultListDfRequest.getBillResultDfRequestList();
         facade.updateBillResultDf(billDfRequestList);
-        return BaseResponse.ok("200");
+        return BaseResponse.ok("당일 법안 본회의 처리 결과 수집 수정 데이터 요청 성공");
 
     }
 
@@ -127,7 +127,7 @@ public class DataController {
         var lawmakerDfRequestList=lawmakerListDfRequest.getLawmakerDfRequestList();
 
         facade.updateLawmakerDf(lawmakerDfRequestList);
-        return BaseResponse.ok("200");
+        return BaseResponse.ok("국회의원 정보 수집 삽입 데이터 요청 성공");
 
     }
 
@@ -198,7 +198,7 @@ public class DataController {
     public BaseResponse<String> updateCongressmanCountByParty() {
         // 존재하지 않는 법안 ID 리스트
         facade.updateCongressmanCountByParty();
-        return BaseResponse.ok("200");
+        return BaseResponse.ok("국회의원 정보 수집 삽입 데이터 요청 성공");
     }
 
 
