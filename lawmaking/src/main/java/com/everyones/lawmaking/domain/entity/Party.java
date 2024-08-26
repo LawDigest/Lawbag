@@ -75,6 +75,11 @@ public class Party extends BaseEntity{
                 .build();
     }
 
+    public void updateCongressmanCount(int districtCongressmanCount, int proportionalCongressmanCount){
+        this.setDistrictCongressmanCount(districtCongressmanCount);
+        this.setProportionalCongressmanCount(proportionalCongressmanCount);
+    }
+
 
 
     @Override

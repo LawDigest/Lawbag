@@ -181,5 +181,27 @@ public class DataController {
 
     }
 
+    @Operation(summary = "의원 카운트 업데이트 API", description = "정당별 비례대표, 지역구 의원 카운트 수정")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PostMapping("/congressman/party/count")
+    public BaseResponse<String> updateCongressmanCountByParty() {
+        // 존재하지 않는 법안 ID 리스트
+        facade.updateCongressmanCountByParty();
+        return BaseResponse.ok("200");
+    }
+
+
+
 
 }
