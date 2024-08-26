@@ -293,8 +293,7 @@ public class DataService {
 
         var congressman = Congressman.of(ldr, party);
 
-        //party는 flush가 되는게 좋으므로 가독성을 위해 flush처리
-        partyRepository.saveAndFlush(party);
+        partyRepository.save(party);
         congressmanRepository.save(congressman);
 
     }
@@ -311,7 +310,6 @@ public class DataService {
 
     @Transactional
     public void lawmakerStateToTrue(LawmakerDfRequest ldr, Congressman congressmanStateUpdateTrue) {
-        //의원 정보만 업데이트 할 수도 있음
         var party = congressmanStateUpdateTrue.getParty();
         if (party == null) {
             throw new PartyException.PartyNotFound(Map.of("party", "null"));
@@ -327,14 +325,11 @@ public class DataService {
             congressmanStateUpdateTrue.update(ldr, party);
             partyRepository.save(party);
         } else {
-            //달라진 정당에 의원 수 수정
             var newParty = partyRepository.findPartyByName(ldr.getPartyName())
                     .orElse(null);
             if (newParty == null) {
                 newParty = Party.create(ldr.getPartyName());
             }
-            //과거 정당에서 의원유형별 의원수 변경
-
             congressmanStateUpdateTrue.update(ldr, newParty);
             partyRepository.save(newParty);
 
