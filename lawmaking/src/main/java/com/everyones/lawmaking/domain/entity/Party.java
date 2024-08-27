@@ -80,6 +80,11 @@ public class Party extends BaseEntity{
         this.setProportionalCongressmanCount(proportionalCongressmanCount);
     }
 
+    public void updateBillCount(int representativeBillCount, int publicBillCount){
+        this.setRepresentativeBillCount(representativeBillCount);
+        this.setPublicBillCount(publicBillCount);
+    }
+
 
 
     @Override

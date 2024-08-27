@@ -322,6 +322,10 @@ public class Facade {
     public void updateCongressmanCountByParty(){
         dataService.updateCongressmanCountByParty();
     }
+    public void updateBillCountByParty(){
+        dataService.updateBillCountByParty();
+    }
+
 
 
 
