@@ -28,6 +28,7 @@ public class DataService {
     private final VoteRecordRepository voteRecordRepository;
     private final VotePartyRepository votePartyRepository;
     private final CongressmanRepositoryCustom congressmanRepositoryCustom;
+    private final PartyRepositoryCustom partyRepositoryCustom;
 
     @Transactional
     public void insertBillInfoDf(List<BillDfRequest> billDfRequestList) {
@@ -349,6 +350,17 @@ public class DataService {
             var proportionalCongressmanCount = congressmanRepositoryCustom.countCongressmanByPartyId(party.getId(), true);
             var districtCongressmanCount = congressmanRepositoryCustom.countCongressmanByPartyId(party.getId(),false);
             party.updateCongressmanCount(districtCongressmanCount, proportionalCongressmanCount);
+            partyRepository.save(party);
+        });
+    }
+
+    @Transactional
+    public void updateBillCountByParty() {
+        List<Party> partyList = partyRepository.findAll();
+        partyList.forEach(party -> {
+            var representativeBillCount = partyRepositoryCustom.countBillCountByPartyId(party.getId(), true);
+            var publicBillCount = partyRepositoryCustom.countBillCountByPartyId(party.getId(),false);
+            party.updateBillCount(representativeBillCount, publicBillCount);
             partyRepository.save(party);
         });
     }
