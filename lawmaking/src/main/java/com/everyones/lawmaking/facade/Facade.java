@@ -319,6 +319,10 @@ public class Facade {
 
     }
 
+    public void updateCongressmanCountByParty(){
+        dataService.updateCongressmanCountByParty();
+    }
+
 
 
     public List<BillDto> getPopularBills() {
