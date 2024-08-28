@@ -56,11 +56,6 @@ public class Party extends BaseEntity{
 
     @ColumnDefault("0")
     @Builder.Default
-    @Column(name = "total_bill_count")
-    private int totalBillCount = 0;
-
-    @ColumnDefault("0")
-    @Builder.Default
     @Column(name = "representative_bill_count")
     private int representativeBillCount = 0;
 
