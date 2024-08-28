@@ -66,8 +66,8 @@ public class Congressman {
     @Column(name = "congressman_telephone")
     private String congressmanTelephone;
 
-    @Column(name = "congressman_bill_proposer_date")
-    private LocalDate congressmanBillProposerDate;
+    @Column(name = "congressman_bill_propose_date")
+    private LocalDate congressmanBillProposeDate;
 
     @Column(name = "email")
     private String email;
@@ -145,8 +145,8 @@ public class Congressman {
         }
     }
 
-    public void updateBillProposerDate(LocalDate proposeDate) {
-        this.setCongressmanBillProposerDate(proposeDate);
+    public void updateBillProposeDate(LocalDate proposeDate) {
+        this.setCongressmanBillProposeDate(proposeDate);
     }
 
 
