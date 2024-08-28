@@ -221,7 +221,7 @@ public class DataController {
         return BaseResponse.ok("정당별 법안 카운트 업데이트 수정 데이터 요청 성공");
     }
 
-    @Operation(summary = "정당별 법안 카운트 업데이트 API", description = "정당별 법안 카운트 업데이트 수정")
+    @Operation(summary = "의원별 최신 발의날짜 업데이트 API", description = "의원별 최신 발의날짜 수정")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(
@@ -238,7 +238,7 @@ public class DataController {
     public BaseResponse<String> updateProposeDateByCongressman() {
         // 존재하지 않는 법안 ID 리스트
         facade.updateProposeDateByCongressman();
-        return BaseResponse.ok("정당별 법안 카운트 업데이트 수정 데이터 요청 성공");
+        return BaseResponse.ok("의원별 최신 발의날짜 수정 성공");
     }
 
 
