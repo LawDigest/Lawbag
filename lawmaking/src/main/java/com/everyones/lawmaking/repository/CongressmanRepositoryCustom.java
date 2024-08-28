@@ -4,6 +4,9 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+
+import static com.everyones.lawmaking.domain.entity.QBillProposer.billProposer;
 import static com.everyones.lawmaking.domain.entity.QCongressman.congressman;
 
 @Repository
@@ -25,6 +28,15 @@ public class CongressmanRepositoryCustom {
 
         return congressmanCount != null ? congressmanCount.intValue() : 0;
     }
+    public LocalDate updateProposeDateByCongressman(String congressmanId) {
 
+        // 서브쿼리 작성
+        return queryFactory
+                .select(billProposer.bill.proposeDate)
+                .from(billProposer)
+                .where(billProposer.congressman.id.eq(congressmanId))
+                .orderBy(billProposer.bill.proposeDate.desc())
+                .fetchFirst();
+    }
 
-}
+    }
