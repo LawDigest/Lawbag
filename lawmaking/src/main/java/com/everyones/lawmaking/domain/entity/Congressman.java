@@ -7,6 +7,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -64,6 +65,9 @@ public class Congressman {
 
     @Column(name = "congressman_telephone")
     private String congressmanTelephone;
+
+    @Column(name = "congressman_bill_proposer_date")
+    private LocalDate congressmanBillProposerDate;
 
     @Column(name = "email")
     private String email;
@@ -139,6 +143,10 @@ public class Congressman {
             this.setElectSort("");
             this.setDistrict("");
         }
+    }
+
+    public void updateBillProposerDate(LocalDate proposeDate) {
+        this.setCongressmanBillProposerDate(proposeDate);
     }
 
 

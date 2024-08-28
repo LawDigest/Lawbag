@@ -365,7 +365,14 @@ public class DataService {
         });
     }
 
-
+    @Transactional
+    public void updateProposeDateByCongressman() {
+        List<Congressman> congressmanList = congressmanRepository.findAll();
+        congressmanList.forEach(congressman -> {
+            var billProposerUpdateDate = congressmanRepositoryCustom.updateProposeDateByCongressman(congressman.getId());
+            congressman.updateBillProposerDate(billProposerUpdateDate);
+            });
+        }
 }
 
 

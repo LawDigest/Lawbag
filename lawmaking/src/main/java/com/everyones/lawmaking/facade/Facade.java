@@ -326,6 +326,10 @@ public class Facade {
         dataService.updateBillCountByParty();
     }
 
+    public void updateProposeDateByCongressman(){
+        dataService.updateProposeDateByCongressman();
+    }
+
 
 
 
