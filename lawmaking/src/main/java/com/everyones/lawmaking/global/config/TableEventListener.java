@@ -11,9 +11,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.Serializable;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -50,7 +54,7 @@ public class TableEventListener {
     private final Map<Long, TableMapInfo> relatedTableMapEvents = new HashMap<>();
 
     private final NotificationCreator notificationCreator;
-
+    private final DataSource dataSource;
 
     /**
      * 테이블별 (컬럼네임,컬럼 인덱스) 정보 가져오는 메서드
@@ -60,10 +64,8 @@ public class TableEventListener {
     Map<String, Map<String, Integer>> fetchColumnOrdersByTable() {
         Map<String, Map<String, Integer>> columnOrdersByTable = new HashMap<>();
 
-        // 커넥션 풀 새로 만들어서 컬럼 이름 가져오기
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port, user, password)) {
-            // try with 구문 시작
-            // connection의 메타데이터를 가져와서
+        try (Connection connection = dataSource.getConnection()) {
+            connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
             DatabaseMetaData metaData = connection.getMetaData();
             try (ResultSet tableResultSet = metaData.getTables(dbName, "public", null, new String[]{"TABLE"})) {
                 // metaData의 테이블 정보를 가져옴
@@ -87,6 +89,7 @@ public class TableEventListener {
 
             }
         } catch (SQLException e) {
+            log.error("Failed to fetch column orders by table", e);
             throw new RuntimeException(e);
         }
         return Collections.unmodifiableMap(columnOrdersByTable);
@@ -135,7 +138,9 @@ public class TableEventListener {
 
                     final Set<Event> dmlOperations = tableMapInfo.getDmlEvents();
                     //TODO: 시간 순서대로 리스트를 받지 않는 문제가 있음 만약 수정 삭제 생성이 한 트랜잭션에서 여러 작업이 동시에 일어나는 경우 잘못된 알림이 발생할 경우가 있음.
-                    dmlOperations.forEach(e -> {
+                    dmlOperations.stream()
+                            .sorted(Comparator.comparing(e -> e.getHeader().getTimestamp()))
+                            .forEach(e -> {
                         final EventData data = e.getData();
                         // 하나의 트랜잭션에는 여러개의 로우가 관여할 수 있음, 또한 하나의 Serializable 객체는 하나의 컬럼 값임.
                         if (data instanceof WriteRowsEventData insertedData) {
@@ -167,6 +172,7 @@ public class TableEventListener {
                                                 final Map<String, List<String>> filteredValues = new HashMap<>();
                                                 resultColumnsIndicesByEvent.forEach((eventName, columnIndices) -> {
                                                     final List<String> values = new ArrayList<>();
+                                                    //관련된 컬럼 인덱스 리스트인 columnIndices와 매칭되는 인덱스의 데이터값을 values에 넣기
                                                     columnIndices.stream().filter(index -> index >= 0).forEach((index) -> values.add(row[index].toString()));
                                                     filteredValues.put(eventName, Collections.unmodifiableList(values));
                                                 });
@@ -240,10 +246,30 @@ public class TableEventListener {
                                             })
                                             .toList());
                         }
+                        // TODO: DeleteRowsEventData 처리 필요 시 추가
                     });
                 });
 
-                notificationCreator.createNotification(filteredValuesByRows);
+
+                    int delay = 100;  // 초기 지연 시간
+                    int maxDelay = 1000;  // 최대 지연 시간
+                    while (delay <= maxDelay) {
+                        try {
+                            Thread.sleep(delay);
+                            notificationCreator.createNotification(filteredValuesByRows);
+                            break;  // 성공적으로 알림 생성 후 루프 종료
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                            log.error("Thread interrupted while waiting", e);
+                            break;
+                        } catch (Exception e) {
+                            delay *= 2;  // 실패 시 지연 시간 증가
+                            if (delay > maxDelay) {
+                                log.error("Failed to create notification after retries", e);
+                                break;
+                            }
+                        }
+                    }
 
                 relatedTableMapEvents.clear();
             } else if (recordedEventTypes.contains(eventType)) {
@@ -257,7 +283,7 @@ public class TableEventListener {
             try {
                 logClient.connect();
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error("Failed to connect BinaryLogClient", e);
             }
         });
 

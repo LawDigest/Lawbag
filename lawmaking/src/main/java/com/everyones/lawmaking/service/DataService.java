@@ -7,9 +7,7 @@ import com.everyones.lawmaking.global.error.PartyException;
 import com.everyones.lawmaking.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
@@ -231,11 +229,8 @@ public class DataService {
         return result;
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional
     public void billProposerUpdate(Bill newBill, Congressman billProposer) {
-        boolean publicProposersUpdated = false;
-        while (!publicProposersUpdated) {
-            try {
                 var newBillProposer = BillProposer.builder()
                         .bill(newBill)
                         .congressman(billProposer)
@@ -243,24 +238,14 @@ public class DataService {
 
                 billProposerRepository.save(newBillProposer);
 
-                congressmanRepository.save(billProposer);
 
-                publicProposersUpdated = true;
 
-            }
-            //트랜잭션관리를 위해서 예외처리
-            catch (ObjectOptimisticLockingFailureException e) {
-                log.warn("pP update lock conflict", e);
-            }
 
-        }
     }
 
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional
     public void updateRepresentativeProposer(Bill newBill, Congressman representativeProposer) {
-        boolean representativeUpdated = false;
-        while (!representativeUpdated) {
-            try {
+
 
                 var repProposer = RepresentativeProposer.builder()
                         .bill(newBill)
@@ -270,18 +255,9 @@ public class DataService {
                 //RP 저장
                 representativeProposerRepository.save(repProposer);
                 congressmanRepository.save(representativeProposer);
-                representativeUpdated = true;
-            }
 
-
-            //트랜잭션관리를 위해서 예외처리
-            catch(ObjectOptimisticLockingFailureException e){
-                log.warn("rp update lock conflict", e);
-
-
-            }
         }
-    }
+
 
     @Transactional
     public void insertLawmaker(LawmakerDfRequest ldr) {
