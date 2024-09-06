@@ -251,6 +251,8 @@ public class TableEventListener {
                 });
 
 
+                Thread notificationCreatorThread = new Thread(()->{
+
                     int delay = 100;  // 초기 지연 시간
                     int maxDelay = 1000;  // 최대 지연 시간
                     while (delay <= maxDelay) {
@@ -269,7 +271,8 @@ public class TableEventListener {
                                 break;
                             }
                         }
-                    }
+                    }});
+                notificationCreatorThread.start();
 
                 relatedTableMapEvents.clear();
             } else if (recordedEventTypes.contains(eventType)) {
