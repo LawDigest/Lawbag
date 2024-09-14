@@ -7,6 +7,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.ZonedDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,5 +21,7 @@ public interface BillTimelineRepository extends JpaRepository<BillTimeline,Long>
                                                   @Param("billTimelineStage") String billTimelineStage,
                                                   @Param("billTimelineCommittee") String billTimelineCommittee,
                                                   @Param("statusUpdateDate") LocalDate statusUpdateDate);
+
+    List<BillTimeline> findBillTimelineByStatusUpdateDate(LocalDate statusUpdateDate);
 
 }

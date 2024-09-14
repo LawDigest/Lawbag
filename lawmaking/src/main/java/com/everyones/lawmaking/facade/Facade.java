@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -37,6 +39,7 @@ public class Facade {
     private final RedisService redisService;
     private final RepresentativeProposerService representativeProposerService;
     private final BillProposerService billProposerService;
+    private final BillTimelineService billTimelineService;
 
     public BillListResponse findByPage(Pageable pageable) {
         var billListResponse = billService.findByPage(pageable);
@@ -217,6 +220,7 @@ public class Facade {
     }
 
     // 알림 데이터를 각 테이블에 해당하는 실제 데이터로 변환 (ex : bill_id
+    // TODO: 컨벤션에 맞게 메소드명 변경 필요
     public List<String> convertRepresentativeBillNotification(List<String> relatedEntityIds) {
         var congressman = congressmanService.findById(relatedEntityIds.get(0));
         var billRepProposer = congressman.getName();
@@ -356,6 +360,15 @@ public class Facade {
         var billList =  billService.findByUserAndCongressmanLike(pageable);
         return setBillListResponseBookMark(billList);
     }
+
+    public BillTimelineResponse getTimeline(LocalDate proposeDate) {
+        return billTimelineService.getTimeline(proposeDate);
+    }
+
+//    public BillStateCountResponse getBillStateCount() {
+//
+//    }
+
 
     public List<ParliamentaryPartyResponse> getParliamentaryParty() {
         return partyService.getParliamentaryParty();

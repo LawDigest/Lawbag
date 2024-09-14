@@ -1,10 +1,7 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.*;
-import com.everyones.lawmaking.common.dto.response.BillDetailResponse;
-import com.everyones.lawmaking.common.dto.response.BillListResponse;
-import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
-import com.everyones.lawmaking.common.dto.response.PaginationResponse;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.constant.BillOrderType;
 import com.everyones.lawmaking.global.error.BillException;
@@ -215,6 +212,10 @@ public class BillService {
                 .billList(billDtoList)
                 .build();
 
+    }
+
+    public BillStateCountResponse getBillStateCount() {
+        return billRepository.findStateCount();
     }
 
 

@@ -27,4 +27,9 @@ public class PartyDto {
                 .build();
     }
 
+    public static PartyDto from(RepresentativeProposer representativeProposer) {
+        var party = representativeProposer.getCongressman().getParty();
+        return PartyDto.from(party);
+    }
+
 }
