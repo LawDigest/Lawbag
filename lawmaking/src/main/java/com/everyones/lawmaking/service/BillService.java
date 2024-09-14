@@ -217,6 +217,10 @@ public class BillService {
         return billRepository.findByBillIdIn(billIds);
     }
 
+    public BillStateCountResponse getBillStateCount() {
+        return billRepository.findStateCount();
+    }
+
 
 
 

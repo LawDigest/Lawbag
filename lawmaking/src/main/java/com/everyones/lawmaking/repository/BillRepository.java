@@ -116,4 +116,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     @Query("SELECT b FROM Bill b WHERE b.id IN :billIds")
     List<Bill> findByBillIdIn(@Param("billIds") List<String> billIds);
 
+    @Query("select b from Bill b ")
+    BillStateCountResponse findStateCount();
+
 }
