@@ -24,6 +24,8 @@ public class PartyDetailResponse {
     @NotNull
     private int districtCongressmanCount;
     @NotNull
+    private int totalCongressmanCount;
+    @NotNull
     private int representativeBillCount;
     @NotNull
     private int publicBillCount;
@@ -44,6 +46,7 @@ public class PartyDetailResponse {
                 .websiteUrl(party.getWebsiteUrl())
                 .proportionalCongressmanCount(party.getProportionalCongressmanCount())
                 .districtCongressmanCount(party.getDistrictCongressmanCount())
+                .totalCongressmanCount(0)
                 .representativeBillCount(party.getRepresentativeBillCount())
                 .publicBillCount(party.getPublicBillCount())
                 .followCount(partyFollow.size())

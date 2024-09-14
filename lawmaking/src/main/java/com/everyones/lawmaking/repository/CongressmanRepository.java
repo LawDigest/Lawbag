@@ -44,4 +44,6 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
     @Query("SELECT c.id FROM Congressman c ")
     Set<String> findAllCongressmanId();
 
+    Integer countByState(boolean state);
+
 }
