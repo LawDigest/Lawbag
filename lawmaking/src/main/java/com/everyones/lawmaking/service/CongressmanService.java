@@ -62,5 +62,9 @@ public class CongressmanService {
                 .build();
     }
 
+    public int getTotalCongressmanState(boolean congressmanState){
+        return congressmanRepository.countByState(congressmanState);
+    }
+
 }
 

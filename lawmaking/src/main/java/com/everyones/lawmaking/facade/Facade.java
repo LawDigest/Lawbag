@@ -103,6 +103,8 @@ public class Facade {
     // 정당 상세 조회
     public PartyDetailResponse getPartyById(long partyId) {
         var partyDetailResponse =  partyService.getPartyById(partyId);
+        var totalCongressmanCount = congressmanService.getTotalCongressmanState(true);
+        partyDetailResponse.setTotalCongressmanCount(totalCongressmanCount);
         var userId = AuthenticationUtil.getUserId();
         if (userId.isEmpty()) {
             return partyDetailResponse;
