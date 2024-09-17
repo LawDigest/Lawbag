@@ -1,4 +1,4 @@
-FROM openjdk:17.0.2-alpine
+FROM openjdk:17.0.2-slim
 
 ARG JAR_FILE=build/libs/lawmaking-0.0.1-SNAPSHOT.jar
 
