@@ -58,7 +58,7 @@ jobs:
         uses: appleboy/ssh-action@master
         id: deploy-prod
         with:
-          host: api.lawdigest.net
+          host: ${{ secrets.PROD_HOST }}
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
