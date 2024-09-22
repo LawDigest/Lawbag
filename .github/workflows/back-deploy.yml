@@ -65,6 +65,7 @@ jobs:
             docker ps -q --filter "name=lawmaking-back" | grep -q . && docker stop lawmaking-back && docker rm lawmaking-back | true
             docker pull ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker run -d -p 8080:8080 --name=lawmaking-back \
+            --network law_prod_network \
              -v spring-log:/var/logs \
              -v /usr/share/zoneinfo/Asia/Seoul:/etc/localtime:ro \
              -e "ACTIVE=${{ secrets.ACTIVE }}" \
