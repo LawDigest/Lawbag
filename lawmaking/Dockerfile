@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-alpine
+FROM amazoncorretto:17
 
 ARG JAR_FILE=build/libs/lawmaking-0.0.1-SNAPSHOT.jar
 
