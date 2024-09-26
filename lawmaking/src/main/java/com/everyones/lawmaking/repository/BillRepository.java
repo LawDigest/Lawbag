@@ -26,7 +26,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     Slice<Bill> findByPage(Pageable pageable, @Param("stage") String stage);
 
     // 특정 의원이 대표 발의한 법안들
-    @Query("SELECT b FROM Bill b " +
+    @Query("SELECT distinct b FROM Bill b " +
            "JOIN b.representativeProposer rp " +
            "WHERE b.id = rp.bill.id " +
            "AND rp.congressman.id = :congressmanId " +
@@ -40,7 +40,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     Slice<Bill> findBillByPublicProposer(String congressmanId, Pageable pageable);
 
     // 정당 소속 의원들이 대표 발의한 법안
-    @Query("SELECT b FROM Bill b " +
+    @Query("SELECT distinct b FROM Bill b " +
             "JOIN b.representativeProposer rp " +
             "JOIN rp.congressman c " +
             "JOIN c.party p " +
@@ -56,7 +56,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     Slice<Bill> findPublicBillsByParty(Pageable pageable, @Param("partyId") long partyId);
 
     // 유저가 스크랩한 법안 페이징해서 가져오는 쿼리
-    @Query("SELECT b FROM Bill b " +
+    @Query("SELECT distinct b FROM Bill b " +
             "JOIN b.representativeProposer rp " +
             "JOIN b.billLike bl " +
             "JOIN bl.user u " +
@@ -84,7 +84,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     List<Bill> findBillInfoByIdList(List<String> billList);
 
     // 유사한 법안 조회 법안과 같은 이름을 가진 법안 조회
-    @Query("SELECT b FROM Bill b " +
+    @Query("SELECT distinct b FROM Bill b " +
             "JOIN b.representativeProposer rp " +
             "WHERE b.billName = :billName " +
             "AND b.id != :billId ")
@@ -105,7 +105,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     Optional<Bill> findBillById(String billNumber);
 
-    @Query("select b from Bill b " +
+    @Query("select distinct b from Bill b " +
             "JOIN b.representativeProposer rp " +
             "JOIN rp.congressman c " +
             "JOIN c.congressmanLike cl " +
