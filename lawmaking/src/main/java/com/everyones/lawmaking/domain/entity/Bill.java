@@ -58,8 +58,7 @@ import java.util.List;
     @OneToMany(mappedBy = "bill")
     private List<VoteParty> votePartyList;
 
-    @OneToOne(mappedBy = "bill")
-    private VoteRecord voteRecord;
+
 
     private String committee;
 
