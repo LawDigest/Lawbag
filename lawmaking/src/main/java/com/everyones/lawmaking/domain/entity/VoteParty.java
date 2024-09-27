@@ -41,5 +41,9 @@ public class VoteParty {
                 .build();
     }
 
+    public void updateVotesForCount(VotePartyRequest votePartyRequest){
+        this.setVoteForCount(votePartyRequest.getVoteForCount());
+    }
+
 
 }
