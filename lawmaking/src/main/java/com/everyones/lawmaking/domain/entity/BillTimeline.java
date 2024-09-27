@@ -40,7 +40,6 @@ public class BillTimeline {
 
     public static BillTimeline of (Bill foundBill, BillStageDfRequest billStageDfRequest){
         var stageChangeDate = billStageDfRequest.getStatusUpdateDate();
-        System.out.println(billStageDfRequest.getStage());
         return BillTimeline.builder()
                 .bill(foundBill)
                 .actStatus(billStageDfRequest.getActStatusValue())
