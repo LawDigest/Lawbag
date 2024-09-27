@@ -220,9 +220,13 @@ public class DataService {
             else{
                 var foundVoteParty = votePartyRepository.findByBillAndParty(foundBill.getId(), party.getId())
                         .orElse(null);
-                if (foundVoteParty == null){
+                if (foundVoteParty==null){
                     var voteParty = VoteParty.of(foundBill,party, votePartyRequest);
                     votePartyRepository.save(voteParty);
+                }
+                else{
+                    foundVoteParty.updateVotesForCount(votePartyRequest);
+                    votePartyRepository.save(foundVoteParty);
                 }
             }
         });

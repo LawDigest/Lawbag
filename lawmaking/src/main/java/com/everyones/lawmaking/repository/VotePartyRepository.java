@@ -10,9 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface VotePartyRepository extends JpaRepository<VoteParty,Long> {
-    @Query("select vp.id from VoteParty vp " +
+    @Query("select vp from VoteParty vp " +
             "join vp.bill b " +
             "join vp.party p " +
             " where b.id =:billId and p.id=:partyId")
-    Optional<String> findByBillAndParty(@Param("billId") String billId, @Param("partyId") Long partyId);
+    Optional<VoteParty> findByBillAndParty(@Param("billId") String billId, @Param("partyId") Long partyId);
 }
