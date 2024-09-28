@@ -113,8 +113,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "where cl.user.id = :userId " +
             "ORDER BY b.proposeDate desc ")
     Slice<Bill> findByUserAndCongressmanLike(Pageable pageable, long userId);
-
-    @Query("select b from Bill b ")
-    BillStateCountResponse findStateCount();
+    @Query("SELECT b FROM Bill b WHERE b.id IN :billIds")
+    List<Bill> findByBillIdIn(@Param("billIds") List<String> billIds);
 
 }

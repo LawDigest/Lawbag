@@ -1,6 +1,6 @@
 package com.everyones.lawmaking.facade;
 
-import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.*;
 import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
@@ -19,7 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -40,6 +41,8 @@ public class Facade {
     private final RepresentativeProposerService representativeProposerService;
     private final BillProposerService billProposerService;
     private final BillTimelineService billTimelineService;
+    private final VotePartyService votePartyService;
+    private final VoteRecordService voteRecordService;
 
     public BillListResponse findByPage(Pageable pageable) {
         var billListResponse = billService.findByPage(pageable);
@@ -360,14 +363,51 @@ public class Facade {
         var billList =  billService.findByUserAndCongressmanLike(pageable);
         return setBillListResponseBookMark(billList);
     }
-
+    @Transactional(readOnly = true)
     public BillTimelineResponse getTimeline(LocalDate proposeDate) {
-        return billTimelineService.getTimeline(proposeDate);
+        var plenaryBills  = getPlenaryBills(proposeDate);
+        var promulgationBills = getPromulgationBills(proposeDate);
+        var committeeBills = getCommitteeBills(proposeDate);
+
+        return BillTimelineResponse.of(proposeDate, plenaryBills, promulgationBills, committeeBills);
+    }
+    public List<BillOutlineDto> getPromulgationBills(LocalDate localDate) {
+        var promulgationBillIds = billTimelineService.findPromulgationBillIds(localDate);
+        var bills = billService.findBillsByIds(promulgationBillIds);
+        return bills.stream()
+                .map(BillOutlineDto::from)
+                .toList();
+    }
+    public List<PlenaryDto> getPlenaryBills(LocalDate localDate) {
+        var plenaryBillIds = billTimelineService.findPlenaryBillIds(localDate);
+        var plenaryBills = new ArrayList<PlenaryDto>();
+        billService.findBillsByIds(plenaryBillIds)
+                .forEach(bill -> {
+                    var voteRecord = voteRecordService.getVoteRecordByBillId(bill.getId());
+                    var votePartyList = votePartyService.getVotePartyListWithPartyByBillId(bill.getId()).stream()
+                            .map(PartyVoteDto::from)
+                            .toList();
+                    var plenaryBill = PlenaryDto.of(bill, voteRecord, votePartyList);
+                    plenaryBills.add(plenaryBill);
+                });
+        return plenaryBills;
+
     }
 
-//    public BillStateCountResponse getBillStateCount() {
-//
-//    }
+    public List<CommitteeAuditDto> getCommitteeBills(LocalDate proposeDate) {
+        var committeeBillDtoList = billTimelineService.findCommitteesWithMultipleBillIds(proposeDate);
+        return committeeBillDtoList.stream()
+                .map(committeeBillDto -> {
+                    var bills = billService.findBillsByIds(committeeBillDto.getBillIds());
+
+                    var billOutlineDtoList = bills.stream()
+                            .map(BillOutlineDto::from)
+                            .toList();
+                    return CommitteeAuditDto.of(committeeBillDto.getCommitteeName(), billOutlineDtoList);
+                })
+                .toList();
+
+    }
 
 
     public List<ParliamentaryPartyResponse> getParliamentaryParty() {

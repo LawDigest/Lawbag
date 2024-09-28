@@ -21,7 +21,8 @@ public class GlobalExceptionHandler {
     }
 
     // 404 NotFound 에러
-    @ExceptionHandler({PartyException.PartyNotFound.class})
+    @ExceptionHandler({PartyException.PartyNotFound.class,
+                        VoteRecordException.VoteRecordNotFound.class})
     protected ResponseEntity<ErrorResponse> handleGlobalNotFoundException(final CustomException e) {
 
         log.error(e.getErrorInfoLog());
