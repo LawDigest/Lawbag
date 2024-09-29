@@ -14,4 +14,8 @@ public interface VoteRecordRepository extends JpaRepository<VoteRecord,Long> {
             "join vr.bill b " +
             "where b.id =:billId ")
     Optional<Long> findVoteRecordIdByBillId(@Param("billId") String billId);
+
+    @Query("select vr from VoteRecord vr " +
+            "where vr.bill.id = :billId ")
+    Optional<VoteRecord> findVoteRecordByBillId(@Param("billId") String billId);
 }

@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.repository;
 
+import com.everyones.lawmaking.common.dto.response.BillStateCountResponse;
 import com.everyones.lawmaking.domain.entity.Bill;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -112,5 +113,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "where cl.user.id = :userId " +
             "ORDER BY b.proposeDate desc ")
     Slice<Bill> findByUserAndCongressmanLike(Pageable pageable, long userId);
+    @Query("SELECT b FROM Bill b WHERE b.id IN :billIds")
+    List<Bill> findByBillIdIn(@Param("billIds") List<String> billIds);
 
 }

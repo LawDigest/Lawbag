@@ -7,7 +7,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
-
+    VOTE_RECORD_NOT_FOUND(404, "법안에 대한 투표 기록을 찾을 수 없습니다."),
 
     COOKIE_NOT_FOUND(404, "쿠키를 찾을 수 없습니다."),
 

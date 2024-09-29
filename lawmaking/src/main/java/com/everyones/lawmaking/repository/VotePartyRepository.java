@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,4 +16,9 @@ public interface VotePartyRepository extends JpaRepository<VoteParty,Long> {
             "join vp.party p " +
             " where b.id =:billId and p.id=:partyId")
     Optional<VoteParty> findByBillAndParty(@Param("billId") String billId, @Param("partyId") Long partyId);
+
+    @Query("select vp from VoteParty vp " +
+            "join fetch vp.party " +
+            "where vp.bill.id = :billId ")
+    List<VoteParty> findVotePartyWithPartyByBillId(@Param("billId") String billId);
 }

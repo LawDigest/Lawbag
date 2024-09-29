@@ -16,8 +16,8 @@ public class RedisService {
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String LIKES_QUEUE = "likesQueue";
     private static final String VIEWS_QUEUE = "viewsQueue";
-    private static final int LIKES_QUEUE_SIZE = 100;
-    private static final int VIEWS_QUEUE_SIZE = 200;
+    private static final int LIKES_QUEUE_SIZE = 1000;
+    private static final int VIEWS_QUEUE_SIZE = 3000;
 
     // 인기글 조회
     public List<String> getPopularBills() {

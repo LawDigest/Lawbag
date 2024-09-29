@@ -1,6 +1,6 @@
 package com.everyones.lawmaking.facade;
 
-import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.*;
 import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
@@ -18,6 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -37,6 +40,9 @@ public class Facade {
     private final RedisService redisService;
     private final RepresentativeProposerService representativeProposerService;
     private final BillProposerService billProposerService;
+    private final BillTimelineService billTimelineService;
+    private final VotePartyService votePartyService;
+    private final VoteRecordService voteRecordService;
 
     public BillListResponse findByPage(Pageable pageable) {
         var billListResponse = billService.findByPage(pageable);
@@ -217,6 +223,7 @@ public class Facade {
     }
 
     // 알림 데이터를 각 테이블에 해당하는 실제 데이터로 변환 (ex : bill_id
+    // TODO: 컨벤션에 맞게 메소드명 변경 필요
     public List<String> convertRepresentativeBillNotification(List<String> relatedEntityIds) {
         var congressman = congressmanService.findById(relatedEntityIds.get(0));
         var billRepProposer = congressman.getName();
@@ -356,6 +363,52 @@ public class Facade {
         var billList =  billService.findByUserAndCongressmanLike(pageable);
         return setBillListResponseBookMark(billList);
     }
+    @Transactional(readOnly = true)
+    public BillTimelineResponse getTimeline(LocalDate proposeDate) {
+        var plenaryBills  = getPlenaryBills(proposeDate);
+        var promulgationBills = getPromulgationBills(proposeDate);
+        var committeeBills = getCommitteeBills(proposeDate);
+
+        return BillTimelineResponse.of(proposeDate, plenaryBills, promulgationBills, committeeBills);
+    }
+    public List<BillOutlineDto> getPromulgationBills(LocalDate localDate) {
+        var promulgationBillIds = billTimelineService.findPromulgationBillIds(localDate);
+        var bills = billService.findBillsByIds(promulgationBillIds);
+        return bills.stream()
+                .map(BillOutlineDto::from)
+                .toList();
+    }
+    public List<PlenaryDto> getPlenaryBills(LocalDate localDate) {
+        var plenaryBillIds = billTimelineService.findPlenaryBillIds(localDate);
+        var plenaryBills = new ArrayList<PlenaryDto>();
+        billService.findBillsByIds(plenaryBillIds)
+                .forEach(bill -> {
+                    var voteRecord = voteRecordService.getVoteRecordByBillId(bill.getId());
+                    var votePartyList = votePartyService.getVotePartyListWithPartyByBillId(bill.getId()).stream()
+                            .map(PartyVoteDto::from)
+                            .toList();
+                    var plenaryBill = PlenaryDto.of(bill, voteRecord, votePartyList);
+                    plenaryBills.add(plenaryBill);
+                });
+        return plenaryBills;
+
+    }
+
+    public List<CommitteeAuditDto> getCommitteeBills(LocalDate proposeDate) {
+        var committeeBillDtoList = billTimelineService.findCommitteesWithMultipleBillIds(proposeDate);
+        return committeeBillDtoList.stream()
+                .map(committeeBillDto -> {
+                    var bills = billService.findBillsByIds(committeeBillDto.getBillIds());
+
+                    var billOutlineDtoList = bills.stream()
+                            .map(BillOutlineDto::from)
+                            .toList();
+                    return CommitteeAuditDto.of(committeeBillDto.getCommitteeName(), billOutlineDtoList);
+                })
+                .toList();
+
+    }
+
 
     public List<ParliamentaryPartyResponse> getParliamentaryParty() {
         return partyService.getParliamentaryParty();
