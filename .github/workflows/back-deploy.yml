@@ -76,8 +76,6 @@ jobs:
              -e "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" \
              -e "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" \
              -e "KAKAO_USER_NAME_ATTRIBUTE=${{ secrets.KAKAO_USER_NAME_ATTRIBUTE }}" \
-             -e "ACCESS_TOKEN_EXPIRY=${{ secrets.ACCESS_TOKEN_EXPIRY }}" \
-             -e "REFRESH_TOKEN_EXPIRY=${{ secrets.REFRESH_TOKEN_EXPIRY }}" \
              -e "TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}" \
              -e "BIN_LOG_HOST=${{ secrets.BIN_LOG_HOST }}" \
              -e "BIN_LOG_PASSWORD=${{ secrets.BIN_LOG_PASSWORD }}" \
