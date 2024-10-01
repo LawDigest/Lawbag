@@ -44,7 +44,7 @@ public class BillTimelineController {
     })
     @GetMapping("/feed")
     public BaseResponse<?> getTimeline(
-            @Parameter(example = "2024-08-20", description = "날짜별 법안 조회")
+            @Parameter(example = "2024-08-02", description = "날짜별 법안 조회")
             @RequestParam(value = "billProposeDate", required = false)
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate billProposeDate
     ) {
