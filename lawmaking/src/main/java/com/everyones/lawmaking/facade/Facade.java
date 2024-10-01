@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -373,7 +372,7 @@ public class Facade {
     }
     public List<BillOutlineDto> getPromulgationBills(LocalDate localDate) {
         var promulgationBillIds = billTimelineService.findPromulgationBillIds(localDate);
-        var bills = billService.findBillsByIds(promulgationBillIds);
+        var bills = billService.findBillsWithPartiesByIds(promulgationBillIds);
         return bills.stream()
                 .map(BillOutlineDto::from)
                 .toList();
@@ -381,7 +380,7 @@ public class Facade {
     public List<PlenaryDto> getPlenaryBills(LocalDate localDate) {
         var plenaryBillIds = billTimelineService.findPlenaryBillIds(localDate);
         var plenaryBills = new ArrayList<PlenaryDto>();
-        billService.findBillsByIds(plenaryBillIds)
+        billService.findBillsWithPartiesByIds(plenaryBillIds)
                 .forEach(bill -> {
                     var voteRecord = voteRecordService.getVoteRecordByBillId(bill.getId());
                     var votePartyList = votePartyService.getVotePartyListWithPartyByBillId(bill.getId()).stream()
@@ -398,7 +397,7 @@ public class Facade {
         var committeeBillDtoList = billTimelineService.findCommitteesWithMultipleBillIds(proposeDate);
         return committeeBillDtoList.stream()
                 .map(committeeBillDto -> {
-                    var bills = billService.findBillsByIds(committeeBillDto.getBillIds());
+                    var bills = billService.findBillsWithPartiesByIds(committeeBillDto.getBillIds());
 
                     var billOutlineDtoList = bills.stream()
                             .map(BillOutlineDto::from)

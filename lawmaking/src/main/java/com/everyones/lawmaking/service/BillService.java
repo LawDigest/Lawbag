@@ -213,8 +213,12 @@ public class BillService {
                 .build();
 
     }
-    public List<Bill> findBillsByIds(List<String> billIds) {
-        return billRepository.findByBillIdIn(billIds);
+    public List<Bill> findBillsWithPartiesByIds(List<String> billIds) {
+        return billRepository.findBillsWithPartiesByIds(billIds);
+    }
+
+    public BillStateCountResponse getBillStateCount() {
+        return billRepository.findStateCount();
     }
 
 

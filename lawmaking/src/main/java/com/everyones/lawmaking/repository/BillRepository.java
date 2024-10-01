@@ -116,4 +116,14 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     @Query("SELECT b FROM Bill b WHERE b.id IN :billIds")
     List<Bill> findByBillIdIn(@Param("billIds") List<String> billIds);
 
+    @Query("SELECT DISTINCT b FROM Bill b " +
+            "JOIN FETCH b.representativeProposer rp " +
+            "JOIN FETCH rp.congressman c " +
+            "JOIN FETCH c.party " +
+            "WHERE b.id IN :billIds")
+    List<Bill> findBillsWithPartiesByIds(@Param("billIds") List<String> billIds);
+
+    @Query("select b from Bill b ")
+    BillStateCountResponse findStateCount();
+
 }
