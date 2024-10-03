@@ -71,6 +71,11 @@ import java.util.List;
     @Column(name = "bill_result")
     private String billResult;
 
+    @Column(name = "proposer_kind")
+    @ColumnDefault("'CONGRESSMAN'")
+    @Enumerated(EnumType.STRING)
+    private ProposerKindType proposerKind;
+
     @Column(columnDefinition = "TEXT")
     private String summary;
 
@@ -106,6 +111,7 @@ import java.util.List;
                 .gptSummary(billDfRequest.getGptSummary())
                 .summary(billDfRequest.getSummary())
                 .briefSummary(billDfRequest.getBriefSummary())
+                .proposerKind(ProposerKindType.from(billDfRequest.getProposerKind()))
                 .build();
     }
 
