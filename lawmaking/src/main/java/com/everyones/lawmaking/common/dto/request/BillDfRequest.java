@@ -41,5 +41,7 @@ public class BillDfRequest {
 
     private List<String> rstProposerPartyNameList;
 
+    private String proposerKind;
+
 
 }
