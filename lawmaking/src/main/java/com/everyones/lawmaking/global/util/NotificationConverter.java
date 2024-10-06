@@ -3,6 +3,7 @@ package com.everyones.lawmaking.global.util;
 import com.everyones.lawmaking.common.dto.response.NotificationResponse;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.Notification;
+import com.everyones.lawmaking.domain.entity.ProposerKindType;
 import com.everyones.lawmaking.global.error.CommonException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -44,23 +45,40 @@ public class NotificationConverter {
         String target = data.get(0);
         String title = null;
         String content = null;
+        String extra = null;
         List<String> notificationImageUrlList = new ArrayList<>();
         switch (columnEventType) {
             case RP_INSERT:
-                // List.of(billId, billRepProposer, billProposers, billName, partyImage) <-정당이미지
+//           billId, congressmanName, billBriefSummary, partyImageUrl
                 title = data.get(1) + " 의원";
-                content = data.get(2) + "이 '" + data.get(3) + "'을/를 발의했어요!";
-                notificationImageUrlList.add(data.get(4));
+                content = "'"+data.get(2) + "'을/를 대표 발의했어요!";
+                notificationImageUrlList.add(data.get(3));
                 break;
             case BILL_STAGE_UPDATE:
-                // List.of("bill_id", "bill_name", "proposers", "stage", "partyImage") <-정당이미지
-                title = data.get(1) + "(" + data.get(2) + ")";
-                content = "스크랩한 법안이 본회의에서 '"+data.get(3)+"'되었어요!";
-                notificationImageUrlList.addAll(data.subList(4, data.size()));
+//              billId, briefSummary, stage, proposerKind, 이미지;
+                title = data.get(1);
+                content = "심사 단계가 '" + data.get(2) + "'로 변동했어요!";
+                extra = data.get(3);
+                if(data.get(3).equals(ProposerKindType.CONGRESSMAN.name())){
+                    notificationImageUrlList.addAll(data.subList(4, data.size()));
+                }else{
+                    notificationImageUrlList.add(data.get(4)+".png");
+                }
+                break;
+            case BILL_RESULT_UPDATE:
+//              billId, briefSummary, billResult, proposerKind, 이미지
+                title = data.get(1);
+                content = "'"+data.get(2) + "'로 처리되었어요!";
+                extra = data.get(3);
+                if(data.get(3).equals(ProposerKindType.CONGRESSMAN.name())){
+                    notificationImageUrlList.addAll(data.subList(4, data.size()));
+                }else{
+                    notificationImageUrlList.add(data.get(4)+".png");
+                }
                 break;
             case CONGRESSMAN_PARTY_UPDATE:
-                // List.of(congressmanId, partyName, congressmanName, partyImage); <-정당이미지
-                title = data.get(1);
+                //congressmanId, partyName, congressmanName, partyImageUrl
+                title = data.get(2);
                 content = "'"+data.get(2)+"'의원의 당적이 '"+data.get(1)+"'(으)로 변동했어요!";
                 notificationImageUrlList.add(data.get(4));
                 break;
@@ -82,6 +100,7 @@ public class NotificationConverter {
                 .title(title)
                 .content(content)
                 .createdDate(createdDate)
+                .extra(extra)
                 .build();
     }
 

@@ -4,6 +4,7 @@ import com.everyones.lawmaking.common.dto.*;
 import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
+import com.everyones.lawmaking.domain.entity.ProposerKindType;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.global.error.AuthException;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
@@ -222,44 +223,77 @@ public class Facade {
     }
 
     // 알림 데이터를 각 테이블에 해당하는 실제 데이터로 변환 (ex : bill_id
-    // TODO: 컨벤션에 맞게 메소드명 변경 필요
-    public List<String> convertRepresentativeBillNotification(List<String> relatedEntityIds) {
-        var congressman = congressmanService.findById(relatedEntityIds.get(0));
-        var billRepProposer = congressman.getName();
-        var bill = billService.findById(relatedEntityIds.get(1));
+    public List<String> convertRepresentativeBillNotification(List<String> uniqueKeys) {
+        var bill = billService.findById(uniqueKeys.get(1));
+        if (!(bill.getProposerKind()==(ProposerKindType.CONGRESSMAN))) {
+            return List.of();
+        }
+        var congressman = congressmanService.findById(uniqueKeys.get(0));
+        var congressmanName = congressman.getName();
         var billId = bill.getId();
-        var billName = bill.getBillName();
-        var billProposers = bill.getProposers();
+        var billBriefSummary = bill.getBriefSummary();
 
         String partyImageUrl = NullUtil.nullCoalescing(() -> congressman.getParty().getPartyImageUrl(), "defaultImageUrl");
 
-        return List.of(billId, billRepProposer, billProposers, billName, partyImageUrl);
+        return List.of(billId, congressmanName, billBriefSummary, partyImageUrl);
     }
 
 
-    public List<String> updateBillStage(List<String> relatedEntityIds) {
-        var partyImageList = partyService.getPartyByBillId(relatedEntityIds.get(0));
+    public List<String> updateBillStage(List<String> uniqueKeys) {
+        var billId = uniqueKeys.get(0);
+        var bill = billService.findById(billId);
+        var proposerKind = bill.getProposerKind();
+        var briefSummary = bill.getBriefSummary();
+        var proposers = bill.getProposers();
+        var stage = bill.getStage();
 
-        return Stream.concat(relatedEntityIds.stream(), partyImageList.stream())
-                .toList();
+        if(proposerKind.equals(ProposerKindType.CONGRESSMAN)){
+            var partyImageList = partyService.getPartyByBillId(billId);
+            return Stream.concat(Stream.of(billId, briefSummary, stage, proposerKind.name()), partyImageList.stream())
+                    .toList();
+        }
+        else{
+            return List.of(billId, briefSummary, stage, proposerKind.name(),proposers);
+
+        }
     }
 
-    public List<String> updateCongressmanParty(List<String> relatedEntityIds) {
-        var congressman = congressmanService.findById(relatedEntityIds.get(0));
+    public List<String> updateCongressmanParty(List<String> uniqueKeys) {
+        var congressman = congressmanService.findById(uniqueKeys.get(0));
         var congressmanId = congressman.getId();
         var congressmanName = congressman.getName();
 
-        var party = partyService.findById(Long.parseLong(relatedEntityIds.get(1)));
+        var party = partyService.findById(Long.parseLong(uniqueKeys.get(1)));
         var partyName = party.getName();
         String partyImageUrl = NullUtil.nullCoalescing(party::getPartyImageUrl, "defaultImageUrl");
         return List.of(congressmanId, partyName, congressmanName, partyImageUrl);
     }
 
-    public List<String> getProcessedData(ColumnEventType cet,List<String> eventData) {
-        return switch (cet) {
+    public List<String> updateBillResult(List<String> relatedEntityIds) {
+        var billId = relatedEntityIds.get(0);
+        var bill = billService.findById(billId);
+        var proposerKind = bill.getProposerKind();
+        var briefSummary = bill.getBriefSummary();
+        var proposers = bill.getProposers();
+        var billResult = bill.getBillResult();
+
+        if(proposerKind.equals(ProposerKindType.CONGRESSMAN)){
+            var partyImageList = partyService.getPartyByBillId(billId);
+            return Stream.concat(Stream.of(billId, briefSummary, billResult, proposerKind.name(),proposers), partyImageList.stream())
+                    .toList();
+        }
+        else{
+            return List.of(billId, briefSummary, billResult, proposerKind.name(), proposers);
+
+        }
+    }
+
+    public List<String> getProcessedData(ColumnEventType columnEventType,List<String> eventData) {
+        return switch (columnEventType) {
             case RP_INSERT -> convertRepresentativeBillNotification(eventData);
             case CONGRESSMAN_PARTY_UPDATE -> updateCongressmanParty(eventData);
             case BILL_STAGE_UPDATE -> updateBillStage(eventData);
+            case BILL_RESULT_UPDATE -> updateBillResult(eventData);
         };
 
     }
@@ -267,7 +301,7 @@ public class Facade {
     public List<User> getSubscribedUsers(ColumnEventType cet, String targetId) {
         return switch (cet) {
             case RP_INSERT, CONGRESSMAN_PARTY_UPDATE -> userService.getUserByLikedCongressmanId(targetId);
-            case BILL_STAGE_UPDATE -> userService.getUserByLikedBillId(targetId);
+            case BILL_STAGE_UPDATE, BILL_RESULT_UPDATE -> userService.getUserByLikedBillId(targetId);
         };
     }
 

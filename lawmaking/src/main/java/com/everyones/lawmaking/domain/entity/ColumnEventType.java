@@ -20,13 +20,20 @@ public enum ColumnEventType {
             "Bill",
             "stage",
             EventType.UPDATE,
-            List.of("bill_id", "bill_name", "proposers", "stage")),
+            List.of("bill_id")),
+
+    BILL_RESULT_UPDATE(
+            "bill_result_update",
+            "Bill",
+            "bill_result",
+            EventType.UPDATE,
+            List.of("bill_id")),
     CONGRESSMAN_PARTY_UPDATE(
             "congressman_party_update",
             "Congressman",
             "party_id",
             EventType.UPDATE,
-            List.of("congressman_id", "party_id", "name"));
+            List.of("congressman_id"));
 
     public enum EventType {
         INSERT, UPDATE, DELETE
@@ -35,7 +42,7 @@ public enum ColumnEventType {
     private final String tableName;
     private final String columnName;
     private final EventType eventType;
-    private final List<String> resultColumnNames;
+    private final List<String> keyColumns;
 
     public static ColumnEventType from(String code) {
         return Arrays.stream(ColumnEventType.values())
