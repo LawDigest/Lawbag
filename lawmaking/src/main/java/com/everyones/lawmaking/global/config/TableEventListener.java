@@ -3,7 +3,6 @@ package com.everyones.lawmaking.global.config;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.github.shyiko.mysql.binlog.BinaryLogClient;
 import com.github.shyiko.mysql.binlog.event.*;
-import com.github.shyiko.mysql.binlog.event.deserialization.EventDeserializer;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -94,7 +93,7 @@ public class TableEventListener {
                         }
                     }
                     // 테이블 당 컬럼들의 네임과 인덱스를 저장한 해시맵을 put
-                    columnOrdersByTable.put(tableName, Collections.unmodifiableMap(columnOrders));
+                    columnOrdersByTable.put(tableName.toLowerCase(), Collections.unmodifiableMap(columnOrders));
                     log.debug("Finished processing columns for table: {}", tableName);
 
                 }
@@ -120,7 +119,7 @@ public class TableEventListener {
         log.debug("Successfully fetched column orders by table.");
 
         final List<ColumnEventType> watchedColumnEvents = List.of(ColumnEventType.values());
-        final List<String> watchedTableNames = watchedColumnEvents.stream().map(ColumnEventType::getTableName).toList();
+        final List<String> watchedTableNames = watchedColumnEvents.stream().map(wce -> wce.getTableName().toLowerCase()).toList();
 
         log.debug("Watched Table Names: {}", watchedTableNames);
 
@@ -150,7 +149,7 @@ public class TableEventListener {
                     final String tableName = tableMapEventData.getTable();
                     // 이벤트 감지가 필요없는 테이블이면 스킵
                     // tableName은 all 소문자로 옴
-                    if (!watchedTableNames.contains(tableName)) return;
+                    if (!watchedTableNames.contains(tableName.toLowerCase())) return;
 
                     final Set<Event> dmlOperations = tableMapInfo.getDmlEvents();
                     dmlOperations.stream()
@@ -169,7 +168,7 @@ public class TableEventListener {
                                                 final Map<String, Integer> columnOrdersForTable = columnOrdersByTable.getOrDefault(tableName, new HashMap<>());
                                                 return new AbstractMap.SimpleEntry<>(
                                                         wce.getEventName(),
-                                                        wce.getResultColumnNames()
+                                                        wce.getKeyColumns()
                                                                 .stream()
                                                                 .map(columnName ->
                                                                         columnOrdersForTable.getOrDefault(columnName.toLowerCase(), -1))
@@ -212,12 +211,12 @@ public class TableEventListener {
                                             .filter(wce -> tableName.equalsIgnoreCase(wce.getTableName())
                                                     && wce.getEventType() == ColumnEventType.EventType.UPDATE)
                                             .map(wce -> {
-                                                final Map<String, Integer> columnOrdersForTable = columnOrdersByTable.getOrDefault(tableName, new HashMap<>());
+                                                final Map<String, Integer> columnOrdersForTable = columnOrdersByTable.getOrDefault(tableName.toLowerCase(), new HashMap<>());
                                                 return new AbstractMap.SimpleEntry<>(
                                                         wce.getEventName(),
                                                         Stream.concat(
                                                                 Stream.of(columnOrdersForTable.getOrDefault(wce.getColumnName().toLowerCase(), -1)),
-                                                                wce.getResultColumnNames()
+                                                                wce.getKeyColumns()
                                                                         .stream()
                                                                         .map(columnName ->
                                                                                 columnOrdersForTable.getOrDefault(columnName.toLowerCase(), -1))
