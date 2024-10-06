@@ -24,15 +24,20 @@ public class NotificationCreator {
     private final Facade facade;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    //ToDo: 알림 데이터 삽입 시 유니크키 컬럼을 추가해서 다중 스프링서버환경에서도 중복 데이터가 삽입되지 않도록 처리
     @Transactional
     public void createNotification(List<Map<String, List<String>>> filteredValuesByRows) {
         List<Notification> notifications = new ArrayList<>();
         filteredValuesByRows.forEach((eventDataByEventTypeMap) -> {
                     eventDataByEventTypeMap.forEach((eventType, eventData) -> {
                         try {
+                            // eventData의 첫번째 값은 항상 targetId
                             ColumnEventType columnEventType = ColumnEventType.from(eventType);
                             List<User> subscribedSavedUser = facade.getSubscribedUsers(columnEventType, eventData.get(0));
                             List<String> processedData = facade.getProcessedData(columnEventType,eventData);
+                            if (processedData.isEmpty()) {
+                                return;
+                            }
                             String jsonString = objectMapper.writeValueAsString(processedData);
 
                             subscribedSavedUser
