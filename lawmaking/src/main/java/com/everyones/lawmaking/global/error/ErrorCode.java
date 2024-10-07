@@ -31,6 +31,8 @@ public enum ErrorCode {
 
     PARTY_NOT_FOUND(404, "해당 파티를 찾을 수 없습니다."),
 
+    NOTIFICATION_NOT_FOUND(404, "해당 알림을 찾을 수 없습니다."),
+
     // 업데이트를 위해 제공된 파라미터와 DB 내부 값이 일치하여 반환해주는 에러
     BAD_UPDATE_PARAMETER(400, "업데이트 하려는 파라미터와 DB 내부 값이 일치합니다."),
 
