@@ -41,6 +41,7 @@ public class NotificationConverter {
     public static NotificationResponse from(Notification notification) {
         ColumnEventType columnEventType = notification.getNotificationName();
         List<String> data = parseData(notification.getContentJson());
+        Long notificationId = notification.getId();
         String type = columnEventType.getEventName();
         String target = data.get(0);
         String title = null;
@@ -94,6 +95,8 @@ public class NotificationConverter {
         return NotificationResponse.builder()
                 // 이벤트 타입
                 .type(type)
+                // 알림 id값
+                .notificationId(notificationId)
                 // 알림으로 이동할 대상 id값
                 .target(target)
                 .notificationImageUrlList(notificationImageUrlList)

@@ -22,6 +22,9 @@ public class NotificationResponse {
     private String title;
 
     @NotNull
+    private Long notificationId;
+
+    @NotNull
     private String content;
 
     @NotNull
@@ -41,6 +44,10 @@ public class NotificationResponse {
     // notifications 리스트를 NotificationResponse 리스트로 만들어주는 메서드
     public static List<NotificationResponse> from(List<Notification> notifications) {
         return notifications.stream().map(NotificationConverter::from).toList();
+    }
+
+    public static NotificationResponse from(Notification notification) {
+        return NotificationConverter.from(notification);
     }
 
 }
