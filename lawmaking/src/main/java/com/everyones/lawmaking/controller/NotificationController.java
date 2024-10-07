@@ -1,9 +1,11 @@
 package com.everyones.lawmaking.controller;
 
+import com.everyones.lawmaking.common.dto.response.NotificationCountResponse;
 import com.everyones.lawmaking.common.dto.response.NotificationResponse;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,10 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -63,10 +62,95 @@ public class NotificationController {
                     )}
             ),
     })
-    @PutMapping("/read")
-    public BaseResponse<List<NotificationResponse>> readNotification(Authentication authentication) {
+    @PutMapping("/read/all")
+    public BaseResponse<List<NotificationResponse>> readAllNotifications(Authentication authentication) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.readNotifications(Long.parseLong(user.getUsername()));
+        var result = facade.readAllNotifications(Long.parseLong(user.getUsername()));
+        return BaseResponse.ok(result);
+    }
+
+    @Operation(summary = "알림 읽음 처리 API", description = "특정 알림을 읽음 처리")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "읽음 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PutMapping("/read")
+    public BaseResponse<NotificationResponse> readNotification(Authentication authentication,
+             @Parameter(example = "3", description = "읽음 처리할 알림id를 의미합니다.")
+             @RequestParam(name = "notification_id") int notificationId) {
+        final UserDetails user = (UserDetails) authentication.getPrincipal();
+        var result = facade.readNotification(Long.parseLong(user.getUsername()), notificationId);
+        return BaseResponse.ok(result.get(0));
+    }
+
+    @Operation(summary = "알림 삭제 처리 API", description = "모든 알림을 삭제 처리")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "읽음 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @DeleteMapping("/delete/all")
+    public BaseResponse<String> deleteAllNotification(Authentication authentication) {
+        final UserDetails user = (UserDetails) authentication.getPrincipal();
+        var result = facade.deleteAllNotification(Long.parseLong(user.getUsername()));
+        return BaseResponse.ok(result);
+    }
+
+    @Operation(summary = "알림 삭제 처리 API", description = "특정 알림을 삭제 처리")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "읽음 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @DeleteMapping("/delete")
+    public BaseResponse<String> deleteNotification(Authentication authentication,
+           @Parameter(example = "3", description = "읽음 처리할 알림id를 의미합니다.")
+           @RequestParam(name = "notification_id") int notificationId) {
+        final UserDetails user = (UserDetails) authentication.getPrincipal();
+        var result = facade.deleteNotification(Long.parseLong(user.getUsername()),notificationId);
+        return BaseResponse.ok(result);
+    }
+
+
+    @Operation(summary = "새 알림 개수 조회 API", description = "알림 개수를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "읽음 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @GetMapping("/count")
+    public BaseResponse<NotificationCountResponse> countNotifications(Authentication authentication) {
+        final UserDetails user = (UserDetails) authentication.getPrincipal();
+        var result = facade.countNotifications(Long.parseLong(user.getUsername()));
         return BaseResponse.ok(result);
     }
 

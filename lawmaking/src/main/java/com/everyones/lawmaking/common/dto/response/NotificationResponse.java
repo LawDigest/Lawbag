@@ -22,6 +22,9 @@ public class NotificationResponse {
     private String title;
 
     @NotNull
+    private Long notificationId;
+
+    @NotNull
     private String content;
 
     @NotNull
