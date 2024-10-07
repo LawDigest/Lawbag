@@ -218,9 +218,29 @@ public class Facade {
     }
 
     // 알림 읽음 처리
-    public List<NotificationResponse> readNotifications(long userId) {
-        return notificationService.readNotifications(userId);
+    public List<NotificationResponse> readAllNotifications(long userId) {
+        return notificationService.readAllNotifications(userId);
     }
+
+    public NotificationResponse readNotification(long userId, int notificationId) {
+        return notificationService.readNotification(userId, notificationId);
+    }
+
+    public String deleteAllNotification(long userId) {
+        return notificationService.deleteAllNotifications(userId);
+    }
+
+    public String deleteNotification(long userId, int notificationId) {
+        return notificationService.deleteNotification(userId, notificationId);
+    }
+
+    public NotificationCountResponse countNotifications(long userId) {
+        return notificationService.countNotifications(userId);
+    }
+
+
+
+
 
     // 알림 데이터를 각 테이블에 해당하는 실제 데이터로 변환 (ex : bill_id
     public List<String> convertRepresentativeBillNotification(List<String> uniqueKeys) {
