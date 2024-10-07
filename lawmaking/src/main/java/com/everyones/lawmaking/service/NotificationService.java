@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -27,22 +28,24 @@ public class NotificationService {
 
 
 
-    public List<NotificationResponse> readAllNotifications(long userId){
-        List<Notification> notifications = notificationRepository.findAllUnreadNotificationsByUserId(userId);
 
-        notifications.forEach((noti)-> noti.setRead(true));
+    public List<NotificationResponse> readNotification(long userId, Optional<Integer> notificationId){
+        List<Notification> notifications;
+        if (notificationId.isPresent()){
+            Notification notification = notificationRepository.findUnreadNotificationByUserId(userId, notificationId.get())
+                    .orElseThrow(() -> new NotificationException.NotificationNotFound(Map.of(NOTIFICATION_ID_KEY_LONG, String.valueOf(notificationId.get()))) );
+            notification.setRead(true);
+            Notification notificationsRead = notificationRepository.save(notification);
+            notifications = List.of(notificationsRead);
+        }
+        else {
+            notifications = notificationRepository.findAllUnreadNotificationsByUserId(userId);
+            notifications.forEach((noti) -> noti.setRead(true));
+            List<Notification> notificationsRead = notificationRepository.saveAll(notifications);
+            notifications = notificationsRead;
+        }
 
-        List<Notification> notificationsRead = notificationRepository.saveAll(notifications);
-
-        return NotificationResponse.from(notificationsRead);
-    }
-    public NotificationResponse readNotification(long userId, int notificationId){
-        Notification notification = notificationRepository.findUnreadNotificationByUserId(userId, notificationId)
-                .orElseThrow(() -> new NotificationException.NotificationNotFound(Map.of(NOTIFICATION_ID_KEY_LONG, String.valueOf(notificationId))));
-        notification.setRead(true);
-        Notification notificationsRead = notificationRepository.save(notification);
-
-        return NotificationResponse.from(notificationsRead);
+        return NotificationResponse.from(notifications);
     }
 
     public String deleteAllNotifications(long userId){

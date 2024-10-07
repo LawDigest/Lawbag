@@ -23,6 +23,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 @Service
@@ -219,11 +220,11 @@ public class Facade {
 
     // 알림 읽음 처리
     public List<NotificationResponse> readAllNotifications(long userId) {
-        return notificationService.readAllNotifications(userId);
+        return notificationService.readNotification(userId, Optional.empty());
     }
 
-    public NotificationResponse readNotification(long userId, int notificationId) {
-        return notificationService.readNotification(userId, notificationId);
+    public List<NotificationResponse> readNotification(long userId, int notificationId) {
+        return notificationService.readNotification(userId, Optional.of(notificationId));
     }
 
     public String deleteAllNotification(long userId) {

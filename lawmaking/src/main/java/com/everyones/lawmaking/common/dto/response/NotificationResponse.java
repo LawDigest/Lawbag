@@ -46,8 +46,4 @@ public class NotificationResponse {
         return notifications.stream().map(NotificationConverter::from).toList();
     }
 
-    public static NotificationResponse from(Notification notification) {
-        return NotificationConverter.from(notification);
-    }
-
 }

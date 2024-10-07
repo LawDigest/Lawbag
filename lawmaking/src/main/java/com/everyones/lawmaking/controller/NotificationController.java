@@ -88,7 +88,7 @@ public class NotificationController {
              @RequestParam(name = "notification_id") int notificationId) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
         var result = facade.readNotification(Long.parseLong(user.getUsername()), notificationId);
-        return BaseResponse.ok(result);
+        return BaseResponse.ok(result.get(0));
     }
 
     @Operation(summary = "알림 삭제 처리 API", description = "모든 알림을 삭제 처리")
