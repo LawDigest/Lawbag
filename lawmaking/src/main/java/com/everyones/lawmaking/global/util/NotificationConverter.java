@@ -51,13 +51,18 @@ public class NotificationConverter {
         List<String> notificationImageUrlList = new ArrayList<>();
         switch (columnEventType) {
             case RP_INSERT:
-//           billId, congressmanName, billBriefSummary, partyImageUrl
+                //의원 발의
+//           billId, congressmanName, billBriefSummary, congressmanInfo, partyInfo
                 title = data.get(1) + " 의원";
                 content = "'"+data.get(2) + "'을/를 대표 발의했어요!";
-                notificationImageUrlList.add(data.get(3));
+                notificationImageUrlList.addAll(data.subList(3, data.size()));
                 break;
             case BILL_STAGE_UPDATE:
-//              billId, briefSummary, stage, proposerKind, 이미지;
+                //의원 발의
+//              billId, briefSummary, stage, proposerKind.name()), partyInfoList.stream();
+
+                //위원장 발의
+//                billId, briefSummary, stage, proposerKind.name(),proposers
                 title = data.get(1);
                 content = "심사 단계가 '" + data.get(2) + "'로 변동했어요!";
                 extra = data.get(3);
@@ -68,7 +73,10 @@ public class NotificationConverter {
                 }
                 break;
             case BILL_RESULT_UPDATE:
-//              billId, briefSummary, billResult, proposerKind, 이미지
+                //의원 발의
+//              billId, briefSummary, billResult, proposerKind.name()), partyInfoList.stream()
+                //위원장 발의
+//                billId, briefSummary, billResult, proposerKind.name(), proposers
                 title = data.get(1);
                 content = "'"+data.get(2) + "'로 처리되었어요!";
                 extra = data.get(3);
@@ -79,10 +87,10 @@ public class NotificationConverter {
                 }
                 break;
             case CONGRESSMAN_PARTY_UPDATE:
-                //congressmanId, partyName, congressmanName, partyImageUrl
+                //congressmanId, partyName, congressmanName,congressmanInfo, partyInfo
                 title = data.get(2);
                 content = "'"+data.get(2)+"'의원의 당적이 '"+data.get(1)+"'(으)로 변동했어요!";
-                notificationImageUrlList.add(data.get(4));
+                notificationImageUrlList.addAll(data.subList(3, data.size()));
                 break;
         }
 
