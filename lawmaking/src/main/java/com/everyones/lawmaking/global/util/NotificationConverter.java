@@ -54,7 +54,7 @@ public class NotificationConverter {
                 //의원 발의
 //           billId, congressmanName, billBriefSummary, congressmanInfo
                 title = data.get(1) + " 의원";
-                content = "'"+data.get(2) + "'을/를 대표 발의했어요!";
+                content = "'"+data.get(2) + "' 법안을 대표 발의했어요!";
                 notificationImageUrlList.add(data.get(3));
                 break;
             case BILL_STAGE_UPDATE:
@@ -89,7 +89,7 @@ public class NotificationConverter {
             case CONGRESSMAN_PARTY_UPDATE:
                 //congressmanId, partyName, congressmanName,congressmanInfo
                 title = data.get(2);
-                content = "'"+data.get(2)+"'의원의 당적이 '"+data.get(1)+"'(으)로 변동했어요!";
+                content = "'"+data.get(2)+"'의원의 당적이 '"+data.get(1)+"' 정당으로 변동했어요!";
                 notificationImageUrlList.add(data.get(3));
                 break;
         }
