@@ -49,12 +49,22 @@ public class PartyService {
                 .collect(Collectors.toList());
     }
 
-    public List<String> getPartyByBillId(String billId) {
-        List<String> partyImageList = partyRepository.findPartyByBillId(billId);
-        if (partyImageList.isEmpty()) {
+    public List<Party> getPartyListByBillId(String billId) {
+        List<Party> partyList = partyRepository.findPartyByBillId(billId);
+        if (partyList.isEmpty()) {
             throw new PartyException.PartyNotFound(Map.of("billId", billId));
         }
-        return partyImageList;
+        return partyList;
+
+    }
+
+    public List<String> getPartyInfoList(String billId) {
+        List<Party> partyList = getPartyListByBillId(billId);
+        return partyList.stream().map(party -> {
+            var partyName = party.getName();
+            var partyImageUrl = party.getPartyImageUrl();
+            return "정당:"+partyName + ":" + partyImageUrl;
+        }).toList();
 
     }
 

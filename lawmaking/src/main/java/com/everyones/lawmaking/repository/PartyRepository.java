@@ -28,12 +28,12 @@ public interface PartyRepository extends JpaRepository<Party, Long> {
     List<Party> findBySearchWord(@Param("searchWord") String searchWord);
 
 
-    @Query("SELECT distinct p.partyImageUrl " +
+    @Query("SELECT distinct p " +
             "from Party p " +
-            "join Congressman c on c.party.id = p.id " +
-            "join RepresentativeProposer rp on rp.congressman.id =c.id " +
+            "join p.congressmanList c " +
+            "join c.representativeProposer rp " +
             "where rp.bill.id =:billId")
-    List<String> findPartyByBillId(@Param("billId") String billId);
+    List<Party> findPartyByBillId(@Param("billId") String billId);
 
     Optional<Party> findPartyByName(String partyName);
     @Query("SELECT new com.everyones.lawmaking.common.dto.response.ParliamentaryPartyResponse(p.id, p.name, p.partyImageUrl, COUNT(c)) " +
