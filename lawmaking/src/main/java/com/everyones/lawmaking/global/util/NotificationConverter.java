@@ -44,6 +44,7 @@ public class NotificationConverter {
         Long notificationId = notification.getId();
         String type = columnEventType.getEventName();
         String target = data.get(0);
+        boolean isRead = notification.isRead();
         String title = null;
         String content = null;
         String extra = null;
@@ -98,6 +99,7 @@ public class NotificationConverter {
                 // 알림 id값
                 .notificationId(notificationId)
                 // 알림으로 이동할 대상 id값
+                .isRead(isRead)
                 .target(target)
                 .notificationImageUrlList(notificationImageUrlList)
                 .title(title)
