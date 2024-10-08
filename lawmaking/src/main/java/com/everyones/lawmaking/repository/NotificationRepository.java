@@ -18,6 +18,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             from Notification n
             Join n.user u
             where u.id = :userId and n.isRead = false
+            order by n.createdDate desc
             """)
     List<Notification> findAllUnreadNotificationsByUserId(@Param("userId") Long userId);
 
@@ -26,8 +27,17 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             from Notification n
             Join n.user u
             where u.id = :userId
+            order by n.createdDate desc
             """)
-    List<Notification> findAllNotificationsByUserId(@Param("userId") Long userId);
+    List<Notification> findAllNotificationsByUserIdSorted(@Param("userId") Long userId);
+
+    @Query("""
+            select n
+            from Notification n
+            Join n.user u
+            where u.id = :userId
+            """)
+    List<Notification> findAllNotificationsByUser(@Param("userId") Long userId);
 
     @Query("""
             select n

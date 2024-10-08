@@ -244,7 +244,7 @@ public class Facade {
 
 
     // 알림 데이터를 각 테이블에 해당하는 실제 데이터로 변환 (ex : bill_id
-    public List<String> convertRepresentativeBillNotification(List<String> uniqueKeys) {
+    public List<String> insertRepresentativeBill(List<String> uniqueKeys) {
         var bill = billService.findById(uniqueKeys.get(1));
         if (!(bill.getProposerKind()==(ProposerKindType.CONGRESSMAN))) {
             return List.of();
@@ -253,10 +253,13 @@ public class Facade {
         var congressmanName = congressman.getName();
         var billId = bill.getId();
         var billBriefSummary = bill.getBriefSummary();
-
+        String partyName = NullUtil.nullCoalescing(() -> congressman.getParty().getName(), "defaultPartyName");
         String partyImageUrl = NullUtil.nullCoalescing(() -> congressman.getParty().getPartyImageUrl(), "defaultImageUrl");
+        String partyInfo = "정당:"+partyName + ":" + partyImageUrl;
+        var congressmanInfo = "의원:"+partyName+":"+congressman.getCongressmanImageUrl();
 
-        return List.of(billId, congressmanName, billBriefSummary, partyImageUrl);
+
+        return List.of(billId, congressmanName, billBriefSummary, congressmanInfo, partyInfo);
     }
 
 
@@ -269,8 +272,7 @@ public class Facade {
         var stage = bill.getStage();
 
         if(proposerKind.equals(ProposerKindType.CONGRESSMAN)){
-            var partyImageList = partyService.getPartyByBillId(billId);
-            return Stream.concat(Stream.of(billId, briefSummary, stage, proposerKind.name()), partyImageList.stream())
+            return Stream.concat(Stream.of(billId, briefSummary, stage, proposerKind.name()), partyService.getPartyInfoList(billId).stream())
                     .toList();
         }
         else{
@@ -284,10 +286,11 @@ public class Facade {
         var congressmanId = congressman.getId();
         var congressmanName = congressman.getName();
 
-        var party = partyService.findById(Long.parseLong(uniqueKeys.get(1)));
-        var partyName = party.getName();
-        String partyImageUrl = NullUtil.nullCoalescing(party::getPartyImageUrl, "defaultImageUrl");
-        return List.of(congressmanId, partyName, congressmanName, partyImageUrl);
+        String partyName = NullUtil.nullCoalescing(() -> congressman.getParty().getName(), "defaultPartyName");
+        String partyImageUrl = NullUtil.nullCoalescing(() -> congressman.getParty().getPartyImageUrl(), "defaultImageUrl");
+        String partyInfo = "정당:"+partyName + ":" + partyImageUrl;
+        var congressmanInfo = "의원:"+partyName+":"+congressman.getCongressmanImageUrl();
+        return List.of(congressmanId, partyName, congressmanName,congressmanInfo, partyInfo);
     }
 
     public List<String> updateBillResult(List<String> relatedEntityIds) {
@@ -299,8 +302,7 @@ public class Facade {
         var billResult = bill.getBillResult();
 
         if(proposerKind.equals(ProposerKindType.CONGRESSMAN)){
-            var partyImageList = partyService.getPartyByBillId(billId);
-            return Stream.concat(Stream.of(billId, briefSummary, billResult, proposerKind.name(),proposers), partyImageList.stream())
+            return Stream.concat(Stream.of(billId, briefSummary, billResult, proposerKind.name()), partyService.getPartyInfoList(billId).stream())
                     .toList();
         }
         else{
@@ -311,7 +313,7 @@ public class Facade {
 
     public List<String> getProcessedData(ColumnEventType columnEventType,List<String> eventData) {
         return switch (columnEventType) {
-            case RP_INSERT -> convertRepresentativeBillNotification(eventData);
+            case RP_INSERT -> insertRepresentativeBill(eventData);
             case CONGRESSMAN_PARTY_UPDATE -> updateCongressmanParty(eventData);
             case BILL_STAGE_UPDATE -> updateBillStage(eventData);
             case BILL_RESULT_UPDATE -> updateBillResult(eventData);
