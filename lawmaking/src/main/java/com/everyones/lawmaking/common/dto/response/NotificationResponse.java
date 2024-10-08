@@ -32,6 +32,8 @@ public class NotificationResponse {
 
     private String extra;
 
+    private boolean isRead;
+
     @NotNull
     private List<String> notificationImageUrlList;
 

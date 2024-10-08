@@ -21,7 +21,7 @@ public class NotificationService {
     private static final String NOTIFICATION_ID_KEY_LONG = "notificationId";
 
     public List<NotificationResponse> getNotifications(long userId){
-        List<Notification> notifications = notificationRepository.findAllUnreadNotificationsByUserId(userId);
+        List<Notification> notifications = notificationRepository.findAllNotificationsByUserId(userId);
 
         return NotificationResponse.from(notifications);
     }
