@@ -59,7 +59,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             select count(n)
             from Notification n
             Join n.user u
-            where u.id = :userId
+            where u.id = :userId and n.isRead = false
             """)
     Integer countNewNotificationsByUserId(Long userId);
 
