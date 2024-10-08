@@ -21,7 +21,7 @@ public class NotificationService {
     private static final String NOTIFICATION_ID_KEY_LONG = "notificationId";
 
     public List<NotificationResponse> getNotifications(long userId){
-        List<Notification> notifications = notificationRepository.findAllNotificationsByUserId(userId);
+        List<Notification> notifications = notificationRepository.findAllNotificationsByUserIdSorted(userId);
 
         return NotificationResponse.from(notifications);
     }
@@ -49,7 +49,7 @@ public class NotificationService {
     }
 
     public String deleteAllNotifications(long userId){
-        List<Notification> notifications = notificationRepository.findAllNotificationsByUserId(userId);
+        List<Notification> notifications = notificationRepository.findAllNotificationsByUser(userId);
 
         notificationRepository.deleteAll(notifications);
         return "success";
