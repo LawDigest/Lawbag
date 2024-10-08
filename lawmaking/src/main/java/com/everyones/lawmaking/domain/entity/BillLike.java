@@ -10,7 +10,9 @@ import lombok.*;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = @UniqueConstraint(name = "ix_bill_like_unique", columnNames = {"user_id", "bill_id"}))
+@Table(uniqueConstraints = @UniqueConstraint(name = "ix_bill_like_unique", columnNames = {"user_id", "bill_id"}),indexes = {
+        @Index(name = "idx_billlike_created_date_bill_id", columnList = "created_date DESC, bill_id DESC")
+})
 public class BillLike extends BaseEntity {
 
     @Id

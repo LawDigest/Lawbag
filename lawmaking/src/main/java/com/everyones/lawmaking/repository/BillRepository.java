@@ -56,7 +56,7 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "JOIN b.billLike bl " +
             "JOIN bl.user u " +
             "WHERE u.id = :userId " +
-            "ORDER BY b.proposeDate DESC, b.id desc")
+            "ORDER BY bl.createdDate DESC, b.id desc")
     Slice<Bill> findByUserId(Pageable pageable, @Param("userId") long userId);
 
     // 단일 법안과 관련된 정보 가져오는 쿼리
