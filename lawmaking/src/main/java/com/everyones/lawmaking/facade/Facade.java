@@ -63,8 +63,14 @@ public class Facade {
         if (userId.isEmpty()) {
             return billDto;
         }
+        var voteRecord = voteRecordService.getVoteRecordByBillId(billId);
+        var votePartyList = votePartyService.getVotePartyListWithPartyByBillId(billId).stream()
+                .map(PartyVoteDto::from)
+                .toList();
+        var voteResultResponse = VoteResultResponse.of(voteRecord, votePartyList);
         var isBookMark = likeService.getBillLikeChecked(billDto.getBillInfoDto().getBillId(), userId.get());
         billDto.setIsBookMark(isBookMark);
+        billDto.setVoteResultResponse(voteResultResponse);
         return billDto;
     }
 
@@ -443,7 +449,6 @@ public class Facade {
                     plenaryBills.add(plenaryBill);
                 });
         return plenaryBills;
-
     }
 
     public List<CommitteeAuditDto> getCommitteeBills(LocalDate proposeDate) {
@@ -460,6 +465,8 @@ public class Facade {
                 .toList();
 
     }
+
+
 
 
     public List<ParliamentaryPartyResponse> getParliamentaryParty() {
