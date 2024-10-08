@@ -52,10 +52,10 @@ public class NotificationConverter {
         switch (columnEventType) {
             case RP_INSERT:
                 //의원 발의
-//           billId, congressmanName, billBriefSummary, congressmanInfo, partyInfo
+//           billId, congressmanName, billBriefSummary, congressmanInfo
                 title = data.get(1) + " 의원";
                 content = "'"+data.get(2) + "'을/를 대표 발의했어요!";
-                notificationImageUrlList.addAll(data.subList(3, data.size()));
+                notificationImageUrlList.add(data.get(3));
                 break;
             case BILL_STAGE_UPDATE:
                 //의원 발의
@@ -87,10 +87,10 @@ public class NotificationConverter {
                 }
                 break;
             case CONGRESSMAN_PARTY_UPDATE:
-                //congressmanId, partyName, congressmanName,congressmanInfo, partyInfo
+                //congressmanId, partyName, congressmanName,congressmanInfo
                 title = data.get(2);
                 content = "'"+data.get(2)+"'의원의 당적이 '"+data.get(1)+"'(으)로 변동했어요!";
-                notificationImageUrlList.addAll(data.subList(3, data.size()));
+                notificationImageUrlList.add(data.get(3));
                 break;
         }
 

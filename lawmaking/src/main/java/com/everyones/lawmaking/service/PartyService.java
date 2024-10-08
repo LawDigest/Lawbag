@@ -63,7 +63,7 @@ public class PartyService {
         return partyList.stream().map(party -> {
             var partyName = party.getName();
             var partyImageUrl = party.getPartyImageUrl();
-            return "정당:"+partyName + ":" + partyImageUrl;
+            return partyName + ":" + partyImageUrl;
         }).toList();
 
     }
