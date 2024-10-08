@@ -10,10 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface VoteRecordRepository extends JpaRepository<VoteRecord,Long> {
-    @Query("select vr.id from VoteRecord vr " +
-            "join vr.bill b " +
-            "where b.id =:billId ")
-    Optional<Long> findVoteRecordIdByBillId(@Param("billId") String billId);
 
     @Query("select vr from VoteRecord vr " +
             "where vr.bill.id = :billId ")

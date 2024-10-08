@@ -36,7 +36,7 @@ public class DataService {
         // 시점 파티 데이터 넣기
         billDfRequestList
             .forEach(billDfRequest -> {
-                var oldBill = billRepository.findBillInfoById(billDfRequest.getBillId())
+                var oldBill = billRepository.findBillById(billDfRequest.getBillId())
                         .orElse(null);
                 if (oldBill != null){
                     oldBill.updateContent(billDfRequest);
@@ -95,7 +95,7 @@ public class DataService {
         billStageDfRequestList.forEach(
                 billStageDfRequest -> {
                     var billId = billStageDfRequest.getBillId();
-                    var foundBill = billRepository.findBillInfoById(billId)
+                    var foundBill = billRepository.findBillById(billId)
                             .orElse(null);
                     var equalBill = billTimelineRepository.findBillTimelineByInfo(billStageDfRequest.getBillId(),
                             billStageDfRequest.getActStatusValue(),
@@ -188,16 +188,16 @@ public class DataService {
 
         voteDfRequestList.forEach((voteDfRequest)->{
             var billId = voteDfRequest.getBillId();
-            var foundBill = billRepository.findBillInfoById(billId)
+            var foundBill = billRepository.findBillById(billId)
                     .orElse(null);
             if (foundBill == null) {
                 result.add(billId);
             }
             else{
-                var voteRecordId = voteRecordRepository.findVoteRecordIdByBillId(foundBill.getId());
-                if(voteRecordId.isEmpty()){
-                    var voteRecord = VoteRecord.of(foundBill, voteDfRequest);
-                    voteRecordRepository.save(voteRecord);
+                var voteRecord = voteRecordRepository.findVoteRecordByBillId(foundBill.getId());
+                if(voteRecord.isEmpty()){
+                    var newVoteRecord = VoteRecord.of(foundBill, voteDfRequest);
+                    voteRecordRepository.save(newVoteRecord);
                 }
             }
         });
@@ -211,7 +211,7 @@ public class DataService {
         votePartyRequestList.forEach((votePartyRequest)->{
             var party = partyRepository.findPartyByName(votePartyRequest.getPartyName())
                     .orElse(null);
-            var foundBill = billRepository.findBillInfoById(votePartyRequest.getBillId())
+            var foundBill = billRepository.findBillById(votePartyRequest.getBillId())
                     .orElse(null);
 
             if (party == null || foundBill == null) {

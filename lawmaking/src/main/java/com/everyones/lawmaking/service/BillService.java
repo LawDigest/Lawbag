@@ -46,7 +46,7 @@ public class BillService {
     }
 
     public BillDetailResponse getBillWithDetail(String billId) {
-        var bill = billRepository.findBillInfoById(billId)
+        var bill = billRepository.findBillById(billId)
                 .orElseThrow(() -> new BillException.BillNotFound(Map.of(BILL_ID_KEY_STRING, billId)));
 
         var billDetailResponse = getBillDetailInfoFrom(bill);
