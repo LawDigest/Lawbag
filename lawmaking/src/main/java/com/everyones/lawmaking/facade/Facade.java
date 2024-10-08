@@ -254,12 +254,10 @@ public class Facade {
         var billId = bill.getId();
         var billBriefSummary = bill.getBriefSummary();
         String partyName = NullUtil.nullCoalescing(() -> congressman.getParty().getName(), "defaultPartyName");
-        String partyImageUrl = NullUtil.nullCoalescing(() -> congressman.getParty().getPartyImageUrl(), "defaultImageUrl");
-        String partyInfo = "정당:"+partyName + ":" + partyImageUrl;
-        var congressmanInfo = "의원:"+partyName+":"+congressman.getCongressmanImageUrl();
+        var congressmanInfo = partyName+":"+congressman.getCongressmanImageUrl();
 
 
-        return List.of(billId, congressmanName, billBriefSummary, congressmanInfo, partyInfo);
+        return List.of(billId, congressmanName, billBriefSummary, congressmanInfo);
     }
 
 
@@ -287,10 +285,8 @@ public class Facade {
         var congressmanName = congressman.getName();
 
         String partyName = NullUtil.nullCoalescing(() -> congressman.getParty().getName(), "defaultPartyName");
-        String partyImageUrl = NullUtil.nullCoalescing(() -> congressman.getParty().getPartyImageUrl(), "defaultImageUrl");
-        String partyInfo = "정당:"+partyName + ":" + partyImageUrl;
-        var congressmanInfo = "의원:"+partyName+":"+congressman.getCongressmanImageUrl();
-        return List.of(congressmanId, partyName, congressmanName,congressmanInfo, partyInfo);
+        var congressmanInfo = partyName+":"+congressman.getCongressmanImageUrl();
+        return List.of(congressmanId, partyName, congressmanName,congressmanInfo);
     }
 
     public List<String> updateBillResult(List<String> relatedEntityIds) {
