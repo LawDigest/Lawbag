@@ -60,8 +60,8 @@ public class DataService {
                                     }
                             );
                     //대표발의자 이름 검색해서 RP 찾기
-                    var representativeProposerName = billDfRequest.getRstProposerIdList();
-                    representativeProposerName.forEach((rpID) -> {
+                    billDfRequest.getRstProposerIdList().
+                            forEach((rpID) -> {
                         var representativeProposer = congressmanRepository.findLawmakerById(rpID)
                                 .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", rpID)));
                         updateRepresentativeProposer(newBill, representativeProposer);
