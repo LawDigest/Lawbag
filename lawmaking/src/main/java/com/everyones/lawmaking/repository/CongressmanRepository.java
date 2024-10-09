@@ -35,7 +35,7 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
     Slice<Congressman> findByPartyId(@Param("partyId") long partyId);
 
     @Query("SELECT c FROM Congressman c " +
-            "Where c.state = true and c.name =:congressmanId ")
+            "Where c.state = true and c.id =:congressmanId ")
     Optional<Congressman> findLawmakerById(String congressmanId);
 
 
