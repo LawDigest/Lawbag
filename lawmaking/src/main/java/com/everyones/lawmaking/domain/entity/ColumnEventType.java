@@ -51,4 +51,12 @@ public enum ColumnEventType {
                 .orElseThrow();
     }
 
+    public static ColumnEventType findByEventName(String eventName) {
+        return Arrays.stream(ColumnEventType.values())
+                .filter(cet -> cet.name().equals(eventName))
+                .findAny()
+                .orElseThrow();
+    }
+
+
 }
