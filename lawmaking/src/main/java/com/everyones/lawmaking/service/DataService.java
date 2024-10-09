@@ -42,18 +42,8 @@ public class DataService {
                     oldBill.updateContent(billDfRequest);
                 }
                 else {
+                    Bill newBill = Bill.of(billDfRequest);
 
-                    //partyName으로 partyId조회해서 리스트 반환하기
-                    List<Long> partyIdList = new ArrayList<>();
-                    List<String> partyNameList = billDfRequest.getRstProposerPartyNameList();
-                    for (String name : partyNameList) {
-                        Party party = partyRepository.findPartyByName(name)
-                                .orElseThrow(() -> new PartyException.PartyNotFound(Map.of("party", name)));
-                        partyIdList.add(party.getId());
-                    }
-
-                    // 미완성 Bill 객체 생성하여 다른 필요한 자식들에게 넣어주기.
-                    Bill newBill = Bill.of(billDfRequest, partyIdList);
 
                     billRepository.save(newBill);
 
@@ -62,18 +52,18 @@ public class DataService {
                     //@ToDo 동명이인 필터링을 위해 후에 의원검색에 한글이름, 한자이름, 정당이름 세가지 조건을 추가하기.
                     //현재는 state가 true인 조건만 추가
                     //트랜잭션에서 에러가 발생하면 모든 트랜잭션이 롤백해야함.
-                    billDfRequest.getPublicProposers()
-                            .forEach(congressmanName -> {
-                                var billProposer = congressmanRepository.findLawmakerByName(congressmanName)
-                                        .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", congressmanName)));
+                    billDfRequest.getPublicProposerIdList()
+                            .forEach(congressmanId -> {
+                                var billProposer = congressmanRepository.findLawmakerById(congressmanId)
+                                        .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", congressmanId)));
                                         billProposerUpdate(newBill, billProposer);
                                     }
                             );
                     //대표발의자 이름 검색해서 RP 찾기
-                    var representativeProposerName = billDfRequest.getRstProposerNameList();
-                    representativeProposerName.forEach((rpName) -> {
-                        var representativeProposer = congressmanRepository.findLawmakerByName(rpName)
-                                .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", rpName)));
+                    var representativeProposerName = billDfRequest.getRstProposerIdList();
+                    representativeProposerName.forEach((rpID) -> {
+                        var representativeProposer = congressmanRepository.findLawmakerById(rpID)
+                                .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", rpID)));
                         updateRepresentativeProposer(newBill, representativeProposer);
                             }
                     );

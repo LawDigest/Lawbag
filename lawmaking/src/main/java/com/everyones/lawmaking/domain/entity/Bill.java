@@ -31,11 +31,6 @@ import java.util.List;
     @Column(name = "bill_number", unique = true)
     private int billNumber;
 
-    // 법안의 제안시점 정당 데이터용으로 partyId 필요
-    @Column(name = "partyIdList")
-    @ElementCollection(fetch = FetchType.LAZY)
-    private List<Long> partyIdList;
-
     @NotNull
     @Column(name = "assembly_number")
     private int assemblyNumber;
@@ -98,11 +93,11 @@ import java.util.List;
     @OneToMany(mappedBy = "bill")
     private List<BillTimeline> billTimelineList = new ArrayList<>();
 
-    public static Bill of(BillDfRequest billDfRequest,List<Long> partyIdList){
+    public static Bill of(BillDfRequest billDfRequest){
         return Bill.builder()
                 .id(billDfRequest.getBillId())
+                .billResult(billDfRequest.getBillResult())
                 .billNumber(billDfRequest.getBillNumber())
-                .partyIdList(partyIdList)
                 .billName(billDfRequest.getBillName())
                 .proposeDate(billDfRequest.getProposeDate())
                 .proposers(billDfRequest.getProposers())
@@ -116,9 +111,18 @@ import java.util.List;
     }
 
     public void updateContent(BillDfRequest billDfRequest){
-        this.setSummary(billDfRequest.getSummary());
+        this.setBillResult(billDfRequest.getBillResult());
+        this.setBillNumber(billDfRequest.getBillNumber());
+        this.setBillName(billDfRequest.getBillName());
+        this.setProposeDate(billDfRequest.getProposeDate());
+        this.setProposers(billDfRequest.getProposers());
+        this.setAssemblyNumber(billDfRequest.getAssemblyNumber());
+        this.setStage(billDfRequest.getStage());
         this.setGptSummary(billDfRequest.getGptSummary());
+        this.setSummary(billDfRequest.getSummary());
         this.setBriefSummary(billDfRequest.getBriefSummary());
+        this.setProposerKind(ProposerKindType.from(billDfRequest.getProposerKind()));
+
     }
 
     public void updateStatusByStep(BillStageDfRequest billStageDfRequest){
