@@ -44,7 +44,7 @@ public class NotificationCreator {
                                     .forEach(user -> {
                                         notifications.add(
                                         Notification.builder()
-                                                .notificationName(columnEventType)
+                                                .notificationName(columnEventType.name())
                                                 .contentJson(jsonString)
                                                 .user(user)
                                                 .build());

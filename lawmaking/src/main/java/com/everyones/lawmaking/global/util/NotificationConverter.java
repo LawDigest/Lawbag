@@ -39,7 +39,7 @@ public class NotificationConverter {
     그리고 해당 Response 객체 생성 자체도 NotificationResponse객체에서 하게 하는게 맞는 것 같아 보임.
     */
     public static NotificationResponse from(Notification notification) {
-        ColumnEventType columnEventType = notification.getNotificationName();
+        ColumnEventType columnEventType = ColumnEventType.findByEventName(notification.getNotificationName());
         List<String> data = parseData(notification.getContentJson());
         Long notificationId = notification.getId();
         String type = columnEventType.getEventName();
