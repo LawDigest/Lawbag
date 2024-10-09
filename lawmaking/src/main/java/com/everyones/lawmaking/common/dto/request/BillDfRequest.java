@@ -2,7 +2,6 @@ package com.everyones.lawmaking.common.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -12,7 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Builder
 public class BillDfRequest {
     private String billId;
 
@@ -21,6 +19,8 @@ public class BillDfRequest {
     private String billName;
 
     private String stage;
+
+    private String billResult;
 
     private int assemblyNumber;
 
@@ -35,11 +35,9 @@ public class BillDfRequest {
 
     private String proposers;
 
-    private List<String> publicProposers;
+    private List<String> publicProposerIdList;
 
-    private List<String> rstProposerNameList;
-
-    private List<String> rstProposerPartyNameList;
+    private List<String> rstProposerIdList;
 
     private String proposerKind;
 

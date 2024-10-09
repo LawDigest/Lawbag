@@ -1,7 +1,6 @@
 package com.everyones.lawmaking.repository;
 
 import com.everyones.lawmaking.domain.entity.Congressman;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -36,8 +35,8 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
     Slice<Congressman> findByPartyId(@Param("partyId") long partyId);
 
     @Query("SELECT c FROM Congressman c " +
-            "Where c.state = true and c.name =:congressmanName ")
-    Optional<Congressman> findLawmakerByName(String congressmanName);
+            "Where c.state = true and c.name =:congressmanId ")
+    Optional<Congressman> findLawmakerById(String congressmanId);
 
 
     Optional<Congressman> findCongressmanById(String congressmanId);
