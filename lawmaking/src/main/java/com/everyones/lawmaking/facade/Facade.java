@@ -7,6 +7,7 @@ import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.ProposerKindType;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.global.error.AuthException;
+import com.everyones.lawmaking.global.error.UserException;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.global.util.NullUtil;
 import com.everyones.lawmaking.service.*;
@@ -44,6 +45,7 @@ public class Facade {
     private final BillTimelineService billTimelineService;
     private final VotePartyService votePartyService;
     private final VoteRecordService voteRecordService;
+    private final SearchKeywordService searchKeywordService;
 
     public BillListResponse findByPage(Pageable pageable) {
         var billListResponse = billService.findByPage(pageable);
@@ -466,6 +468,25 @@ public class Facade {
 
     }
 
+    public List<SearchKeywordResponse> getRecentSearchWords() {
+        var userId = AuthenticationUtil.getUserId()
+                .orElseThrow(UserException.UserNotFoundException::new);
+        return searchKeywordService.getRecentSearchWords(userId);
+    }
+
+    public void makeSearchKeywordAndGetRecentSearchWords(String keyword) {
+        var userId = AuthenticationUtil.getUserId()
+                        .orElseThrow(UserException.UserNotFoundException::new);
+
+        var user = userService.findById(userId);
+        searchKeywordService.makeSearchKeyword(user, keyword);
+    }
+
+    public void removeRecentSearchWord(String keyword) {
+        var userId = AuthenticationUtil.getUserId()
+                        .orElseThrow(UserException.UserNotFoundException::new);
+        searchKeywordService.removeRecentSearchWord(userId, keyword);
+    }
 
 
 
