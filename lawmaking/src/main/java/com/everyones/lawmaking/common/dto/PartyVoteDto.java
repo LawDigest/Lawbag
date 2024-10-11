@@ -13,13 +13,13 @@ import lombok.Getter;
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class PartyVoteDto {
     private PartyDto partyInfo;
-    private Integer approvalCount;
+    private Integer partyApprovalCount;
 
 
     public static PartyVoteDto from(VoteParty voteParty) {
         return PartyVoteDto.builder()
                 .partyInfo(PartyDto.from(voteParty.getParty()))
-                .approvalCount(voteParty.getVoteForCount())
+                .partyApprovalCount(voteParty.getVoteForCount())
                 .build();
     }
 
