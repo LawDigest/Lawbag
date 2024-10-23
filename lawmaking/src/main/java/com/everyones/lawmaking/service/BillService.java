@@ -77,7 +77,10 @@ public class BillService {
     public BillListResponse getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable) {
         var billSlice = billRepository.findByRepresentativeProposer(congressmanId, pageable);
         return getBillListResponse(billSlice, BillOrderType.BASIC);
-
+    }
+    public BillListResponse getBillInfoFromRepresentativeProposer(String congressmanId, Pageable pageable, String stage) {
+        var billSlice = billRepository.findByRepresentativeProposer(congressmanId, pageable, stage);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
     }
 
     public BillListResponse getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
@@ -85,17 +88,28 @@ public class BillService {
         return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
+    public BillListResponse getBillInfoFromPublicProposer(String congressmanId, Pageable pageable, String stage) {
+        var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable, stage);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
+    }
 
     public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findRepresentativeBillsByParty(pageable, partyId);
         return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
+    public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId, String stage) {
+        var billSlice = billRepository.findRepresentativeBillsByParty(pageable, partyId, stage);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
+    }
 
     public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId) {
         var billSlice = billRepository.findPublicBillsByParty(pageable, partyId);
         return getBillListResponse(billSlice, BillOrderType.BASIC);
-
+    }
+    public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId, String stage) {
+        var billSlice = billRepository.findPublicBillsByParty(pageable, partyId, stage);
+        return getBillListResponse(billSlice, BillOrderType.BASIC);
     }
 
     public BillListResponse findByUserAndCongressmanLike(Pageable pageable) {

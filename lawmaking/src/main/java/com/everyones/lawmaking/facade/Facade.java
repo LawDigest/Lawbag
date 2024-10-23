@@ -83,14 +83,17 @@ public class Facade {
     }
 
     // Congressman 대표 발의 가져오기
-    public BillListResponse getBillsFromRepresentativeProposer(String congressmanId, Pageable pageable) {
-        var billListResponse = billService.getBillInfoFromRepresentativeProposer(congressmanId, pageable);
+    public BillListResponse getBillsFromRepresentativeProposer(String congressmanId, Pageable pageable, String stage) {
+        var billListResponse = stage == null ? billService.getBillInfoFromRepresentativeProposer(congressmanId, pageable)
+                : billService.getBillInfoFromRepresentativeProposer(congressmanId, pageable, stage);
         return setBillListResponseBookMark(billListResponse);
     }
 
+
     // Congressman 공동 발의 법안 가져오기
-    public BillListResponse getBillsFromPublicProposer(String congressmanId, Pageable pageable) {
-        var billListResponse = billService.getBillInfoFromPublicProposer(congressmanId, pageable);
+    public BillListResponse getBillsFromPublicProposer(String congressmanId, Pageable pageable, String stage) {
+        var billListResponse = stage == null ? billService.getBillInfoFromPublicProposer(congressmanId, pageable)
+                : billService.getBillInfoFromPublicProposer(congressmanId, pageable, stage);
         return setBillListResponseBookMark(billListResponse);
     }
 
@@ -130,13 +133,15 @@ public class Facade {
     }
 
     //
-    public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId) {
-        var billListResponse = billService.getRepresentativeBillsByParty(pageable, partyId);
+    public BillListResponse getRepresentativeBillsByParty(Pageable pageable, long partyId, String stage) {
+        var billListResponse = stage == null ? billService.getRepresentativeBillsByParty(pageable, partyId)
+                : billService.getRepresentativeBillsByParty(pageable, partyId, stage);
         return setBillListResponseBookMark(billListResponse);
     }
 
-    public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId) {
-        var billListResponse = billService.getPublicBillsByParty(pageable, partyId);
+    public BillListResponse getPublicBillsByParty(Pageable pageable, long partyId, String stage) {
+        var billListResponse = stage == null ? billService.getPublicBillsByParty(pageable, partyId)
+                : billService.getPublicBillsByParty(pageable, partyId, stage);
         return setBillListResponseBookMark(billListResponse);
     }
 
