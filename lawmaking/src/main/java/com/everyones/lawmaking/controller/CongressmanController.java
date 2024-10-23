@@ -46,7 +46,7 @@ public class CongressmanController {
     })
     @GetMapping("/detail")
     public BaseResponse<CongressmanResponse> getCongressmanDetails(
-            @Parameter(example = "04T3751T", description = "의원 Id")
+            @Parameter(example = "0PK7354M", description = "의원 Id")
             @RequestParam("congressman_id")
             String congressmanId) {
 
@@ -72,21 +72,25 @@ public class CongressmanController {
     })
     @GetMapping("/bill_info")
     public BaseResponse<BillListResponse> getCongressmanBills(
-            @Parameter(example = "04T3751T", description = "의원 Id")
+            @Parameter(example = "0PK7354M", description = "의원 Id")
             @RequestParam("congressman_id") String congressmanId,
             @Parameter(example = "represent_proposer", description = "해당 의원의 법안 대표 발의 기준, 공동 발의 기준 여부")
             @Schema(type = "String", allowableValues = {"represent_proposer", "public_proposer"})
             @RequestParam("type") String type,
+            @Parameter(example = "위원회 심사")
+            @RequestParam(value = "stage", required = false) String stage,
+            @Parameter(example = "0")
             @RequestParam("page") int page,
+            @Parameter(example = "3")
             @RequestParam("size") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
 
         if (type.equals("represent_proposer")) {
-            var representativeBills = facade.getBillsFromRepresentativeProposer(congressmanId, pageable);
+            var representativeBills = facade.getBillsFromRepresentativeProposer(congressmanId, pageable, stage);
             return BaseResponse.ok(representativeBills);
         }
-        var publicProposerBills = facade.getBillsFromPublicProposer(congressmanId, pageable);
+        var publicProposerBills = facade.getBillsFromPublicProposer(congressmanId, pageable, stage);
         return BaseResponse.ok(publicProposerBills);
     }
 

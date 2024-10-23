@@ -32,11 +32,23 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "ORDER BY b.proposeDate desc, b.id desc")
     Slice<Bill> findByRepresentativeProposer(String congressmanId, Pageable pageable);
 
+    @Query("SELECT b FROM Bill b " +
+            "WHERE exists (select rp FROM b.representativeProposer rp where rp.congressman.id = :congressmanId) " +
+            "AND b.stage = :stage " +
+            "ORDER BY b.proposeDate desc, b.id desc")
+    Slice<Bill> findByRepresentativeProposer(String congressmanId, Pageable pageable, String stage);
+
     // 특정의원이 공동 발의한 법안들
     @Query("SELECT b FROM Bill b " +
             "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.id = :congressmanId) " +
             "ORDER BY b.proposeDate desc, b.id desc")
     Slice<Bill> findBillByPublicProposer(String congressmanId, Pageable pageable);
+
+    @Query("SELECT b FROM Bill b " +
+            "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.id = :congressmanId) " +
+            "AND b.stage = :stage " +
+            "ORDER BY b.proposeDate desc, b.id desc")
+    Slice<Bill> findBillByPublicProposer(String congressmanId, Pageable pageable, String stage);
 
     // 정당 소속 의원들이 대표 발의한 법안
     @Query("SELECT b FROM Bill b " +
@@ -44,12 +56,24 @@ public interface BillRepository extends JpaRepository<Bill, String> {
             "ORDER BY b.proposeDate DESC, b.id DESC")
     Slice<Bill> findRepresentativeBillsByParty(Pageable pageable, @Param("partyId") long partyId);
 
+    @Query("SELECT b FROM Bill b " +
+            "WHERE exists (select rp FROM b.representativeProposer rp where rp.congressman.party.id = :partyId) " +
+            "AND b.stage = :stage " +
+            "ORDER BY b.proposeDate DESC, b.id DESC")
+    Slice<Bill> findRepresentativeBillsByParty(Pageable pageable, @Param("partyId") long partyId, String stage);
+
     // 정당 소속 의원들이 공동 발의한 법안
     // TODO: 쿼리 개선 필요
     @Query("SELECT b FROM Bill b " +
             "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.party.id = :partyId) " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
     Slice<Bill> findPublicBillsByParty(Pageable pageable, @Param("partyId") long partyId);
+
+    @Query("SELECT b FROM Bill b " +
+            "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.party.id = :partyId) " +
+            "AND b.stage = :stage " +
+            "ORDER BY b.proposeDate DESC, b.id DESC")
+    Slice<Bill> findPublicBillsByParty(Pageable pageable, @Param("partyId") long partyId, String stage);
 
     // 유저가 스크랩한 법안 페이징해서 가져오는 쿼리
     @Query("SELECT b FROM Bill b " +

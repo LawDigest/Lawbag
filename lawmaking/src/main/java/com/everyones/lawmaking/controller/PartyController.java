@@ -68,13 +68,15 @@ public class PartyController {
                                                           @Parameter(example = "대표", description = "공동대표발의안 또는 대표발의 의안 조회 여부")
                                                           @Schema(type = "String", allowableValues = {"represent_proposer", "public_proposer"})
                                                           @RequestParam("type") String type,
+                                                          @Parameter(example = "위원회 심사")
+                                                          @RequestParam(value = "stage", required = false) String stage,
                                                           @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
                                                           @RequestParam(name = "page", required = true) int page,
                                                           @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
                                                           @RequestParam(name = "size", required = true) int size) {
         var pageable = PageRequest.of(page, size);
-        var response = (type.equals("represent_proposer")) ? facade.getRepresentativeBillsByParty(pageable, partyId)
-                : facade.getPublicBillsByParty(pageable, partyId);
+        var response = (type.equals("represent_proposer")) ? facade.getRepresentativeBillsByParty(pageable, partyId, stage)
+                : facade.getPublicBillsByParty(pageable, partyId, stage);
 
         return BaseResponse.ok(response);
 
