@@ -62,17 +62,18 @@ public class Facade {
     public BillDetailResponse getBillByBillId(String billId) {
         var billDto =  billService.getBillWithDetail(billId);
         var userId = AuthenticationUtil.getUserId();
-        if (userId.isEmpty()) {
-            return billDto;
-        }
         var voteRecord = voteRecordService.getVoteRecordByBillId(billId);
         var votePartyList = votePartyService.getVotePartyListWithPartyByBillId(billId).stream()
                 .map(PartyVoteDto::from)
                 .toList();
         var voteResultResponse = VoteResultResponse.of(voteRecord, votePartyList);
+        billDto.setVoteResultResponse(voteResultResponse);
+        if (userId.isEmpty()) {
+            return billDto;
+        }
         var isBookMark = likeService.getBillLikeChecked(billDto.getBillInfoDto().getBillId(), userId.get());
         billDto.setIsBookMark(isBookMark);
-        billDto.setVoteResultResponse(voteResultResponse);
+
         return billDto;
     }
 
