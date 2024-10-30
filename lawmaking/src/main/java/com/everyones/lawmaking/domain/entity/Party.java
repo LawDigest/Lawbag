@@ -2,6 +2,7 @@ package com.everyones.lawmaking.domain.entity;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -67,6 +68,22 @@ public class Party extends BaseEntity{
     @ColumnDefault("0")
     @Column(name = "is_parliamentary")
     private Boolean isParliamentary;
+
+    @Schema(name = "당대표")
+    @Column(name = "party_leader")
+    private String partyLeader;
+
+    @Schema(name = "원내 대표")
+    @Column(name = "parliamentary_leader")
+    private String parliamentaryLeader;
+
+    @Schema(name = "사무 총장")
+    @Column(name = "secretary_general")
+    private String secretaryGeneral;
+
+    @Schema(name = "정책위의장")
+    @Column(name = "policy_committee_chairman")
+    private String policyCommitteeChairman;
 
     public static Party create(String partyName ){
         return Party.builder()
