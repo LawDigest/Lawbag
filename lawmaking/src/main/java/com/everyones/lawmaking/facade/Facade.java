@@ -386,7 +386,13 @@ public class Facade {
                 // 모든 작업이 성공적으로 완료되었을 때만 WithdrawResponse 반환
                 return WithdrawResponse.of(authInfo);
 
-            } catch (HttpClientErrorException | HttpServerErrorException e) {
+            }
+            catch (AuthException | UserException e) {
+                // 인증 정보 삭제 실패 시 롤백 설정
+                status.setRollbackOnly();
+                throw e;
+            }
+            catch (HttpClientErrorException | HttpServerErrorException e) {
                 // 외부 API 호출 실패 시 롤백 설정
                 status.setRollbackOnly();
                 String kakaoErrorMessage = e.getResponseBodyAsString();
@@ -402,7 +408,7 @@ public class Facade {
             }
         });
     }
-    public void deleteUserAccount(Long userId, String socialId) throws RuntimeException {
+    public void deleteUserAccount(Long userId, String socialId) {
         try{
 
 
@@ -430,7 +436,7 @@ public class Facade {
         catch (Exception e) {
             log.error("Error during user account deletion", e);
 
-            throw new UserException.UserDeleteFailureException(Map.of("userId", String.valueOf(userId)));
+            throw e;
         }
 
     }
