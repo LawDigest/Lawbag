@@ -372,17 +372,18 @@ public class Facade {
         try{
             //로그아웃 및 리프레시토큰 삭제
             //프로그래적인 트랜잭션 관리
-            transactionTemplate.executeWithoutResult(status -> {
+            return transactionTemplate.execute(status -> {
+                // 1. 로그아웃 및 리프레시 토큰 삭제
                 tokenService.logout(httpRequest, httpResponse);
                 deleteUserAccount(userId, socialId);
-            });
 
-            // 소셜 리프레시 토큰을 이용해 엑세스 토큰 재발급 후 언링크 진행
-            var oauthRefreshAccessTokenResponse = oAuthService.refreshAccessToken(provider, socialId);
-            var accessToken = Objects.requireNonNull(oauthRefreshAccessTokenResponse.getBody()).getAccessToken();
-            // 엑세스 토큰으로 소셜 언링크
-            oAuthService.unlink(socialId, accessToken);
-            return WithdrawResponse.of(authInfo);
+                // 소셜 리프레시 토큰을 이용해 엑세스 토큰 재발급 후 언링크 진행
+                var oauthRefreshAccessTokenResponse = oAuthService.refreshAccessToken(provider, socialId);
+                var accessToken = Objects.requireNonNull(oauthRefreshAccessTokenResponse.getBody()).getAccessToken();
+                oAuthService.unlink(socialId, accessToken);
+                // WithdrawResponse 반환
+                return WithdrawResponse.of(authInfo);
+            });
 
         }
         catch (HttpClientErrorException | HttpServerErrorException e) {
