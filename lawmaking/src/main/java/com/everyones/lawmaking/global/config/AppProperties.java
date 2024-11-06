@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -18,11 +17,18 @@ public class AppProperties {
 
     @Getter
     @Setter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Auth {
         @Value("${app.auth.token-secret}")
         private  String tokenSecret;
+
+        @Value("${app.auth.kakao-app-client-id}")
+        private  String kakaoAppClientId;
+
+        @Value("${app.auth.kakao-app-client-secret}")
+        private String kakaoAppClientSecret;
 
         @Value("${app.auth.access-token-expiry}")
         private  long accessTokenExpiry;

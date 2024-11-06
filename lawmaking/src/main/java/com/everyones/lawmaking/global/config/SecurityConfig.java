@@ -3,9 +3,11 @@ package com.everyones.lawmaking.global.config;
 import com.everyones.lawmaking.global.filterException.CustomAuthenticationEntryPoint;
 import com.everyones.lawmaking.global.handler.*;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
+import com.everyones.lawmaking.global.service.CustomOAuth2AuthorizedClientService;
 import com.everyones.lawmaking.global.service.CustomOAuth2UserService;
 import com.everyones.lawmaking.global.service.TokenService;
 import com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.everyones.lawmaking.repository.OAuth2ClientTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -35,6 +39,8 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
     private final AuthTokenProvider tokenProvider;
     private final CustomOAuth2UserService oAuth2UserService;
     private final TokenAccessDeniedHandler tokenAccessDeniedHandler;
+    private final OAuth2ClientTokenRepository oAuth2ClientTokenRepository;
+    private final ClientRegistrationRepository clientRegistrationRepository;
     private final CorsConfig corsConfig;
     private final TokenService tokenService;
 
@@ -73,6 +79,7 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
                         .successHandler(oAuth2AuthenticationSuccessHandler())
                         .failureHandler(oAuth2AuthenticationFailureHandler()
                         )
+                        .authorizedClientService(customOAuth2AuthorizedClientService())
                 )
                 .logout((logOut) ->
                         logOut
@@ -135,12 +142,13 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
      * */
     @Bean
     public OAuth2AuthenticationFailureHandler oAuth2AuthenticationFailureHandler() {
-        return new OAuth2AuthenticationFailureHandler(oAuth2AuthorizationRequestBasedOnCookieRepository());
+        return new OAuth2AuthenticationFailureHandler(oAuth2AuthorizationRequestBasedOnCookieRepository(), oAuth2ClientTokenRepository);
     }
 
-    /*
-     * Cors ÏÑ§Ï†ï
-     * */
+    @Bean
+    public OAuth2AuthorizedClientService customOAuth2AuthorizedClientService() {
+        return new CustomOAuth2AuthorizedClientService(oAuth2ClientTokenRepository, clientRegistrationRepository);
+    }
 
 }
 

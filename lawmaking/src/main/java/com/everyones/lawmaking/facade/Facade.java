@@ -7,7 +7,10 @@ import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.ProposerKindType;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.global.error.AuthException;
+import com.everyones.lawmaking.global.error.ErrorCode;
+import com.everyones.lawmaking.global.error.ExternalException;
 import com.everyones.lawmaking.global.error.UserException;
+import com.everyones.lawmaking.global.service.TokenService;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.global.util.NullUtil;
 import com.everyones.lawmaking.service.*;
@@ -19,12 +22,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Service
@@ -46,7 +49,9 @@ public class Facade {
     private final VotePartyService votePartyService;
     private final VoteRecordService voteRecordService;
     private final SearchKeywordService searchKeywordService;
-
+    private final OAuthService oAuthService;
+    private final TokenService tokenService;
+    private final TransactionTemplate transactionTemplate;
     public BillListResponse findByPage(Pageable pageable) {
         var billListResponse = billService.findByPage(pageable);
         return setBillListResponseBookMark(billListResponse);
@@ -357,8 +362,82 @@ public class Facade {
 
 
 
-    public WithdrawResponse withdraw(String userId, HttpServletRequest httpRequest, HttpServletResponse httpResponse) throws Exception {
-        return authService.withdraw(userId,httpRequest, httpResponse);
+    public WithdrawResponse withdraw(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
+        var userId = AuthenticationUtil.getUserId()
+                .orElseThrow(UserException.UserNotFoundException::new);
+        var authInfo = authService.getAuthInfo(userId);
+        var socialId = authInfo.getSocialId();
+        var provider = authInfo.getProvider().name();
+
+        return transactionTemplate.execute(status -> {
+            try {
+                // 1. 로그아웃 및 리프레시 토큰 삭제
+                tokenService.logout(httpRequest, httpResponse);
+
+                // 2. 데이터 삭제
+                deleteUserAccount(userId, socialId);
+
+                // 3. 외부 API 호출 - unlink
+                var oauthRefreshAccessTokenResponse = oAuthService.refreshAccessToken(provider, socialId);
+                var accessToken = Objects.requireNonNull(oauthRefreshAccessTokenResponse.getBody()).getAccessToken();
+                status.flush();
+                oAuthService.unlink(socialId, accessToken);
+
+                // 모든 작업이 성공적으로 완료되었을 때만 WithdrawResponse 반환
+                return WithdrawResponse.of(authInfo);
+
+            }
+            catch (AuthException | UserException e) {
+                // 인증 정보 삭제 실패 시 롤백 설정
+                status.setRollbackOnly();
+                throw e;
+            }
+            catch (HttpClientErrorException | HttpServerErrorException e) {
+                // 외부 API 호출 실패 시 롤백 설정
+                status.setRollbackOnly();
+                String kakaoErrorMessage = e.getResponseBodyAsString();
+                throw new ExternalException.ApiException(
+                        ErrorCode.EXTERNAL_API_ERROR,
+                        Map.of("error Message from social service", kakaoErrorMessage)
+                );
+            } catch (Exception e) {
+                // 기타 예외 발생 시 트랜잭션 롤백
+                status.setRollbackOnly();
+                log.error("Error during user account deletion or unlink", e);
+                throw new UserException.WithdrawalFailureException(Map.of("userId", String.valueOf(userId)));
+            }
+        });
+    }
+    public void deleteUserAccount(Long userId, String socialId) {
+        try{
+
+
+            // 1. 사용자의 모든 좋아요 데이터 삭제
+        likeService.deleteBillLikeByUserId(userId);
+        likeService.deleteCongressmanLikeByUserId(userId);
+        likeService.deletePartyFollowByUserId(userId);
+
+//         2. 알림, 검색어 삭제
+            notificationService.deleteNotificationByUserId(userId);
+            searchKeywordService.deleteAllSearchWordsByUserId(userId);
+
+            // 3. 사용자 삭제
+            int isUserDeleted = userService.deleteUserById(userId);
+            if (isUserDeleted == 0) {
+                throw new UserException.UserNotFoundException(Map.of("userId", String.valueOf(userId)));
+            }
+
+            // 4. 인증 정보 삭제
+            int isAuthInfoDeleted = authService.deleteAuthInfoBySocialId(socialId);
+            if (isAuthInfoDeleted == 0) {
+                throw new AuthException.AuthInfoNotFound(Map.of("userId", String.valueOf(userId)));
+            }
+        }
+        catch (Exception e) {
+            log.error("Error during user account deletion", e);
+
+            throw e;
+        }
 
     }
 

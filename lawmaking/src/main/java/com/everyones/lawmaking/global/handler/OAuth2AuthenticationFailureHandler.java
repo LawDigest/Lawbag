@@ -2,6 +2,7 @@ package com.everyones.lawmaking.global.handler;
 
 import com.everyones.lawmaking.global.util.CookieUtil;
 import com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.everyones.lawmaking.repository.OAuth2ClientTokenRepository;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +22,7 @@ import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBased
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
     private final OAuth2AuthorizationRequestBasedOnCookieRepository authorizationRequestRepository;
+    private final OAuth2ClientTokenRepository oAuth2ClientTokenRepository;
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws ServletException, IOException {
@@ -31,6 +33,12 @@ public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationF
                 .queryParam("error", exception.getLocalizedMessage())
                 .build().toUriString();
 
+        // 사용자 principal (사용자명 등)을 가져와서 토큰 삭제
+        String clientRegistrationId = request.getParameter("client_id"); // 예: google, facebook 등
+        if (clientRegistrationId != null && request.getUserPrincipal() != null) {
+            String principalName = request.getUserPrincipal().getName();
+            oAuth2ClientTokenRepository.deleteByClientRegistrationIdAndPrincipalName(clientRegistrationId, principalName);
+        }
         authorizationRequestRepository.removeAuthorizationRequestCookies(request, response);
 
         getRedirectStrategy().sendRedirect(request, response, targetUrl);

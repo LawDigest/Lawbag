@@ -14,8 +14,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
 
@@ -45,9 +47,8 @@ public class AuthController {
             Authentication authentication,
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        var userDetails = (UserDetails) authentication.getPrincipal();
 
-        var result = facade.withdraw(userDetails.getUsername(),request,response);
+        var result = facade.withdraw(request,response);
         return BaseResponse.ok(result);
     }
 

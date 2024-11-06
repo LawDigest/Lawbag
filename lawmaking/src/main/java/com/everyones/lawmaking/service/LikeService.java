@@ -141,4 +141,17 @@ public class LikeService {
         return congressmanLikeRepository.countByCongressmanId(congressmanId).intValue();
     }
 
+    public void deleteCongressmanLikeByUserId(Long userId) {
+        congressmanLikeRepository.deleteByUserId(userId);
+    }
+
+    public void deleteBillLikeByUserId(Long userId) {
+        billLikeRepository.deleteAllByUserId(userId);
+    }
+
+    public void deletePartyFollowByUserId(Long userId) {
+        partyFollowRepository.deleteAllByUserId(userId);
+    }
+
+
 }

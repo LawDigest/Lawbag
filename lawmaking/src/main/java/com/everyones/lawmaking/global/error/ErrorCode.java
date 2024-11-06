@@ -33,6 +33,11 @@ public enum ErrorCode {
 
     NOTIFICATION_NOT_FOUND(404, "해당 알림을 찾을 수 없습니다."),
 
+    SOCIAL_TOKEN_NOT_FOUND(404, "해당 소셜 토큰을 찾을 수 없습니다."),
+    EXTERNAL_API_ERROR(502, "외부 API 호출 중 오류가 발생하였습니다."),
+    WITHDRAWAL_FAILURE(409, "해당 유저의 탈퇴가 실패하였습니다."),
+    USER_DELETE_FAILURE(500, "해당 유저의 삭제가 실패하였습니다."),
+
     // 업데이트를 위해 제공된 파라미터와 DB 내부 값이 일치하여 반환해주는 에러
     BAD_UPDATE_PARAMETER(400, "업데이트 하려는 파라미터와 DB 내부 값이 일치합니다."),
 
