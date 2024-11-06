@@ -19,7 +19,6 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
             "where t.refreshToken =:refreshToken ")
     Optional<Token> findTokenByRefreshToken(@Param("refreshToken") String refreshToken);
 
-    @Transactional(rollbackFor = Exception.class)
     @Modifying(clearAutomatically = true)
     Integer deleteByUserId(Long userId);
 

@@ -369,44 +369,40 @@ public class Facade {
         var socialId = authInfo.getSocialId();
         var provider = authInfo.getProvider().name();
 
-        try{
-            //로그아웃 및 리프레시토큰 삭제
-            //프로그래적인 트랜잭션 관리
-            return transactionTemplate.execute(status -> {
+        return transactionTemplate.execute(status -> {
+            try {
                 // 1. 로그아웃 및 리프레시 토큰 삭제
                 tokenService.logout(httpRequest, httpResponse);
+
+                // 2. 데이터 삭제
                 deleteUserAccount(userId, socialId);
 
-                // 소셜 리프레시 토큰을 이용해 엑세스 토큰 재발급 후 언링크 진행
+                // 3. 외부 API 호출 - unlink
                 var oauthRefreshAccessTokenResponse = oAuthService.refreshAccessToken(provider, socialId);
                 var accessToken = Objects.requireNonNull(oauthRefreshAccessTokenResponse.getBody()).getAccessToken();
+                status.flush();
                 oAuthService.unlink(socialId, accessToken);
-                // WithdrawResponse 반환
+
+                // 모든 작업이 성공적으로 완료되었을 때만 WithdrawResponse 반환
                 return WithdrawResponse.of(authInfo);
-            });
 
-        }
-        catch (HttpClientErrorException | HttpServerErrorException e) {
-            // 카카오 API에서 반환된 에러 메시지 추출
-            String kakaoErrorMessage = e.getResponseBodyAsString();
-            // 예외 메시지에 카카오 에러 메시지 포함
-            throw new ExternalException.ApiException(
-                    ErrorCode.EXTERNAL_API_ERROR,
-                    Map.of("error Message from social service ", kakaoErrorMessage)
-            );
-        }
-        catch (UserException | AuthException e) {
-            throw e;
-        }
-        catch (Exception e) {
-            log.error("Error during user account deletion", e);
-            // 기타 예외 처리
-            throw new UserException.WithdrawalFailureException(Map.of("userId", String.valueOf(userId)));
-        }
-
-
+            } catch (HttpClientErrorException | HttpServerErrorException e) {
+                // 외부 API 호출 실패 시 롤백 설정
+                status.setRollbackOnly();
+                String kakaoErrorMessage = e.getResponseBodyAsString();
+                throw new ExternalException.ApiException(
+                        ErrorCode.EXTERNAL_API_ERROR,
+                        Map.of("error Message from social service", kakaoErrorMessage)
+                );
+            } catch (Exception e) {
+                // 기타 예외 발생 시 트랜잭션 롤백
+                status.setRollbackOnly();
+                log.error("Error during user account deletion or unlink", e);
+                throw new UserException.WithdrawalFailureException(Map.of("userId", String.valueOf(userId)));
+            }
+        });
     }
-    public void deleteUserAccount(Long userId, String socialId) throws UserException,AuthException {
+    public void deleteUserAccount(Long userId, String socialId) throws RuntimeException {
         try{
 
 
