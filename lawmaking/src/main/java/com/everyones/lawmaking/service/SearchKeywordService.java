@@ -53,4 +53,7 @@ public class SearchKeywordService {
                 .map(SearchKeywordResponse::from)
                 .toList();
     }
+    public void deleteAllSearchWordsByUserId(Long userId) {
+        searchKeywordRepository.deleteAllByUserId(userId);
+    }
 }

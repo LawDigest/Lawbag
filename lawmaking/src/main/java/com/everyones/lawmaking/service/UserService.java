@@ -35,4 +35,8 @@ public class UserService {
         return userRepository.findAllByCongressmanId(congressmanId);
     }
 
+    public int deleteUserById(Long userId) {
+        return userRepository.deleteUserById(userId);
+    }
+
 }

@@ -4,6 +4,7 @@ import com.everyones.lawmaking.domain.entity.AuthInfo;
 import com.everyones.lawmaking.domain.entity.Provider;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,6 +19,9 @@ public interface AuthInfoRepository extends JpaRepository<AuthInfo, Long> {
             "from AuthInfo a " +
             "inner join fetch a.user u " +
             "where u.id =:userId ")
-    Optional<AuthInfo> findAuthInfoByUserId(@Param("userId") String userId);
+    Optional<AuthInfo> findAuthInfoByUserId(@Param("userId") Long userId);
+
+    @Modifying(clearAutomatically = true)
+    int deleteBySocialId(@Param("userId") String socialId);
 
 }

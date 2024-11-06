@@ -3,6 +3,7 @@ package com.everyones.lawmaking.repository;
 import com.everyones.lawmaking.domain.entity.Provider;
 import com.everyones.lawmaking.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -34,4 +35,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "where bl.bill.id = :billId")
     List<User> findAllByBillId(@Param("billId") String billId);
 
+    @Modifying(clearAutomatically = true)
+    int deleteUserById(Long userId);
 }

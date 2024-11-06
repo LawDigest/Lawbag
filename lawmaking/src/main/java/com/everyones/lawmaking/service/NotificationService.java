@@ -64,6 +64,10 @@ public class NotificationService {
         return "success";
     }
 
+    public void deleteNotificationByUserId(Long userId){
+        notificationRepository.deleteAllByUserId(userId);
+    }
+
     public NotificationCountResponse countNotifications(long userId){
         Integer notification = notificationRepository.countNewNotificationsByUserId(userId);
         return NotificationCountResponse.of(userId, notification);

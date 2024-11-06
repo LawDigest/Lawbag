@@ -1,7 +1,10 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.SearchPartyDto;
-import com.everyones.lawmaking.common.dto.response.*;
+import com.everyones.lawmaking.common.dto.response.FollowingPartyResponse;
+import com.everyones.lawmaking.common.dto.response.ParliamentaryPartyResponse;
+import com.everyones.lawmaking.common.dto.response.PartyDetailResponse;
+import com.everyones.lawmaking.common.dto.response.SearchResponse;
 import com.everyones.lawmaking.domain.entity.Party;
 import com.everyones.lawmaking.global.error.PartyException;
 import com.everyones.lawmaking.repository.PartyRepository;
