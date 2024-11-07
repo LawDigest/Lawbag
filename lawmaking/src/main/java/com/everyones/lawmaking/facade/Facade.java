@@ -365,6 +365,7 @@ public class Facade {
     public WithdrawResponse withdraw(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
         var userId = AuthenticationUtil.getUserId()
                 .orElseThrow(UserException.UserNotFoundException::new);
+
         var authInfo = authService.getAuthInfo(userId);
         var socialId = authInfo.getSocialId();
         var provider = authInfo.getProvider().name();
