@@ -363,9 +363,12 @@ public class Facade {
 
 
     public WithdrawResponse withdraw(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-        var userId = AuthenticationUtil.getUserId()
-                .orElseThrow(UserException.UserNotFoundException::new);
-        var authInfo = authService.getAuthInfo(userId);
+        var userId = AuthenticationUtil.getUserId();
+        if (userId.isEmpty()) {
+            throw new UserException.UserNotFoundException();
+        }
+        var userIdValue = userId.get();
+        var authInfo = authService.getAuthInfo(userIdValue);
         var socialId = authInfo.getSocialId();
         var provider = authInfo.getProvider().name();
 
@@ -375,7 +378,7 @@ public class Facade {
                 tokenService.logout(httpRequest, httpResponse);
 
                 // 2. 데이터 삭제
-                deleteUserAccount(userId, socialId);
+                deleteUserAccount(userIdValue, socialId);
 
                 // 3. 외부 API 호출 - unlink
                 var oauthRefreshAccessTokenResponse = oAuthService.refreshAccessToken(provider, socialId);
