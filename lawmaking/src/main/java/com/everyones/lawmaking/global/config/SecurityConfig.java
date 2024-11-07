@@ -49,7 +49,9 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
     @Bean
     protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .addFilterBefore(customLogoutFilter(), LogoutFilter.class)
+                .addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(customLogoutFilter(), tokenAuthenticationFilter().getClass())
+                .addFilterBefore(tokenAuthenticationFilter(), LogoutFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -86,10 +88,6 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
                         .logoutSuccessHandler(new CustomLogoutSuccessHandler())
 
                 );
-
-
-        http.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }
