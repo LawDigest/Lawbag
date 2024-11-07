@@ -16,12 +16,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -150,22 +149,25 @@ public class TokenService {
         return authTokenMap;
     }
 
+    @Transactional
     public void invalidateToken(Long userId) {
-        tokenRepository.deleteByUserId(userId);
+        deleteByUserId(userId);
     }
 
 
 
+    @Transactional
     public void logout(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
-        var userId = AuthenticationUtil.getUserId()
-                .orElseThrow(UserException.UserNotFoundException::new);
+        var userId = AuthenticationUtil.getUserId();
+        if(userId.isPresent()){
+            invalidateToken(userId.get());
+        }
         HttpSession session = httpServletRequest.getSession(false); // 기존 세션 가져오기
         if (session != null) {
             session.invalidate();
         }
         var cookieDomain = appProperties.getAuth().getCookieDomain();
-        invalidateToken(userId);
         CookieUtil.deleteCookieForClient(httpServletRequest, httpServletResponse, ACCESS_TOKEN, cookieDomain);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
@@ -174,6 +176,11 @@ public class TokenService {
         context.setAuthentication(null);
         SecurityContextHolder.clearContext();
 
+    }
+
+    @Transactional
+    public void deleteByUserId(Long userId) {
+        tokenRepository.deleteByUserId(userId);
     }
 
 
