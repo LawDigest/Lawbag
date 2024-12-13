@@ -7,9 +7,9 @@ public class PaginationUtil {
     public static <T> boolean hasNextPage(List<T> contents, int pageSize) {
         if(contents.size() > pageSize) {
             contents.remove(pageSize);
-            return true;
+            return false;
         }
-        return false;
+        return true;
     }
 
 }

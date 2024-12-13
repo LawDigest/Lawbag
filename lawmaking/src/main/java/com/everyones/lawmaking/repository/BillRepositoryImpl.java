@@ -52,6 +52,7 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
                 .from(bill)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
+                .orderBy(bill.proposeDate.desc(), bill.id.desc())
                 .fetch();
     }
     private Map<String, List<RepresentativeProposerDto>> findRepresentativeProposerMap(List<String> billIds) {
