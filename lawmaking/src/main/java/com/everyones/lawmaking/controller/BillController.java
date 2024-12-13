@@ -1,10 +1,11 @@
 package com.everyones.lawmaking.controller;
 
-import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.bill.BillDto;
 import com.everyones.lawmaking.common.dto.response.BillDetailResponse;
 import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
+import com.everyones.lawmaking.facade.BillFacade;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +32,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @Tag(name = "법안 API", description = "법안 조회 API")
 public class BillController {
     private final Facade facade;
+    private final BillFacade billFacade;
 
     @Operation(summary = "메인피드 조회", description = "메인피드에 들어갈 데이터를 가져옵니다.")
     @ApiResponses(value = {
@@ -54,7 +56,7 @@ public class BillController {
             int size
             ) {
         var pageable = PageRequest.of(page, size);
-        var result = facade.findByPage(pageable);
+        var result = billFacade.getBillList(pageable);
         return BaseResponse.ok(result);
 
     }
@@ -84,7 +86,7 @@ public class BillController {
             @RequestParam(name = "stage") String stage
             ) {
         var pageable = PageRequest.of(page, size);
-        var result = facade.findByPage(pageable, stage);
+        var result = billFacade.getBillList(pageable, stage);
         return BaseResponse.ok(result);
 
     }

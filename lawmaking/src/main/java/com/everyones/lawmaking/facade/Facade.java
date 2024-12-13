@@ -1,6 +1,7 @@
 package com.everyones.lawmaking.facade;
 
 import com.everyones.lawmaking.common.dto.*;
+import com.everyones.lawmaking.common.dto.bill.BillDto;
 import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
@@ -52,16 +53,6 @@ public class Facade {
     private final OAuthService oAuthService;
     private final TokenService tokenService;
     private final TransactionTemplate transactionTemplate;
-    public BillListResponse findByPage(Pageable pageable) {
-        var billListResponse = billService.findByPage(pageable);
-        return setBillListResponseBookMark(billListResponse);
-    }
-
-    // 법안의 처리 단계에 따라 법안 페이징해서 법안 반환
-    public BillListResponse findByPage(Pageable pageable, String stage) {
-        var billListResponse = billService.findByPage(pageable, stage);
-        return setBillListResponseBookMark(billListResponse);
-    }
 
     // 법안 아이디를 기준으로, 하나의 법안 상세 조회
     public BillDetailResponse getBillByBillId(String billId) {
@@ -343,6 +334,7 @@ public class Facade {
         };
     }
 
+    // TODO: 가져가서 제거할 생각하기
     private BillListResponse setBillListResponseBookMark(BillListResponse billListResponse) {
         var userId = AuthenticationUtil.getUserId();
 

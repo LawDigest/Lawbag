@@ -22,4 +22,8 @@ public class RepresentativeProposer {
     @JoinColumn(name = "congressman_id")
     private Congressman congressman;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "party_id")
+    private Party party;
+
 }

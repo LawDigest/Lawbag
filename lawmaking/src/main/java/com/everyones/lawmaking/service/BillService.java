@@ -1,6 +1,8 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.*;
+import com.everyones.lawmaking.common.dto.bill.BillDto;
+import com.everyones.lawmaking.common.dto.proposer.RepresentativeProposerDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.global.constant.BillOrderType;
@@ -32,17 +34,15 @@ public class BillService {
                 .orElseThrow(() -> new BillException.BillNotFound(Map.of(BILL_ID_KEY_STRING, billId)));
     }
 
-    // 메인피드에서 Bill 정보 페이지네이션으로 가져오기
-    public BillListResponse findByPage(Pageable pageable) {
-        var billSlice = billRepository.findByPage(pageable);
-        return getBillListResponse(billSlice, BillOrderType.BASIC);
 
+    public BillListResponse getBillList(Pageable pageable) {
+        return billRepository.findBillWithDetailAndPage(pageable, AuthenticationUtil.getUserId());
     }
 
     // 단계 추가
-    public BillListResponse findByPage(Pageable pageable, String stage) {
+    public BillListResponse getBillList(Pageable pageable, String stage) {
         var billSlice = billRepository.findByPage(pageable, stage);
-        return getBillListResponse(billSlice, BillOrderType.BASIC);
+        return BillListResponse.from(billSlice);
     }
 
     public BillDetailResponse getBillWithDetail(String billId) {
@@ -84,7 +84,8 @@ public class BillService {
     }
 
     public BillListResponse getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
-        var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable);
+
+        var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable.getPageSize(), pageable.getOffset());
         return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
@@ -121,18 +122,20 @@ public class BillService {
         return getBillListResponse(billList, BillOrderType.BASIC);
     }
 
+    /**
+     * TODO: 2024-12-08 billOrderType 파라미터 제거 해야함.
+     * @param billSlice
+     * @param billOrderType
+     * @return
+     */
     public BillListResponse getBillListResponse(Slice<Bill> billSlice, BillOrderType billOrderType) {
-
         var pagination = PaginationResponse.from(billSlice);
-
         var billIdList = billSlice
                 .stream()
                 .map(Bill::getId)
                 .toList();
 
-        var billList = getSortedBillByOrderType(billIdList, billOrderType);
-
-        var billInfoList = billList.stream()
+        var billInfoList = billSlice.stream()
                 .map(this::getBillInfoFrom)
                 .toList();
 
@@ -140,10 +143,6 @@ public class BillService {
                 .paginationResponse(pagination)
                 .billList(billInfoList)
                 .build();
-    }
-
-    public List<Bill> getSortedBillByOrderType(List<String> billIdList, BillOrderType billOrderType) {
-        return billRepository.findBillInfoByIdList(billIdList);
     }
 
 
@@ -156,7 +155,7 @@ public class BillService {
                 .toList();
     }
 
-    // 메인피드 등 법안들의 리스트를 반환할 때 사용
+    // DTO로 이전시켜야함
     private BillDto getBillInfoFrom(Bill bill) {
 
         // Bill Entity To DTO

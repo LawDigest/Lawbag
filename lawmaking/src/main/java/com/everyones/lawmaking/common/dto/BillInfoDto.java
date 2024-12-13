@@ -4,6 +4,7 @@ import com.everyones.lawmaking.domain.entity.Bill;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,7 +30,7 @@ public class BillInfoDto {
     private String billStage;
     private String briefSummary;
 
-
+    @QueryProjection
     public BillInfoDto(Bill bill) {
         this.billId = bill.getId();
         this.billName = bill.getBillName();
