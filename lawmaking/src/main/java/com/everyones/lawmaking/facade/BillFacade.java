@@ -11,29 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class BillFacade {
-    private final CommonFacade commonFacade;
     private final BillService billService;
 
-    /**
-     * @param pageable
-     * @return BillListResponse
-     */
     @Transactional(readOnly = true)
-    public BillListResponse getBillList(Pageable pageable) {
-        return billService.getBillList(pageable);
-    }
     public BillListResponse getBillList(Pageable pageable, String stage) {
-        var billListResponse = billService.getBillList(pageable, stage);
-        return setBillListResponseBookMark(billListResponse);
-    }
-
-    private BillListResponse setBillListResponseBookMark(BillListResponse billListResponse) {
-        var userId = AuthenticationUtil.getUserId();
-
-        if (userId.isEmpty()) {
-            return billListResponse;
-        }
-        return billListResponse;
+        return billService.getBillList(pageable, stage);
     }
 
 }

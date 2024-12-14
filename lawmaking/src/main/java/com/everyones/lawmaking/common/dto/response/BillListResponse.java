@@ -27,16 +27,5 @@ public class BillListResponse {
                 .billList(billList)
                 .build();
     }
-    public static BillListResponse from(Slice<Bill> billSlice) {
-        return BillListResponse.builder()
-                .paginationResponse(PaginationResponse.from(billSlice))
-                .billList(toBillDtoList(billSlice.getContent()))
-                .build();
-    }
-    private static List<BillDto> toBillDtoList(List<Bill> billList) {
-        return billList.stream()
-                .map(BillDto::from)
-                .toList();
-    }
 
 }

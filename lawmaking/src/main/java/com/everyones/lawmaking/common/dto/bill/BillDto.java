@@ -46,25 +46,4 @@ public class BillDto {
                 .build();
     }
 
-    public static BillDto from(Bill bill) {
-        return BillDto.builder()
-                .billInfoDto(BillInfoDto.from(bill))
-                .representativeProposerDtoList(toRepresentativeProposerDtoList(bill.getRepresentativeProposer()))
-                .publicProposerDtoList(toPublicProposerDtoList(bill.getPublicProposer()))
-                .isBookMark(false)
-                .build();
-    }
-
-    private static List<RepresentativeProposerDto> toRepresentativeProposerDtoList(List<RepresentativeProposer> proposers) {
-        return proposers.stream()
-                .map(RepresentativeProposerDto::from)
-                .toList();
-    }
-
-    private static List<PublicProposerDto> toPublicProposerDtoList(List<BillProposer> proposers) {
-        return proposers.stream()
-                .map(PublicProposerDto::from)
-                .toList();
-    }
-
 }

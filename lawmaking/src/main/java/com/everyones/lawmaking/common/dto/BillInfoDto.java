@@ -42,7 +42,7 @@ public class BillInfoDto {
         this.billStage = bill.getStage();
         this.briefSummary = bill.getBriefSummary();
     }
-
+    @Deprecated
     public static BillInfoDto from(Bill bill) {
         var billLikeCount = bill.getBillLike().size();
         return BillInfoDto.builder()

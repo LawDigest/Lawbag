@@ -5,6 +5,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 
 public interface BillRepositoryCustom {
-    BillListResponse findBillWithDetailAndPage(Pageable pageable, Optional<Long> userIdOptional);
+    BillListResponse findBillWithDetailAndPage(Pageable pageable, Optional<Long> userIdOptional, String stage);
 
 }

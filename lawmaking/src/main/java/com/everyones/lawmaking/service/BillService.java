@@ -33,16 +33,9 @@ public class BillService {
         return billRepository.findById(billId)
                 .orElseThrow(() -> new BillException.BillNotFound(Map.of(BILL_ID_KEY_STRING, billId)));
     }
-
-
-    public BillListResponse getBillList(Pageable pageable) {
-        return billRepository.findBillWithDetailAndPage(pageable, AuthenticationUtil.getUserId());
-    }
-
-    // 단계 추가
     public BillListResponse getBillList(Pageable pageable, String stage) {
-        var billSlice = billRepository.findByPage(pageable, stage);
-        return BillListResponse.from(billSlice);
+        var userIdOptional = AuthenticationUtil.getUserId();
+        return billRepository.findBillWithDetailAndPage(pageable, userIdOptional, stage);
     }
 
     public BillDetailResponse getBillWithDetail(String billId) {

@@ -18,6 +18,7 @@ import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.PaginationResponse;
 import com.everyones.lawmaking.global.util.PaginationUtil;
 import com.querydsl.core.group.GroupBy;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
+import org.springframework.util.StringUtils;
 
 /**
  * @version 3
@@ -37,8 +39,8 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public BillListResponse findBillWithDetailAndPage(Pageable pageable, Optional<Long> userIdOptional) {
-        var pagedBill = findPagedBills(pageable);
+    public BillListResponse findBillWithDetailAndPage(Pageable pageable, Optional<Long> userIdOptional, String stage) {
+        var pagedBill = findPagedBills(pageable, stage);
         var billIds = extractBillIds(pagedBill);
         var representativeProposerMap = findRepresentativeProposerMap(billIds);
         var publicProposerMap = findPublicProposerMap(billIds);
@@ -47,13 +49,20 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
         var pagination = PaginationResponse.of(PaginationUtil.hasNextPage(pagedBill, pageable.getPageSize()), pageable.getPageNumber());
         return BillListResponse.of(pagination, billDtoList);
     }
-    private List<BillInfoDto> findPagedBills(Pageable pageable) {
+    private List<BillInfoDto> findPagedBills(Pageable pageable, String stage) {
         return queryFactory.select(new QBillInfoDto(bill))
                 .from(bill)
+                .where(eqStage(stage))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize() + 1)
                 .orderBy(bill.proposeDate.desc(), bill.id.desc())
                 .fetch();
+    }
+    private BooleanExpression eqStage(String stage) {
+        if(StringUtils.hasText(stage)) {
+            return bill.stage.eq(stage);
+        }
+        return null;
     }
     private Map<String, List<RepresentativeProposerDto>> findRepresentativeProposerMap(List<String> billIds) {
         return queryFactory
