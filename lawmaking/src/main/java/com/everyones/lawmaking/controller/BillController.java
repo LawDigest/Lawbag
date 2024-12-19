@@ -57,8 +57,8 @@ public class BillController {
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
             int size,
             @Parameter(example = "공포", description = "법안의 단계 현황을 나타냅니다.")
-            @Schema(type = "string", allowableValues = {"접수", "소관위접수", "위원회심사", "소관위심사",
-                    "체계자구 심사", "본회의 심의", "정부이송", "공포", "대안반영폐기", "철회"})
+            @Schema(type = "string", allowableValues = {"접수", "위원회심사",
+                    "본회의 심의", "공포"})
             @RequestParam(name = "stage", required = false) String stage
             ) {
         var pageable = PageRequest.of(page, size);
@@ -67,7 +67,6 @@ public class BillController {
         }
         var result = billFacade.getBillList(pageable, stage);
         return BaseResponse.ok(result);
-
     }
 
     @Operation(summary = "법안 상세 조회", description = "법안 id로 법안 데이터를 가져옵니다.")
