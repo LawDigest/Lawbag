@@ -48,6 +48,12 @@
                 <Pattern>${ROLLING_PATTERN}</Pattern>
             </encoder>
         </appender>
+        <!-- Redis log 설정 -->
+
+        <logger name="io.lettuce.core" level="INFO" additivity="false">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </logger>
 
         <root level="DEBUG">
             <appender-ref ref="CONSOLE"/>
