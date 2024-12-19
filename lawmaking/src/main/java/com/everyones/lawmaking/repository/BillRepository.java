@@ -13,12 +13,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface BillRepository extends JpaRepository<Bill, String> {
+public interface BillRepository extends JpaRepository<Bill, String>, BillRepositoryCustom{
 
     // 단순한 법안 페이징으로 가져오기
-    @Query("SELECT b FROM Bill b " +
-            "ORDER BY b.proposeDate DESC, b.id DESC")
-    Slice<Bill> findByPage(Pageable pageable);
+    Slice<Bill> findAllByOrderByProposeDateDescIdDesc(Pageable pageable);
 
     // 단계 + 법안 페이징으로 가져오기
     @Query("SELECT b FROM Bill b " +
@@ -39,10 +37,17 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     Slice<Bill> findByRepresentativeProposer(String congressmanId, Pageable pageable, String stage);
 
     // 특정의원이 공동 발의한 법안들
-    @Query("SELECT b FROM Bill b " +
-            "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.id = :congressmanId) " +
-            "ORDER BY b.proposeDate desc, b.id desc")
-    Slice<Bill> findBillByPublicProposer(String congressmanId, Pageable pageable);
+    @Query(value = "SELECT b.* " +
+            "FROM ( " +
+            "    SELECT DISTINCT bp.bill_id " +
+            "    FROM billproposer bp " +
+            "    WHERE bp.congressman_id = :congressmanId " +
+            ") subquery " +
+            "JOIN bill b ON subquery.bill_id = b.bill_id " +
+            "ORDER BY b.propose_date DESC " +
+            "LIMIT :pageSize OFFSET :offset",
+            nativeQuery = true)
+    Slice<Bill> findBillByPublicProposer(String congressmanId, Integer pageSize, Long offset);
 
     @Query("SELECT b FROM Bill b " +
             "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.id = :congressmanId) " +
@@ -64,10 +69,12 @@ public interface BillRepository extends JpaRepository<Bill, String> {
 
     // 정당 소속 의원들이 공동 발의한 법안
     // TODO: 쿼리 개선 필요
-    @Query("SELECT b FROM Bill b " +
-            "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.party.id = :partyId) " +
+    @Query("SELECT distinct b FROM Bill b " +
+            "JOIN b.publicProposer bp " +
+            "WHERE bp.congressman.party.id = :partyId " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
     Slice<Bill> findPublicBillsByParty(Pageable pageable, @Param("partyId") long partyId);
+
 
     @Query("SELECT b FROM Bill b " +
             "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.party.id = :partyId) " +
@@ -86,8 +93,12 @@ public interface BillRepository extends JpaRepository<Bill, String> {
     // 단일 법안과 관련된 정보 가져오는 쿼리
     Optional<Bill> findBillById(String billId);
 
+    /**
+     * TODO: 삭제 예정
+     * @deprecated
+     * 본래 페이징과 분리하여 fetch join + batch size를 함께 사용하여 가져오려 했으나, 그냥 batch size로 처리
+      */
 
-    // 피드 등 여러 법안들 가져오는 쿼리
     @Query("SELECT b FROM Bill b " +
             "WHERE b.id in :billList " +
             "ORDER BY b.proposeDate desc, b.id desc")

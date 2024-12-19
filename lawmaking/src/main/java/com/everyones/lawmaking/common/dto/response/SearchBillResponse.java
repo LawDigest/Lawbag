@@ -1,6 +1,6 @@
 package com.everyones.lawmaking.common.dto.response;
 
-import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.bill.BillDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;

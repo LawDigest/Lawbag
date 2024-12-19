@@ -1,7 +1,8 @@
 package com.everyones.lawmaking.common.dto.response;
 
 import com.everyones.lawmaking.common.dto.*;
-import com.everyones.lawmaking.domain.entity.VoteRecord;
+import com.everyones.lawmaking.common.dto.bill.BillDto;
+import com.everyones.lawmaking.common.dto.proposer.RepresentativeProposerDto;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;

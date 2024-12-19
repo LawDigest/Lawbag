@@ -1,16 +1,15 @@
-package com.everyones.lawmaking.common.dto;
+package com.everyones.lawmaking.common.dto.proposer;
 
-import com.everyones.lawmaking.domain.entity.Bill;
-import com.everyones.lawmaking.domain.entity.BillProposer;
+import com.everyones.lawmaking.domain.entity.Party;
 import com.everyones.lawmaking.domain.entity.RepresentativeProposer;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import com.querydsl.core.annotations.QueryProjection;
 import lombok.*;
 
 
 @Builder
 @Getter
-@AllArgsConstructor
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class RepresentativeProposerDto {
 
@@ -22,14 +21,31 @@ public class RepresentativeProposerDto {
     private String partyImageUrl;
     private String partyName;
 
+    @QueryProjection
+    public RepresentativeProposerDto(
+            String representativeProposerId,
+            String representativeProposerName,
+            String representProposerImgUrl,
+            long partyId,
+            String partyImageUrl,
+            String partyName) {
+        this.representativeProposerId = representativeProposerId;
+        this.representativeProposerName = representativeProposerName;
+        this.representProposerImgUrl = representProposerImgUrl;
+        this.partyId = partyId;
+        this.partyImageUrl = partyImageUrl;
+        this.partyName = partyName;
+    }
+
     public static RepresentativeProposerDto from(RepresentativeProposer representativeProposer) {
+        Party party = representativeProposer.getParty();
         return RepresentativeProposerDto.builder()
                 .representativeProposerId(representativeProposer.getCongressman().getId())
                 .representativeProposerName(representativeProposer.getCongressman().getName())
                 .representProposerImgUrl(representativeProposer.getCongressman().getCongressmanImageUrl())
-                .partyId(representativeProposer.getCongressman().getParty().getId())
-                .partyName(representativeProposer.getCongressman().getParty().getName())
-                .partyImageUrl(representativeProposer.getCongressman().getParty().getPartyImageUrl())
+                .partyId(party.getId())
+                .partyName(party.getName())
+                .partyImageUrl(party.getPartyImageUrl())
                 .build();
     }
 

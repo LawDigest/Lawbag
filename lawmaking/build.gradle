@@ -78,3 +78,22 @@ tasks.named('bootBuildImage') {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+//querydsl 관련 사항
+def querydslDir = layout.buildDirectory.dir("generated/querydsl").get().asFile
+sourceSets {
+    main.java.srcDirs += [ querydslDir ]
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.getGeneratedSourceOutputDirectory().set(file(querydslDir))
+}
+
+clean.doLast {
+    file(querydslDir).deleteDir()
+}
+
+
+clean {
+    delete file('src/main/generated')
+}
