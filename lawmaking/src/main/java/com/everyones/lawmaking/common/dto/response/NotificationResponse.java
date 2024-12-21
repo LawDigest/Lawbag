@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -41,7 +41,7 @@ public class NotificationResponse {
     private String type;
 
     @NotNull
-    private LocalDateTime createdDate;
+    private LocalDate createdDate;
 
     // notifications 리스트를 NotificationResponse 리스트로 만들어주는 메서드
     public static List<NotificationResponse> from(List<Notification> notifications) {

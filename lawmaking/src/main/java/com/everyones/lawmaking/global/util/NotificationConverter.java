@@ -51,18 +51,13 @@ public class NotificationConverter {
         List<String> notificationImageUrlList = new ArrayList<>();
         switch (columnEventType) {
             case RP_INSERT:
-                //의원 발의
-//           billId, congressmanName, billBriefSummary, congressmanInfo
+
                 title = data.get(1) + " 의원";
                 content = "'"+data.get(2) + "' 법안을 대표 발의했어요!";
                 notificationImageUrlList.add(data.get(3));
                 break;
             case BILL_STAGE_UPDATE:
-                //의원 발의
-//              billId, briefSummary, stage, proposerKind.name()), partyInfoList.stream();
 
-                //위원장 발의
-//                billId, briefSummary, stage, proposerKind.name(),proposers
                 title = data.get(1);
                 content = "심사 단계가 '" + data.get(2) + "'로 변동했어요!";
                 extra = data.get(3);
@@ -73,10 +68,7 @@ public class NotificationConverter {
                 }
                 break;
             case BILL_RESULT_UPDATE:
-                //의원 발의
-//              billId, briefSummary, billResult, proposerKind.name()), partyInfoList.stream()
-                //위원장 발의
-//                billId, briefSummary, billResult, proposerKind.name(), proposers
+
                 title = data.get(1);
                 content = "'"+data.get(2) + "'로 처리되었어요!";
                 extra = data.get(3);
@@ -87,7 +79,6 @@ public class NotificationConverter {
                 }
                 break;
             case CONGRESSMAN_PARTY_UPDATE:
-                //congressmanId, partyName, congressmanName,congressmanInfo
                 title = data.get(2);
                 content = "'"+data.get(2)+"'의원의 당적이 '"+data.get(1)+"' 정당으로 변동했어요!";
                 notificationImageUrlList.add(data.get(3));
@@ -112,7 +103,7 @@ public class NotificationConverter {
                 .notificationImageUrlList(notificationImageUrlList)
                 .title(title)
                 .content(content)
-                .createdDate(createdDate)
+                .createdDate(createdDate.toLocalDate())
                 .extra(extra)
                 .build();
     }
