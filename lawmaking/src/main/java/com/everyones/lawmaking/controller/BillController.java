@@ -1,12 +1,14 @@
 package com.everyones.lawmaking.controller;
 
-import com.everyones.lawmaking.common.dto.BillDto;
+import com.everyones.lawmaking.common.dto.bill.BillDto;
 import com.everyones.lawmaking.common.dto.response.BillDetailResponse;
 import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
+import com.everyones.lawmaking.facade.BillFacade;
 import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.global.BaseResponse;
+import com.everyones.lawmaking.global.constant.BillStageType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +21,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -31,6 +34,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @Tag(name = "법안 API", description = "법안 조회 API")
 public class BillController {
     private final Facade facade;
+    private final BillFacade billFacade;
 
     @Operation(summary = "메인피드 조회", description = "메인피드에 들어갈 데이터를 가져옵니다.")
     @ApiResponses(value = {
@@ -51,27 +55,24 @@ public class BillController {
             @RequestParam(name = "page")
             int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
-            int size
+            int size,
+            @Parameter(example = "공포", description = "법안의 단계 현황을 나타냅니다.")
+            @Schema(type = "string", allowableValues = {"접수", "위원회심사",
+                    "본회의 심의", "공포"})
+            @RequestParam(name = "stage", required = false) String stage
             ) {
         var pageable = PageRequest.of(page, size);
-        var result = facade.findByPage(pageable);
+        if(StringUtils.hasText(stage) && !BillStageType.containsValue(stage)) {
+            throw new IllegalArgumentException(stage);
+        }
+        var result = billFacade.getBillList(pageable, stage);
         return BaseResponse.ok(result);
-
     }
 
-    @Operation(summary = "메인피드 단계로 조회", description = "메인피드에 들어갈 데이터를 단계를 통해 가져옵니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(
-                    responseCode = "500",
-                    description = "서버 오류 (문제 지속시 BE팀 문의)",
-                    content = {@Content(
-                            mediaType = "application/json;charset=UTF-8",
-                            schema = @Schema(implementation = BaseResponse.class),
-                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
-                    )}
-            ),
-    })
+    /**
+     * 프론트가 새로운 uri(/mainfeed?stage)로 해당 api를 바꾸면 삭제될 예정입니다.
+     */
+    @Deprecated
     @GetMapping("/mainfeed/stage")
     public BaseResponse<BillListResponse> getBillsByStage(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
@@ -82,9 +83,9 @@ public class BillController {
             @Schema(type = "string", allowableValues = {"접수", "위원회 심사",
                     "본회의 심의","공포"})
             @RequestParam(name = "stage") String stage
-            ) {
+    ) {
         var pageable = PageRequest.of(page, size);
-        var result = facade.findByPage(pageable, stage);
+        var result = billFacade.getBillList(pageable, stage);
         return BaseResponse.ok(result);
 
     }
