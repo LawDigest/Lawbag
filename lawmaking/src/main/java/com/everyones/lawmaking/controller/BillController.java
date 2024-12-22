@@ -69,6 +69,27 @@ public class BillController {
         return BaseResponse.ok(result);
     }
 
+    /**
+     * 프론트가 새로운 uri(/mainfeed?stage)로 해당 api를 바꾸면 삭제될 예정입니다.
+     */
+    @Deprecated
+    @GetMapping("/mainfeed/stage")
+    public BaseResponse<BillListResponse> getBillsByStage(
+            @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
+            @RequestParam(name = "page") int page,
+            @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
+            @RequestParam(name = "size") int size,
+            @Parameter(example = "공포", description = "법안의 단계 현황을 나타냅니다.")
+            @Schema(type = "string", allowableValues = {"접수", "위원회 심사",
+                    "본회의 심의","공포"})
+            @RequestParam(name = "stage") String stage
+    ) {
+        var pageable = PageRequest.of(page, size);
+        var result = billFacade.getBillList(pageable, stage);
+        return BaseResponse.ok(result);
+
+    }
+
     @Operation(summary = "법안 상세 조회", description = "법안 id로 법안 데이터를 가져옵니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
