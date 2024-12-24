@@ -56,7 +56,7 @@ public class DataService {
                             .forEach(congressmanId -> {
                                 var billProposer = congressmanRepository.findLawmakerById(congressmanId)
                                         .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", congressmanId)));
-                                        billProposerUpdate(newBill, billProposer);
+                                billProposerUpdate(newBill, billProposer);
                                     }
                             );
                     //대표발의자 이름 검색해서 RP 찾기
@@ -64,7 +64,7 @@ public class DataService {
                             forEach((rpID) -> {
                         var representativeProposer = congressmanRepository.findLawmakerById(rpID)
                                 .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", rpID)));
-                        updateRepresentativeProposer(newBill, representativeProposer);
+                                updateRepresentativeProposer(newBill, representativeProposer);
                             }
                     );
                 }
@@ -228,6 +228,7 @@ public class DataService {
                 var newBillProposer = BillProposer.builder()
                         .bill(newBill)
                         .congressman(billProposer)
+                        .party(billProposer.getParty())
                         .build();
 
                 billProposerRepository.save(newBillProposer);
@@ -244,11 +245,11 @@ public class DataService {
                 var repProposer = RepresentativeProposer.builder()
                         .bill(newBill)
                         .congressman(representativeProposer)
+                        .party(representativeProposer.getParty())
                         .build();
 
                 //RP 저장
                 representativeProposerRepository.save(repProposer);
-                congressmanRepository.save(representativeProposer);
 
         }
 
