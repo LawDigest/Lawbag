@@ -19,7 +19,8 @@ public interface CongressmanRepository extends JpaRepository<Congressman, String
 
     @Query("SELECT c FROM Congressman c JOIN FETCH c.party " +
             "JOIN c.congressmanLike cl " +
-            "WHERE cl.user.id = :userId")
+            "WHERE cl.user.id = :userId " +
+            "order by c.congressmanBillProposeDate desc")
     List<Congressman> findLikingCongressmanByUserId(@Param("userId") long userId);
 
     @Query("SELECT c FROM Congressman c " +
