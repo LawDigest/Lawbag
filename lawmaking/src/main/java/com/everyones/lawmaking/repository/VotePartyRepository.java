@@ -18,7 +18,9 @@ public interface VotePartyRepository extends JpaRepository<VoteParty,Long> {
     Optional<VoteParty> findByBillAndParty(@Param("billId") String billId, @Param("partyId") Long partyId);
 
     @Query("select vp from VoteParty vp " +
-            "join fetch vp.party " +
-            "where vp.bill.id = :billId ")
+            "join fetch vp.party p " +
+            "where vp.bill.id = :billId " +
+            "order by case when p.name = '무소속' then 1 else 0 end, " +
+            "vp.voteForCount desc ")
     List<VoteParty> findVotePartyWithPartyByBillId(@Param("billId") String billId);
 }
