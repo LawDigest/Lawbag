@@ -524,6 +524,7 @@ public class Facade {
                     var voteRecord = voteRecordService.getVoteRecordByBillId(bill.getId());
                     var votePartyList = votePartyService.getVotePartyListWithPartyByBillId(bill.getId()).stream()
                             .map(PartyVoteDto::from)
+
                             .toList();
                     var plenaryBill = PlenaryDto.of(bill, voteRecord, votePartyList);
                     plenaryBills.add(plenaryBill);
