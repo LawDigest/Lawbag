@@ -27,14 +27,15 @@ public class RepresentativeProposerDto {
             String representativeProposerName,
             String representProposerImgUrl,
             long partyId,
-            String partyImageUrl,
-            String partyName) {
+            String partyName,
+            String partyImageUrl) {
         this.representativeProposerId = representativeProposerId;
         this.representativeProposerName = representativeProposerName;
         this.representProposerImgUrl = representProposerImgUrl;
         this.partyId = partyId;
-        this.partyImageUrl = partyImageUrl;
         this.partyName = partyName;
+        this.partyImageUrl = partyImageUrl;
+
     }
 
     public static RepresentativeProposerDto from(RepresentativeProposer representativeProposer) {

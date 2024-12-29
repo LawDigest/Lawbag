@@ -78,8 +78,8 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
                                                 congressman.name,
                                                 congressman.congressmanImageUrl,
                                                 party.id,
-                                                party.partyImageUrl,
-                                                party.name
+                                                party.name,
+                                                party.partyImageUrl
                                         )
                                 ))
                 );
@@ -99,8 +99,8 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
                                                 congressman.name,
                                                 congressman.congressmanImageUrl,
                                                 party.id,
-                                                party.partyImageUrl,
-                                                party.name
+                                                party.name,
+                                                party.partyImageUrl
                                         )
                                 ))
                 );
