@@ -41,15 +41,19 @@ import java.util.List;
     @Column(name = "proposers")
     private String proposers;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill")
     private List<BillProposer> publicProposer;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
     private List<RepresentativeProposer> representativeProposer;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill")
     private List<BillLike> billLike;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill")
     private List<VoteParty> votePartyList;
 
@@ -90,6 +94,7 @@ import java.util.List;
     @ColumnDefault("0")
     private int viewCount;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill")
     private List<BillTimeline> billTimelineList = new ArrayList<>();
 
