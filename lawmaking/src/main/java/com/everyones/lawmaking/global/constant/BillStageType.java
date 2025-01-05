@@ -11,11 +11,12 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum BillStageType {
     RECEIPT(1,"접수", "접수"),
-    STANDING_COMMITTEE_RECEIPT(2,"위원회심사","소관위접수"),
-    STANDING_COMMITTEE_AUDIT_BEFORE(3,"위원회심사","위원회심사"),
-    STANDING_COMMITTEE_AUDIT(4,"위원회심사","소관위심사"),
+    STANDING_COMMITTEE_RECEIPT(2,"위원회 심사","소관위접수"),
+    STANDING_COMMITTEE_AUDIT_BEFORE(3,"위원회 심사","위원회 심사"),
+    SYSTEMATIC_REVIEW(4,"체계자구 심사", "체계자구 심사"),
     PLENARY_SESSION(5,"본회의 심의","본회의 심의"),
-    PROMULGATION(6,"공포","공포");
+    GOVERNMENT_TRANSFER(6, "정부이송","정부이송"),
+    PROMULGATION(7,"공포","공포");
 
     private int order;
     private String key;
