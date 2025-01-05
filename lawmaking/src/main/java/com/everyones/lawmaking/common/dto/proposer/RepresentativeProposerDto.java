@@ -18,8 +18,8 @@ public class RepresentativeProposerDto {
     private String representProposerImgUrl;
 
     private long partyId;
-    private String partyImageUrl;
     private String partyName;
+    private String partyImageUrl;
 
     @QueryProjection
     public RepresentativeProposerDto(
