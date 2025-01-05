@@ -16,9 +16,8 @@ import java.util.Optional;
 public interface BillTimelineRepository extends JpaRepository<BillTimeline,Long> {
 
     @Query("select bt.id from BillTimeline bt " +
-            "where bt.actStatus=:actStatus and bt.bill.id =:billId and bt.billTimelineCommittee=:billTimelineCommittee and bt.billTimelineStage=:billTimelineStage and bt.statusUpdateDate=:statusUpdateDate")
+            "where bt.bill.id =:billId and bt.billTimelineCommittee=:billTimelineCommittee and bt.billTimelineStage=:billTimelineStage and bt.statusUpdateDate=:statusUpdateDate")
     Optional<String> findBillTimelineByInfo(@Param("billId") String billId,
-                                                  @Param("actStatus") String actStatus,
                                                   @Param("billTimelineStage") String billTimelineStage,
                                                   @Param("billTimelineCommittee") String billTimelineCommittee,
                                                   @Param("statusUpdateDate") LocalDate statusUpdateDate);
@@ -35,5 +34,7 @@ public interface BillTimelineRepository extends JpaRepository<BillTimeline,Long>
     @Query("select tl.bill.id from BillTimeline tl " +
             "where tl.statusUpdateDate = :proposeDate and tl.billTimelineStage = :stage")
     List<String> findBillTimelineBetweenProposeDateAndStage(@Param("proposeDate") LocalDate localDate, @Param("stage") String stage);
+
+    List<BillTimeline> findByBillIdAndBillTimelineStageAndBillResult(String bill_id, String billTimelineStage, String billResult);
 
 }

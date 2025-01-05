@@ -87,18 +87,19 @@ public class DataService {
                     var billId = billStageDfRequest.getBillId();
                     var foundBill = billRepository.findBillById(billId)
                             .orElse(null);
-                    var equalBill = billTimelineRepository.findBillTimelineByInfo(billStageDfRequest.getBillId(),
-                            billStageDfRequest.getActStatusValue(),
+                    var equalBillTimeline = billTimelineRepository.findBillTimelineByInfo(
+                            billStageDfRequest.getBillId(),
                             billStageDfRequest.getStage(),
                             billStageDfRequest.getCommittee(),
                             billStageDfRequest.getStatusUpdateDate());
 
-                    if(equalBill.isPresent()){
-                        resultMap.get("duplicateBill").add(equalBill.get());
+                    if(equalBillTimeline.isPresent()){
+                        resultMap.get("duplicateBill").add(equalBillTimeline.get());
                     }
                     else if(foundBill == null){
                         resultMap.get("notFoundBill").add(billStageDfRequest.getBillId());
                     }
+                    // 중복된 billTimeline이 없고 bill이 존재할 경우
                     else{
                         foundBill.updateStatusByStep(billStageDfRequest);
                         // billTimeline 객체 만들기
@@ -120,6 +121,8 @@ public class DataService {
                     var billId = billResultDfRequest.getBillId();
                     var foundBill = billRepository.findBillById(billId);
                     foundBill.ifPresent(bill -> bill.setBillResult(billResultDfRequest.getBillProposeResult()));
+                    var billTimelist = billTimelineRepository.findByBillIdAndBillTimelineStageAndBillResult(billId, "본회의 심의",null);
+                    billTimelist.forEach(billTimeline -> billTimeline.setBillResult(billResultDfRequest.getBillProposeResult()));
                 }
         );
     }

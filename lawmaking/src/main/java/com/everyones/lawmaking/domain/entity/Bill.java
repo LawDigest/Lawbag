@@ -2,6 +2,7 @@ package com.everyones.lawmaking.domain.entity;
 
 import com.everyones.lawmaking.common.dto.request.BillDfRequest;
 import com.everyones.lawmaking.common.dto.request.BillStageDfRequest;
+import com.everyones.lawmaking.global.constant.BillStageType;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.persistence.*;
@@ -41,15 +42,19 @@ import java.util.List;
     @Column(name = "proposers")
     private String proposers;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill")
     private List<BillProposer> publicProposer;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill", fetch = FetchType.LAZY)
     private List<RepresentativeProposer> representativeProposer;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill")
     private List<BillLike> billLike;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill")
     private List<VoteParty> votePartyList;
 
@@ -90,6 +95,7 @@ import java.util.List;
     @ColumnDefault("0")
     private int viewCount;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "bill")
     private List<BillTimeline> billTimelineList = new ArrayList<>();
 
@@ -126,8 +132,15 @@ import java.util.List;
     }
 
     public void updateStatusByStep(BillStageDfRequest billStageDfRequest){
-        this.setStage(billStageDfRequest.getStage());
-        this.setCommittee(billStageDfRequest.getCommittee());
+        BillStageType currentStage = BillStageType.fromValue(this.stage);
+        BillStageType nextStage = BillStageType.fromValue(billStageDfRequest.getStage());
+
+
+        // 단계의 order가 커야 수정 가능 (심의 단계가 다음 단계일 때만 수정이 가능.)
+        if (BillStageType.canUpdateStage(currentStage, nextStage)) {
+            this.setStage(billStageDfRequest.getStage());
+            this.setCommittee(billStageDfRequest.getCommittee());
+        }
     }
 
 }
