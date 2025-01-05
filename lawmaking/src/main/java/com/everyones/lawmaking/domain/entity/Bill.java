@@ -126,8 +126,15 @@ import java.util.List;
     }
 
     public void updateStatusByStep(BillStageDfRequest billStageDfRequest){
-        this.setStage(billStageDfRequest.getStage());
-        this.setCommittee(billStageDfRequest.getCommittee());
+        BillStage currentStage = BillStage.fromDescription(this.stage);
+        BillStage nextStage = BillStage.fromDescription(billStageDfRequest.getStage());
+
+
+        // 단계의 order가 커야 수정 가능 (심의 단계가 다음 단계일 때만 수정이 가능.)
+        if (BillStage.canStageUpdate(currentStage, nextStage)) {
+            this.setStage(billStageDfRequest.getStage());
+            this.setCommittee(billStageDfRequest.getCommittee());
+        }
     }
 
 }
