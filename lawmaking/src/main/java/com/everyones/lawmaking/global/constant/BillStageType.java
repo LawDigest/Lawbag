@@ -29,7 +29,7 @@ public enum BillStageType {
         }
     }
 
-    public static boolean canStageUpdate(BillStageType current, BillStageType next) {
+    public static boolean canUpdateStage(BillStageType current, BillStageType next) {
         return current.getOrder() < next.getOrder();
     }
 

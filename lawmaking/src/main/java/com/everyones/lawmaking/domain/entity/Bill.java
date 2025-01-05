@@ -137,7 +137,7 @@ import java.util.List;
 
 
         // 단계의 order가 커야 수정 가능 (심의 단계가 다음 단계일 때만 수정이 가능.)
-        if (BillStageType.canStageUpdate(currentStage, nextStage)) {
+        if (BillStageType.canUpdateStage(currentStage, nextStage)) {
             this.setStage(billStageDfRequest.getStage());
             this.setCommittee(billStageDfRequest.getCommittee());
         }
