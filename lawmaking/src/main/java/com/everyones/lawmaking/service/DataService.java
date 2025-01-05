@@ -120,6 +120,8 @@ public class DataService {
                     var billId = billResultDfRequest.getBillId();
                     var foundBill = billRepository.findBillById(billId);
                     foundBill.ifPresent(bill -> bill.setBillResult(billResultDfRequest.getBillProposeResult()));
+                    var billTimelist = billTimelineRepository.findByBillIdAndBillTimelineStageAndBillResult(billId, "본회의 심의",null);
+                    billTimelist.forEach(billTimeline -> billTimeline.setBillResult(billResultDfRequest.getBillProposeResult()));
                 }
         );
     }

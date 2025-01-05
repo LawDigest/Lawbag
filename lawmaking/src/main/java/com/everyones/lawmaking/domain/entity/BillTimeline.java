@@ -25,8 +25,9 @@ public class BillTimeline extends BaseEntity{
     @JoinColumn(name = "bill_id")
     private Bill bill;
 
-    @Column(name="act_status")
-    private String actStatus;
+    @Column(name = "bill_result")
+    String billResult;
+
 
     @Column(name="bill_timeline_stage")
     private String billTimelineStage;
@@ -42,7 +43,6 @@ public class BillTimeline extends BaseEntity{
         var stageChangeDate = billStageDfRequest.getStatusUpdateDate();
         return BillTimeline.builder()
                 .bill(foundBill)
-                .actStatus(billStageDfRequest.getActStatusValue())
                 .billTimelineCommittee(billStageDfRequest.getCommittee())
                 .statusUpdateDate(stageChangeDate)
                 .billTimelineStage(billStageDfRequest.getStage())
