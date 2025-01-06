@@ -5,6 +5,7 @@ import com.everyones.lawmaking.common.dto.bill.BillDto;
 import com.everyones.lawmaking.common.dto.proposer.RepresentativeProposerDto;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.Bill;
+import com.everyones.lawmaking.global.constant.BillInfoConstant;
 import com.everyones.lawmaking.global.constant.BillOrderType;
 import com.everyones.lawmaking.global.error.BillException;
 import com.everyones.lawmaking.global.error.UserException;
@@ -224,7 +225,8 @@ public class BillService {
     }
 
     public BillStateCountResponse getBillStateCount() {
-        return billRepository.findStateCount();
+        int currentAssemblyNumber = BillInfoConstant.getCurrentAssemblyNumber();
+        return billRepository.findStateCount(currentAssemblyNumber);
     }
 
 
