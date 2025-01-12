@@ -19,6 +19,9 @@ public class BillTimelineService {
 //        var billTimeLines = billTimelineRepository.findBillTimelineByStatusUpdateDate(proposeDate);
 //        return BillTimelineResponse.of(proposeDate, billTimeLines);
 //    }
+    public List<String> getSubmittedBillIds(LocalDate localDate) {
+        return billTimelineRepository.findBillTimelineBetweenProposeDateAndStage(localDate, "접수");
+    }
 
     public List<String> findPromulgationBillIds(LocalDate localDate) {
         return billTimelineRepository.findBillTimelineBetweenProposeDateAndStage(localDate, "공포");

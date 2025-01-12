@@ -503,11 +503,18 @@ public class Facade {
     }
     @Transactional(readOnly = true)
     public BillTimelineResponse getTimeline(LocalDate proposeDate) {
+        var submittedBills = getSubmittedBills(proposeDate);
         var plenaryBills  = getPlenaryBills(proposeDate);
         var promulgationBills = getPromulgationBills(proposeDate);
         var committeeBills = getCommitteeBills(proposeDate);
-
-        return BillTimelineResponse.of(proposeDate, plenaryBills, promulgationBills, committeeBills);
+        return BillTimelineResponse.of(proposeDate, submittedBills,plenaryBills, promulgationBills, committeeBills);
+    }
+    public List<BillOutlineDto> getSubmittedBills(LocalDate proposeDate) {
+        var submittedBillIds = billTimelineService.getSubmittedBillIds(proposeDate);
+        var bills = billService.findBillsWithPartiesByIds(submittedBillIds);
+        return bills.stream()
+                .map(BillOutlineDto::from)
+                .toList();
     }
     public List<BillOutlineDto> getPromulgationBills(LocalDate localDate) {
         var promulgationBillIds = billTimelineService.findPromulgationBillIds(localDate);

@@ -27,6 +27,9 @@ public class BillTimelineResponse {
 
     Integer billCount;
 
+    @Schema(name = "접수된 법안")
+    List<BillOutlineDto> submittedList;
+
     @Schema(name = "본회의 심의")
     List<PlenaryDto> plenaryList;
 
@@ -36,10 +39,11 @@ public class BillTimelineResponse {
     @Schema(name = "위원회 심사 법안 목록 리스트")
     List<CommitteeAuditDto> committeeAuditList;
 
-    public static BillTimelineResponse of(LocalDate date, List<PlenaryDto> plenaryList, List<BillOutlineDto> promulgationList, List<CommitteeAuditDto> committeeAuditList) {
+    public static BillTimelineResponse of(LocalDate date, List<BillOutlineDto> submittedList,List<PlenaryDto> plenaryList, List<BillOutlineDto> promulgationList, List<CommitteeAuditDto> committeeAuditList) {
         return BillTimelineResponse.builder()
                 .date(date)
-                .billCount(plenaryList.size() + promulgationList.size() + committeeAuditList.size())
+                .billCount(submittedList.size() +plenaryList.size() + promulgationList.size() + committeeAuditList.size())
+                .submittedList(submittedList)
                 .plenaryList(plenaryList)
                 .promulgationList(promulgationList)
                 .committeeAuditList(committeeAuditList)
