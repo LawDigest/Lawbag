@@ -24,7 +24,7 @@ import java.util.List;
 @Table(name = "Bill", indexes = {
         @Index(name = "idx_bill_id_propose_date", columnList = "propose_date DESC"),
         @Index(name = "idx_propose_date_id", columnList = "propose_date, bill_id")
-})public class Bill {
+})public class Bill extends BaseEntity{
     @Id
     @Column(name = "bill_id")
     private String id;
