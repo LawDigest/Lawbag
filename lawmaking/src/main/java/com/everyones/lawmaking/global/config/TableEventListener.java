@@ -165,7 +165,7 @@ public class TableEventListener {
                                             .filter(wce -> tableName.equalsIgnoreCase(wce.getTableName())
                                                     && wce.getEventType() == ColumnEventType.EventType.INSERT)
                                             .map(wce -> {
-                                                final Map<String, Integer> columnOrdersForTable = columnOrdersByTable.getOrDefault(tableName, new HashMap<>());
+                                                final Map<String, Integer> columnOrdersForTable = columnOrdersByTable.getOrDefault(tableName.toLowerCase(), new HashMap<>());
                                                 return new AbstractMap.SimpleEntry<>(
                                                         wce.getEventName(),
                                                         wce.getKeyColumns()
