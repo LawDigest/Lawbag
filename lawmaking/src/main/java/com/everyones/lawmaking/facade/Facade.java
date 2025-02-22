@@ -502,6 +502,15 @@ public class Facade {
         return setBillListResponseBookMark(billList);
     }
     @Transactional(readOnly = true)
+    public List<BillTimelineResponse> getTimeline(Pageable pageable) {
+        var timelineDateList = billTimelineService.getDatePaging(pageable);
+        List<BillTimelineResponse> timelineList = new ArrayList<>();
+        for (LocalDate timelineDate : timelineDateList) {
+            timelineList.add(getTimeline(timelineDate));
+        }
+        return timelineList;
+    }
+    @Transactional(readOnly = true)
     public BillTimelineResponse getTimeline(LocalDate proposeDate) {
         var submittedBills = getSubmittedBills(proposeDate);
         var plenaryBills  = getPlenaryBills(proposeDate);

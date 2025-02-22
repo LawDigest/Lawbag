@@ -3,6 +3,7 @@ package com.everyones.lawmaking.service;
 import com.everyones.lawmaking.common.dto.projection.CommitteeBillDto;
 import com.everyones.lawmaking.repository.BillTimelineRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -40,5 +41,9 @@ public class BillTimelineService {
                     List<String> billIds = Arrays.asList(billIdsConcat.split(","));
                     return CommitteeBillDto.of(committee, billIds);
                 }).toList();
+    }
+
+    public List<LocalDate> getDatePaging(Pageable pageable) {
+        return billTimelineRepository.findTop3ProposeDates(pageable);
     }
 }
