@@ -14,7 +14,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +48,7 @@ public class BillTimelineController {
                     )}
             ),
     })
+    @Deprecated
     @GetMapping("/feed")
     public BaseResponse<BillTimelineResponse> getTimeline(
             @Parameter(example = "2024-08-02", description = "날짜별 법안 조회")
@@ -56,6 +59,17 @@ public class BillTimelineController {
             billProposeDate = LocalDate.now();
         }
         var result = facade.getTimeline(billProposeDate);
+        return BaseResponse.ok(result);
+    }
+    @GetMapping("/feed/paging")
+    public BaseResponse<List<BillTimelineResponse>> getTimelinePaging(
+            @Parameter(example = "0", description = "페이지 넘버")
+            @RequestParam(value = "page") int page,
+            @Parameter(example = "2", description = "불러올 날짜 개수")
+            @RequestParam(value = "size") int size
+    ) {
+        var pageable = PageRequest.of(page, size);
+        var result = facade.getTimeline(pageable);
         return BaseResponse.ok(result);
     }
 
