@@ -22,6 +22,7 @@ public class BillOutlineDto {
     private String billId;
     private String billName;
     private String billStage;
+    private String billResult;
     private String billProposers;
     private String billBriefSummary;
 
@@ -46,6 +47,7 @@ public class BillOutlineDto {
                 .billId(bill.getId())
                 .billName(bill.getBillName())
                 .billStage(bill.getStage())
+                .billResult(bill.getBillResult())
                 .billProposers(bill.getProposers())
                 .billBriefSummary(bill.getBriefSummary())
                 .build();
