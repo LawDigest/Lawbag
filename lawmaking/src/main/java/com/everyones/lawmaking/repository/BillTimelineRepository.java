@@ -31,7 +31,14 @@ public interface BillTimelineRepository extends JpaRepository<BillTimeline,Long>
     List<Tuple> findCommitteesWithMultipleBills(@Param("proposeDate") LocalDate proposeDate);
 
     @Query("select tl.bill.id from BillTimeline tl " +
-            "where tl.statusUpdateDate = :proposeDate and tl.billTimelineStage = :stage")
+            "where tl.statusUpdateDate = :proposeDate and tl.billTimelineStage = :stage " +
+            "order by case tl.billResult " +
+            "    when '원안가결' then 1 " +
+            "    when '수정가결' then 2 " +
+            "    when '철회' then 3 " +
+            "    when '대안반영폐기' then 4 " +
+            "    else 5 " +
+            "end")
     List<String> findBillTimelineBetweenProposeDateAndStage(@Param("proposeDate") LocalDate localDate, @Param("stage") String stage);
 
     List<BillTimeline> findByBillIdAndBillTimelineStageAndBillResult(String bill_id, String billTimelineStage, String billResult);
