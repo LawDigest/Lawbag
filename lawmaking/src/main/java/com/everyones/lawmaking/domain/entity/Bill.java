@@ -135,7 +135,6 @@ import java.util.List;
         BillStageType currentStage = BillStageType.fromValue(this.stage);
         BillStageType nextStage = BillStageType.fromValue(billStageDfRequest.getStage());
 
-
         // 단계의 order가 커야 수정 가능 (심의 단계가 다음 단계일 때만 수정이 가능.)
         if (BillStageType.canUpdateStage(currentStage, nextStage)) {
             this.setStage(billStageDfRequest.getStage());
