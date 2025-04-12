@@ -45,6 +45,8 @@ public interface BillTimelineRepository extends JpaRepository<BillTimeline,Long>
 
     @Query("SELECT DISTINCT bl.statusUpdateDate FROM BillTimeline bl " +
             "ORDER BY bl.statusUpdateDate DESC")
-    List<LocalDate> findTop3ProposeDates(Pageable pageable);
+    List<LocalDate> findTopProposeDates(Pageable pageable);
+
+    LocalDate findTopByOrderByStatusUpdateDateDesc();
 
 }

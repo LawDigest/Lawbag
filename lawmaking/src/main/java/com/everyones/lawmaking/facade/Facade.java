@@ -512,6 +512,9 @@ public class Facade {
     }
     @Transactional(readOnly = true)
     public BillTimelineResponse getTimeline(LocalDate proposeDate) {
+        if (redisService.isTimelineCached(proposeDate)) {
+            return redisService.getTimelineCached(proposeDate);
+        }
         var submittedBills = getSubmittedBills(proposeDate);
         var plenaryBills  = getPlenaryBills(proposeDate);
         var promulgationBills = getPromulgationBills(proposeDate);
