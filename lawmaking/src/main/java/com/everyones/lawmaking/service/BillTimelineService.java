@@ -44,6 +44,6 @@ public class BillTimelineService {
     }
 
     public List<LocalDate> getDatePaging(Pageable pageable) {
-        return billTimelineRepository.findTop3ProposeDates(pageable);
+        return billTimelineRepository.findTopProposeDates(pageable);
     }
 }

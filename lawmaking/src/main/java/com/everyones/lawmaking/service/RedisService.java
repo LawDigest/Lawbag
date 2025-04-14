@@ -1,7 +1,15 @@
 package com.everyones.lawmaking.service;
 
+import com.everyones.lawmaking.common.dto.response.BillTimelineResponse;
+import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.repository.BillTimelineRepository;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
@@ -14,10 +22,21 @@ import java.util.Map;
 public class RedisService {
 
     private final RedisTemplate<String, Object> redisTemplate;
+
+    private final String TIMELINE_KEY = "timelineQueue";
     private static final String LIKES_QUEUE = "likesQueue";
     private static final String VIEWS_QUEUE = "viewsQueue";
+
     private static final int LIKES_QUEUE_SIZE = 1000;
     private static final int VIEWS_QUEUE_SIZE = 3000;
+
+    public boolean isTimelineCached(LocalDate localDate) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(TIMELINE_KEY + localDate));
+    }
+    public BillTimelineResponse getTimelineCached(LocalDate localDate) {
+        return (BillTimelineResponse) redisTemplate.opsForValue().get(TIMELINE_KEY + localDate);
+    }
+
 
     // 인기글 조회
     public List<String> getPopularBills() {
