@@ -26,7 +26,8 @@ public class BillTimelineScheduler {
         redisTemplate.delete(oldestKey);
 
         // 업데이트 할 필요가 없다면 return
-        if (!today.equals(recentUpdateDate) || Boolean.TRUE.equals(redisTemplate.hasKey(todayKey))) {
+        boolean isUpdated = Boolean.TRUE.equals(redisTemplate.hasKey(todayKey));
+        if (!today.equals(recentUpdateDate) || isUpdated) {
             return;
         }
 
