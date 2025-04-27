@@ -4,6 +4,7 @@ import com.everyones.lawmaking.common.dto.projection.CommitteeBillDto;
 import com.everyones.lawmaking.repository.BillTimelineRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -43,7 +44,7 @@ public class BillTimelineService {
                 }).toList();
     }
 
-    public List<LocalDate> getDatePaging(Pageable pageable) {
+    public Slice<LocalDate> getDatePaging(Pageable pageable) {
         return billTimelineRepository.findTopProposeDates(pageable);
     }
 }
