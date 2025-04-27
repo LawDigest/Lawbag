@@ -2,6 +2,7 @@ package com.everyones.lawmaking.controller;
 
 
 import com.everyones.lawmaking.common.dto.response.BillStateCountResponse;
+import com.everyones.lawmaking.common.dto.response.BillTimelinePaginationResponse;
 import com.everyones.lawmaking.common.dto.response.BillTimelineResponse;
 import com.everyones.lawmaking.facade.BillFacade;
 import com.everyones.lawmaking.facade.Facade;
@@ -62,7 +63,7 @@ public class BillTimelineController {
         return BaseResponse.ok(result);
     }
     @GetMapping("/feed/paging")
-    public BaseResponse<List<BillTimelineResponse>> getTimelinePaging(
+    public BaseResponse<BillTimelinePaginationResponse> getTimelinePaging(
             @Parameter(example = "0", description = "페이지 넘버")
             @RequestParam(value = "page") int page,
             @Parameter(example = "2", description = "불러올 날짜 개수")
