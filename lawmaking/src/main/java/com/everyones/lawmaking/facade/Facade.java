@@ -5,6 +5,7 @@ import com.everyones.lawmaking.common.dto.bill.BillDto;
 import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
+import com.everyones.lawmaking.domain.entity.Party;
 import com.everyones.lawmaking.domain.entity.ProposerKindType;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.global.error.AuthException;
@@ -591,6 +592,11 @@ public class Facade {
 
     public List<ParliamentaryPartyResponse> getParliamentaryParty() {
         return partyService.getParliamentaryParty();
+    }
+
+    public PartyExecutiveResponse getPartyExecutive(int partyId) {
+        Party party = partyService.findById(partyId);
+        return PartyExecutiveResponse.from(party);
     }
 
 
