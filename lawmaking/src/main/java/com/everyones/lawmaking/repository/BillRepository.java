@@ -37,17 +37,15 @@ public interface BillRepository extends JpaRepository<Bill, String>, BillReposit
     Slice<Bill> findByRepresentativeProposer(String congressmanId, Pageable pageable, String stage);
 
     // 특정의원이 공동 발의한 법안들
-    @Query(value = "SELECT b.* " +
-            "FROM ( " +
-            "    SELECT DISTINCT bp.bill_id " +
-            "    FROM billproposer bp " +
-            "    WHERE bp.congressman_id = :congressmanId " +
-            ") subquery " +
-            "JOIN bill b ON subquery.bill_id = b.bill_id " +
-            "ORDER BY b.propose_date DESC " +
-            "LIMIT :pageSize OFFSET :offset",
-            nativeQuery = true)
-    Slice<Bill> findBillByPublicProposer(String congressmanId, Integer pageSize, Long offset);
+    @Query("SELECT b " +
+            "FROM Bill b " +
+            "WHERE b.id IN (" +
+            "    SELECT DISTINCT bp.bill.id " +
+            "    FROM BillProposer bp " +
+            "    WHERE bp.congressman.id = :congressmanId" +
+            ") " +
+            "ORDER BY b.proposeDate DESC")
+    Slice<Bill> findBillByPublicProposer(String congressmanId, Pageable pageable);
 
     @Query("SELECT b FROM Bill b " +
             "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.id = :congressmanId) " +

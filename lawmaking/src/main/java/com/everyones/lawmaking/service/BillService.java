@@ -79,7 +79,7 @@ public class BillService {
 
     public BillListResponse getBillInfoFromPublicProposer(String congressmanId, Pageable pageable) {
 
-        var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable.getPageSize(), pageable.getOffset());
+        var billSlice = billRepository.findBillByPublicProposer(congressmanId, pageable);
         return getBillListResponse(billSlice, BillOrderType.BASIC);
 
     }
