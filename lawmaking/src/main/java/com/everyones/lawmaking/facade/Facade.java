@@ -262,13 +262,16 @@ public class Facade {
         }
         var congressman = congressmanService.findById(uniqueKeys.get(0));
         var congressmanName = congressman.getName();
+        var party = congressman.getParty();
         var billId = bill.getId();
         var billBriefSummary = bill.getBriefSummary();
-        String partyName = NullUtil.nullCoalescing(() -> congressman.getParty().getName(), "defaultPartyName");
+        String partyName = NullUtil.nullCoalescing(party::getName, "defaultPartyName");
+        String partyImageUrl = NullUtil.nullCoalescing(party::getPartyImageUrl, "defaultPartyImageUrl");
         var congressmanInfo = partyName+":"+congressman.getCongressmanImageUrl();
+        var partyInfo = partyName+":"+partyImageUrl;
 
 
-        return List.of(billId, congressmanName, billBriefSummary, congressmanInfo);
+        return List.of(billId, congressmanName, billBriefSummary, congressmanInfo, partyInfo);
     }
 
 
