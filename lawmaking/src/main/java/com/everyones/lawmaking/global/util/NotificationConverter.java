@@ -54,7 +54,7 @@ public class NotificationConverter {
 
                 title = data.get(1) + " 의원";
                 content = "'"+data.get(2) + "' 법안을 대표 발의했어요!";
-                notificationImageUrlList.add(data.get(3));
+                notificationImageUrlList.addAll(data.subList(3, data.size()));
                 break;
             case BILL_STAGE_UPDATE:
 

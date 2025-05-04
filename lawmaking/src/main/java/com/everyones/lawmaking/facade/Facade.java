@@ -265,10 +265,12 @@ public class Facade {
         var billId = bill.getId();
         var billBriefSummary = bill.getBriefSummary();
         String partyName = NullUtil.nullCoalescing(() -> congressman.getParty().getName(), "defaultPartyName");
-        var congressmanInfo = partyName+":"+congressman.getCongressmanImageUrl();
+        String partyId = NullUtil.nullCoalescing(() -> String.valueOf(congressman.getParty().getId()), "defaultPartyImageUrl");
+        var congressmanInfo = partyName+":"+congressman.getId();
+        var partyInfo = partyName+":"+partyId;
 
 
-        return List.of(billId, congressmanName, billBriefSummary, congressmanInfo);
+        return List.of(billId, congressmanName, billBriefSummary, congressmanInfo, partyInfo);
     }
 
 
