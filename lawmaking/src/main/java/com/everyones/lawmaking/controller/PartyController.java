@@ -1,7 +1,9 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.response.*;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.PartyFacade;
+import com.everyones.lawmaking.facade.BillFacade;
+import com.everyones.lawmaking.facade.LikeFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,7 +28,9 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RequestMapping("/v1/party")
 @Tag(name = "정당 관련 API", description = "정당 관련 API 호출")
 public class PartyController {
-    private final Facade facade;
+    private final PartyFacade partyFacade;
+    private final BillFacade billFacade;
+    private final LikeFacade likeFacade;
 
     @Operation(summary = "의원의 발의안 리스트 조회", description = "의원이 발의한 법안 데이터 조회")
     @ApiResponses(value = {
@@ -44,8 +48,7 @@ public class PartyController {
     @GetMapping("/detail")
     public BaseResponse<PartyDetailResponse> getParty(@Parameter(example = "1", description = "정당 id")
                                                       @RequestParam("party_id") long partyId) {
-
-        var response = facade.getPartyById(partyId);
+        var response = partyFacade.getPartyById(partyId);
         return BaseResponse.ok(response);
     }
 
@@ -75,11 +78,9 @@ public class PartyController {
                                                           @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
                                                           @RequestParam(name = "size", required = true) int size) {
         var pageable = PageRequest.of(page, size);
-        var response = (type.equals("represent_proposer")) ? facade.getRepresentativeBillsByParty(pageable, partyId, stage)
-                : facade.getPublicBillsByParty(pageable, partyId, stage);
-
+        var response = (type.equals("represent_proposer")) ? billFacade.getRepresentativeBillsByParty(pageable, partyId, stage)
+                : billFacade.getPublicBillsByParty(pageable, partyId, stage);
         return BaseResponse.ok(response);
-
     }
 
     @Operation(summary = "정당 소속의 의원들 조회", description = "정당 소속 의원들 조회")
@@ -98,11 +99,9 @@ public class PartyController {
     @GetMapping("/congressman")
     public BaseResponse<PartyCongressmanResponse> getPartyCongressman(@Parameter(example = "1", description = "정당 id")
                                                                       @RequestParam("party_id") long partyId){
-        var result = facade.getPartyCongressman(partyId);
+        var result = partyFacade.getPartyCongressman(partyId);
         return BaseResponse.ok(result);
-
     }
-
 
     @Operation(summary = "정당 팔로우", description = "특정 정당 팔로우하기")
     @ApiResponses(value = {
@@ -125,12 +124,12 @@ public class PartyController {
             @Schema(type = "boolean", allowableValues = {"true", "false"})
             @RequestParam("follow_checked") boolean followChecked
     ) {
-
         var userDetails = (UserDetails) authentication.getPrincipal();
         var userId = Long.parseLong(userDetails.getUsername());
-        var result = facade.followParty(userId, partyId, followChecked);
+        var result = likeFacade.followParty(userId, partyId, followChecked);
         return BaseResponse.ok(result);
     }
+
     @Operation(summary = "원내 정당 조회", description = "원내 정당 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -146,9 +145,10 @@ public class PartyController {
     })
     @GetMapping("/parliamentary")
     public BaseResponse<List<ParliamentaryPartyResponse>> getParliamentaryParty() {
-        var result = facade.getParliamentaryParty();
+        var result = partyFacade.getParliamentaryParty();
         return BaseResponse.ok(result);
     }
+
     @Operation(summary = "정당 간부 조회", description = "당대표, 사무총장 등 정당 간부 조회")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -167,9 +167,7 @@ public class PartyController {
             @Parameter(example = "1", description = "정당 Id")
             @RequestParam("party_id") int partyId
     ) {
-        var result = facade.getPartyExecutive(partyId);
+        var result = partyFacade.getPartyExecutive(partyId);
         return BaseResponse.ok(result);
     }
-
-
 }

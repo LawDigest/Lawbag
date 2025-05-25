@@ -2,7 +2,7 @@ package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.response.NotificationCountResponse;
 import com.everyones.lawmaking.common.dto.response.NotificationResponse;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.NotificationFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,8 +26,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RequestMapping("/v1/notification/user")
 @Tag(name="알림 관련 API", description = "알림 조회 및 생성 삭제 기능 포함")
 public class NotificationController {
-
-    private final Facade facade;
+    private final NotificationFacade notificationFacade;
 
     @Operation(summary = "알림 조회 API", description = "발송 되지 않았고 읽지 않은 알림을 조회한다.")
     @ApiResponses(value = {
@@ -45,7 +44,7 @@ public class NotificationController {
     @GetMapping("")
     public BaseResponse<List<NotificationResponse>> getNotifications(Authentication authentication) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.getNotifications(Long.parseLong(user.getUsername()));
+        var result = notificationFacade.getNotifications(Long.parseLong(user.getUsername()));
         return BaseResponse.ok(result);
     }
 
@@ -65,7 +64,7 @@ public class NotificationController {
     @PutMapping("/read/all")
     public BaseResponse<List<NotificationResponse>> readAllNotifications(Authentication authentication) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.readAllNotifications(Long.parseLong(user.getUsername()));
+        var result = notificationFacade.readAllNotifications(Long.parseLong(user.getUsername()));
         return BaseResponse.ok(result);
     }
 
@@ -87,7 +86,7 @@ public class NotificationController {
              @Parameter(example = "3", description = "읽음 처리할 알림id를 의미합니다.")
              @RequestParam(name = "notification_id") int notificationId) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.readNotification(Long.parseLong(user.getUsername()), notificationId);
+        var result = notificationFacade.readNotification(Long.parseLong(user.getUsername()), notificationId);
         return BaseResponse.ok(result.get(0));
     }
 
@@ -107,7 +106,7 @@ public class NotificationController {
     @DeleteMapping("/delete/all")
     public BaseResponse<String> deleteAllNotification(Authentication authentication) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.deleteAllNotification(Long.parseLong(user.getUsername()));
+        var result = notificationFacade.deleteAllNotification(Long.parseLong(user.getUsername()));
         return BaseResponse.ok(result);
     }
 
@@ -129,7 +128,7 @@ public class NotificationController {
            @Parameter(example = "3", description = "읽음 처리할 알림id를 의미합니다.")
            @RequestParam(name = "notification_id") int notificationId) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.deleteNotification(Long.parseLong(user.getUsername()),notificationId);
+        var result = notificationFacade.deleteNotification(Long.parseLong(user.getUsername()),notificationId);
         return BaseResponse.ok(result);
     }
 
@@ -150,7 +149,7 @@ public class NotificationController {
     @GetMapping("/count")
     public BaseResponse<NotificationCountResponse> countNotifications(Authentication authentication) {
         final UserDetails user = (UserDetails) authentication.getPrincipal();
-        var result = facade.countNotifications(Long.parseLong(user.getUsername()));
+        var result = notificationFacade.countNotifications(Long.parseLong(user.getUsername()));
         return BaseResponse.ok(result);
     }
 

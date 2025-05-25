@@ -4,6 +4,7 @@ import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.Notification;
 import com.everyones.lawmaking.domain.entity.User;
 import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.NotificationFacade;
 import com.everyones.lawmaking.global.error.CommonException;
 import com.everyones.lawmaking.repository.NotificationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -23,7 +24,7 @@ import java.util.Map;
 public class NotificationCreator {
 
     private final NotificationRepository notificationRepository;
-    private final Facade facade;
+    private final NotificationFacade notificationFacade;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     //ToDo: 알림 데이터 삽입 시 유니크키 컬럼을 추가해서 다중 스프링서버환경에서도 중복 데이터가 삽입되지 않도록 처리
@@ -49,8 +50,8 @@ public class NotificationCreator {
                 try {
                     // eventData의 첫번째 값은 항상 targetId
                     ColumnEventType columnEventType = ColumnEventType.from(eventType);
-                    List<User> subscribedSavedUser = facade.getSubscribedUsers(columnEventType, eventData.get(0));
-                    List<String> processedData = facade.getProcessedData(columnEventType,eventData);
+                    List<User> subscribedSavedUser = notificationFacade.getSubscribedUsers(columnEventType, eventData.get(0));
+                    List<String> processedData = notificationFacade.getProcessedData(columnEventType,eventData);
                     if (processedData.isEmpty()) {
                         log.warn("Processed data is empty for eventType: {}", eventType);
                         return;

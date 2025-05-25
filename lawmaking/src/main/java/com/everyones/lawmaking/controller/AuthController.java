@@ -2,6 +2,7 @@ package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
 import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.UserFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,6 +28,8 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @Tag(name = "인증 API", description = "인증 관련 API")
 public class AuthController {
 
+    private final UserFacade userFacade;
+
     private final Facade facade;
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴 합니다.")
@@ -48,7 +51,7 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        var result = facade.withdraw(request,response);
+        var result = userFacade.withdraw(request,response);
         return BaseResponse.ok(result);
     }
 
@@ -71,7 +74,7 @@ public class AuthController {
     public BaseResponse<String> reissueToken(
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        facade.reissueToken(request,response);
+        userFacade.reissueToken(request,response);
         return BaseResponse.ok("success");
     }
 }
