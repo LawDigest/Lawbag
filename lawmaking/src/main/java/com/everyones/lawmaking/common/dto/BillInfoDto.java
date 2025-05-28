@@ -29,6 +29,7 @@ public class BillInfoDto {
     private int billLikeCount;
     private String billStage;
     private String briefSummary;
+    private String billResult;
 
     @QueryProjection
     public BillInfoDto(Bill bill) {
@@ -56,6 +57,9 @@ public class BillInfoDto {
                 .billStage(bill.getStage())
                 .briefSummary(bill.getBriefSummary())
                 .build();
+    }
+    public void setBillResult(String billResult) {
+        this.billResult = billResult;
     }
 
 }

@@ -47,4 +47,7 @@ public class BillTimelineService {
     public Slice<LocalDate> getDatePaging(Pageable pageable) {
         return billTimelineRepository.findTopProposeDates(pageable);
     }
+    public String getRecentBillResult(String billId) {
+        return billTimelineRepository.findTopByBillIdOrderByStatusUpdateDateDesc(billId);
+    }
 }
