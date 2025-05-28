@@ -18,6 +18,7 @@ public class BillDetailInfo extends BillInfoDto{
 
     private String billLink;
 
+
     public BillDetailInfo(Bill bill) {
         super(bill);
         this.billLink = bill.getBillLink();

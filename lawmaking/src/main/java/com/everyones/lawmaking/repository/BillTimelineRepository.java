@@ -50,4 +50,11 @@ public interface BillTimelineRepository extends JpaRepository<BillTimeline,Long>
 
     LocalDate findTopByOrderByStatusUpdateDateDesc();
 
+    @Query("SELECT bt.billResult " +
+            "FROM BillTimeline bt " +
+            "WHERE bt.bill.id = :billId " +
+            "ORDER BY bt.statusUpdateDate DESC " +
+            "limit 1 ")
+    String findTopByBillIdOrderByStatusUpdateDateDesc(String billId);
+
 }

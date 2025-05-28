@@ -1,39 +1,25 @@
 package com.everyones.lawmaking.facade;
 
-import com.everyones.lawmaking.common.dto.BillOutlineDto;
-import com.everyones.lawmaking.common.dto.CommitteeAuditDto;
 import com.everyones.lawmaking.common.dto.PartyVoteDto;
-import com.everyones.lawmaking.common.dto.PlenaryDto;
 import com.everyones.lawmaking.common.dto.VoteResultResponse;
 import com.everyones.lawmaking.common.dto.bill.BillDto;
-import com.everyones.lawmaking.common.dto.response.BillDetailResponse;
-import com.everyones.lawmaking.common.dto.response.BillListResponse;
-import com.everyones.lawmaking.common.dto.response.BillStateCountResponse;
-import com.everyones.lawmaking.common.dto.response.BillTimelinePaginationResponse;
-import com.everyones.lawmaking.common.dto.response.BillTimelineResponse;
-import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
-import com.everyones.lawmaking.common.dto.response.CountDto;
+import com.everyones.lawmaking.common.dto.response.*;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
-import com.everyones.lawmaking.service.BillService;
-import com.everyones.lawmaking.service.BillTimelineService;
-import com.everyones.lawmaking.service.LikeService;
-import com.everyones.lawmaking.service.RedisService;
-import com.everyones.lawmaking.service.VotePartyService;
-import com.everyones.lawmaking.service.VoteRecordService;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
+import com.everyones.lawmaking.service.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class BillFacade {
     private final BillService billService;
+    private final BillTimelineService billTimelineService;
     private final LikeService likeService;
     private final VoteRecordService voteRecordService;
     private final VotePartyService votePartyService;
@@ -41,6 +27,8 @@ public class BillFacade {
 
     public BillDetailResponse getBillByBillId(String billId) {
         var billDto =  billService.getBillWithDetail(billId);
+        var billResult = billTimelineService.getRecentBillResult(billId);
+        billDto.getBillInfoDto().setBillResult(billResult);
         var userId = AuthenticationUtil.getUserId();
         var voteRecord = voteRecordService.getVoteRecordByBillId(billId);
         var votePartyList = votePartyService.getVotePartyListWithPartyByBillId(billId).stream()
