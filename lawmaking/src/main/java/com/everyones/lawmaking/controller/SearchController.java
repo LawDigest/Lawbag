@@ -3,7 +3,7 @@ package com.everyones.lawmaking.controller;
 import com.everyones.lawmaking.common.dto.response.SearchBillResponse;
 import com.everyones.lawmaking.common.dto.response.SearchDataResponse;
 import com.everyones.lawmaking.common.dto.response.SearchKeywordResponse;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.SearchFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import com.everyones.lawmaking.global.error.BillException;
 import com.everyones.lawmaking.global.error.CongressmanException;
@@ -29,8 +29,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RequestMapping("/v1/search")
 @Tag(name="검색 관련 API", description = "의원, 정당 및 법안 검색 API")
 public class SearchController {
-
-    private final Facade facade;
+    private final SearchFacade searchFacade;
 
     @Operation(summary = "최근 검색어 삽입 API", description = "최근 10개의 검색어를 가져옵니다.")
     @ApiResponses(value = {
@@ -49,7 +48,7 @@ public class SearchController {
     public BaseResponse<String> makeRecentKeyword(
             @Parameter(example = "국민", description = "국민의 힘 정당 노리는 검색어")
             @RequestParam("search_word") String searchWord) {
-        facade.makeSearchKeywordAndGetRecentSearchWords(searchWord);
+        searchFacade.makeSearchKeywordAndGetRecentSearchWords(searchWord);
         return BaseResponse.ok(searchWord + "업데이트 완료");
     }
 
@@ -68,7 +67,7 @@ public class SearchController {
     })
     @GetMapping("/recent-keword")
     public BaseResponse<List<SearchKeywordResponse>> getRecentSearchWords() {
-        var result = facade.getRecentSearchWords();
+        var result = searchFacade.getRecentSearchWords();
         return BaseResponse.ok(result);
     }
 
@@ -89,7 +88,7 @@ public class SearchController {
     public BaseResponse<String> removeRecentKeyword(
             @Parameter(example = "국민", description = "국민의 힘 정당 노리는 검색어")
             @RequestParam("search_word") String searchWord) {
-        facade.removeRecentSearchWord(searchWord);
+        searchFacade.removeRecentSearchWord(searchWord);
         return BaseResponse.ok(searchWord + "가 삭제되었습니다. ");
     }
     // 의원, 정당 검색
@@ -116,7 +115,7 @@ public class SearchController {
             throw new CongressmanException.SearchParameterInvalid(Map.of("searchWord", searchWord));
         }
 
-        var result = facade.searchCongressmanAndParty(searchWord);
+        var result = searchFacade.searchCongressmanAndParty(searchWord);
         return BaseResponse.ok(result);
 
     }
@@ -144,7 +143,7 @@ public class SearchController {
         if (searchWord.trim().length()<2){
             throw new BillException.SearchParameterInvalid(Map.of("searchWord", searchWord));
         }
-        var result = facade.searchBill(searchWord,page);
+        var result = searchFacade.searchBill(searchWord,page);
         return BaseResponse.ok(result);
 
     }

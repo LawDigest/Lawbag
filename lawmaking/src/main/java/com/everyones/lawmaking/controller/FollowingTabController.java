@@ -2,7 +2,8 @@ package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.LikingCongressmanResponse;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.CongressmanFacade;
+import com.everyones.lawmaking.facade.BillFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import com.everyones.lawmaking.global.error.UserException;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
@@ -30,8 +31,8 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RequestMapping("/v1/following-tab")
 @Tag(name = "팔로잉탭 API", description = "팔로잉 탭 API")
 public class FollowingTabController {
-
-    private final Facade facade;
+    private final CongressmanFacade congressmanFacade;
+    private final BillFacade billFacade;
 
     @Operation(summary = "팔로잉 탭의 법안 조회", description = "팔로우한 의원의 목록을 최근 발의 순으로 가져옵니다..")
     @ApiResponses(value = {
@@ -47,15 +48,13 @@ public class FollowingTabController {
             ),
     })
     @GetMapping("/congressman")
-    public BaseResponse<List<LikingCongressmanResponse>> getCongressman(
-    ) {
+    public BaseResponse<List<LikingCongressmanResponse>> getCongressman() {
         var userId = AuthenticationUtil.getUserId();
         if (userId.isEmpty()) {
             throw new UserException.UserNotFoundException();
         }
-        var result = facade.getLikingCongressman(userId.get());
+        var result = congressmanFacade.getLikingCongressman(userId.get());
         return BaseResponse.ok(result);
-
     }
 
     @Operation(summary = "팔로잉 탭의 법안 조회", description = "팔로우 한 의원의 대표발의안을 최신순으로 가져옵니다.")
@@ -74,14 +73,12 @@ public class FollowingTabController {
     @GetMapping("/bill")
     public BaseResponse<BillListResponse> getBills(
             @Parameter(example = "0", description = "스크롤할 때마다 page값을 0에서 1씩 늘려주면 됩니다.")
-            @RequestParam(name = "page")
-            int page,
+            @RequestParam(name = "page") int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
             int size
     ) {
         var pageable = PageRequest.of(page, size);
-        var result = facade.getBillsFromFollowingTab(pageable);
+        var result = billFacade.getBillsFromFollowingTab(pageable);
         return BaseResponse.ok(result);
-
     }
 }

@@ -1,8 +1,7 @@
 package com.everyones.lawmaking.controller;
 
-
 import com.everyones.lawmaking.common.dto.request.*;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.DataFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -30,9 +29,7 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RequestMapping("/v1/auto_data_upload")
 @Tag(name = "내수용 데이터 API", description = "새로 수집되는 데이터들을 기록하기 위한 API")
 public class DataController {
-
-
-    private final Facade facade;
+    private final DataFacade dataFacade;
 
     @Operation(summary = "발의법률안 삽입 요청 API", description = "수집한 발의법률안 삽입 요청한다.")
     @ApiResponses(value = {
@@ -52,13 +49,9 @@ public class DataController {
             @Parameter(description = "발의법률안 삽입 데이터", required = true)
             @RequestBody BillListDfRequest billListDfRequest) {
         var billDfRequestList = billListDfRequest.getBillRequestList();
-        facade.insertBillInfoDf(billDfRequestList);
-
+        dataFacade.insertBillInfoDf(billDfRequestList);
         return BaseResponse.ok("발의법률안정보 삽입 데이터 요청 성공");
-
     }
-
-
 
     @Operation(summary = "날짜별 법안 처리상태 변동 수집 데이터 수정 요청 API", description = "날짜별 법안 처리상태 변동 수집 데이터 수정 요청한다.")
     @ApiResponses(value = {
@@ -78,11 +71,9 @@ public class DataController {
             @Parameter(description = "날짜별 법안 처리상태 변동 수집 수정 데이터", required = true)
             @RequestBody BillStageListDfRequest billStageListDfRequest) {
         var billStageDfRequestList = billStageListDfRequest.getBillStageRequestList();
-        var result = facade.updateBillStageDf(billStageDfRequestList);
+        var result = dataFacade.updateBillStageDf(billStageDfRequestList);
         return BaseResponse.ok(result);
-
     }
-
 
     @Operation(summary = "당일 법안 본회의 처리 결과 수집 수정 요청 API", description = "당일 법안 본회의 처리 결과 수집 수정 요청한다.")
     @ApiResponses(value = {
@@ -102,9 +93,8 @@ public class DataController {
             @Parameter(description = "당일 법안 본회의 처리 결과 수집 수정 데이터", required = true)
             @RequestBody BillResultListDfRequest billResultListDfRequest) {
         var billDfRequestList=billResultListDfRequest.getBillResultDfRequestList();
-        facade.updateBillResultDf(billDfRequestList);
+        dataFacade.updateBillResultDf(billDfRequestList);
         return BaseResponse.ok("당일 법안 본회의 처리 결과 수집 수정 데이터 요청 성공");
-
     }
 
     @Operation(summary = "국회의원 정보 수집 수정 요청 API", description = "국회의원 정보 수집 수정 요청한다.")
@@ -125,10 +115,8 @@ public class DataController {
             @Parameter(description = "국회의원 정보 수집 삽입 api", required = true)
             @RequestBody LawmakerListDfRequest lawmakerListDfRequest) {
         var lawmakerDfRequestList=lawmakerListDfRequest.getLawmakerDfRequestList();
-
-        facade.updateLawmakerDf(lawmakerDfRequestList);
+        dataFacade.updateLawmakerDf(lawmakerDfRequestList);
         return BaseResponse.ok("국회의원 정보 수집 삽입 데이터 요청 성공");
-
     }
 
     @Operation(summary = "당일 본회의 투표수 삽입 API", description = "당일 본회의 투표 수를 데이터베이스에 저장")
@@ -149,11 +137,8 @@ public class DataController {
             @Parameter(description = "당일 본회의 투표수 삽입 API", required = true)
             @RequestBody VoteListRequest voteListRequest) {
         var voteDfRequestList=voteListRequest.getVoteDfRequestList();
-
-        // 존재하지 않는 법안 ID 리스트
-        var result = facade.insertAssemblyVote(voteDfRequestList);
+        var result = dataFacade.insertAssemblyVote(voteDfRequestList);
         return BaseResponse.ok(result);
-
     }
 
     @Operation(summary = "본회의 정당별 투표수 삽입 API", description = "본회의 정당별 투표수 삽입 API 데이터베이스 저장")
@@ -174,11 +159,8 @@ public class DataController {
             @Parameter(description = "본회의 정당별 투표수 삽입 API", required = true)
             @RequestBody VotePartyListRequest votePartyListRequest) {
         var voteDfRequestList=votePartyListRequest.getVotePartyRequestList();
-
-        // 존재하지 않는 법안 ID 리스트
-        var result = facade.insertVoteIndividual(voteDfRequestList);
+        var result = dataFacade.insertVoteIndividual(voteDfRequestList);
         return BaseResponse.ok(result);
-
     }
 
     @Operation(summary = "의원 카운트 업데이트 API", description = "정당별 비례대표, 지역구 의원 카운트 수정")
@@ -196,9 +178,8 @@ public class DataController {
     })
     @PostMapping("/congressman/party/count")
     public BaseResponse<String> updateCongressmanCountByParty() {
-        // 존재하지 않는 법안 ID 리스트
-        facade.updateCongressmanCountByParty();
-        return BaseResponse.ok("국회의원 정보 수집 삽입 데이터 요청 성공");
+        dataFacade.updateCongressmanCountByParty();
+        return BaseResponse.ok("정당별 의원 카운트 업데이트 성공");
     }
 
     @Operation(summary = "정당별 법안 카운트 업데이트 API", description = "정당별 법안 카운트 업데이트 수정")
@@ -216,9 +197,8 @@ public class DataController {
     })
     @PostMapping("/bill/party/count")
     public BaseResponse<String> updateBillCountByParty() {
-        // 존재하지 않는 법안 ID 리스트
-        facade.updateBillCountByParty();
-        return BaseResponse.ok("정당별 법안 카운트 업데이트 수정 데이터 요청 성공");
+        dataFacade.updateBillCountByParty();
+        return BaseResponse.ok("정당별 법안 카운트 업데이트 성공");
     }
 
     @Operation(summary = "의원별 최신 발의날짜 업데이트 API", description = "의원별 최신 발의날짜 수정")
@@ -236,12 +216,7 @@ public class DataController {
     })
     @PostMapping("/bill/congressman/date")
     public BaseResponse<String> updateProposeDateByCongressman() {
-        // 존재하지 않는 법안 ID 리스트
-        facade.updateProposeDateByCongressman();
-        return BaseResponse.ok("의원별 최신 발의날짜 수정 성공");
+        dataFacade.updateProposeDateByCongressman();
+        return BaseResponse.ok("의원별 최신 발의날짜 업데이트 성공");
     }
-
-
-
-
 }

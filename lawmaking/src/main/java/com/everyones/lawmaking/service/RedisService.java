@@ -1,21 +1,14 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.BillTimelineResponse;
-import com.everyones.lawmaking.facade.Facade;
-import com.everyones.lawmaking.repository.BillTimelineRepository;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Service;
-
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor

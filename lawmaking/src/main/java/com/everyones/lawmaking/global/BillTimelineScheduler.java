@@ -1,7 +1,8 @@
 package com.everyones.lawmaking.global;
 
 import com.everyones.lawmaking.common.dto.response.BillTimelineResponse;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.BillFacade;
+import com.everyones.lawmaking.facade.TimelineFacade;
 import com.everyones.lawmaking.repository.BillTimelineRepository;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +13,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 public class BillTimelineScheduler {
     private final RedisTemplate<String, Object> redisTemplate;
     private final BillTimelineRepository billTimelineRepository;
-    private final Facade facade;
+    private final TimelineFacade timelineFacade;
 
     @Scheduled(cron = "0 0/30 8-19 * * MON-FRI")
     public void refreshTimelineCache() {
@@ -32,7 +33,7 @@ public class BillTimelineScheduler {
         }
 
         // 오늘 데이터 추가
-        BillTimelineResponse billTimelineResponse = facade.getTimeline(today);
+        BillTimelineResponse billTimelineResponse = timelineFacade.getTimeline(today);
         redisTemplate.opsForValue().set(todayKey, billTimelineResponse);
     }
 }

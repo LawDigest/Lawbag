@@ -1,7 +1,10 @@
 package com.everyones.lawmaking.controller;
 
 import com.everyones.lawmaking.common.dto.response.*;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.UserFacade;
+import com.everyones.lawmaking.facade.PartyFacade;
+import com.everyones.lawmaking.facade.CongressmanFacade;
+import com.everyones.lawmaking.facade.BillFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import com.everyones.lawmaking.global.error.UserException;
 import com.everyones.lawmaking.global.util.AuthenticationUtil;
@@ -32,7 +35,10 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RequestMapping("/v1/user")
 @Tag(name = "유저 관련 API", description = "유저 관련 API 호출")
 public class UserController {
-    private final Facade facade;
+    private final UserFacade userFacade;
+    private final PartyFacade partyFacade;
+    private final CongressmanFacade congressmanFacade;
+    private final BillFacade billFacade;
 
     @Operation(summary = "유저 정보 조회", description = "마이 페이지에서 유저의 기본 정보 조회 ")
     @ApiResponses(value = {
@@ -52,7 +58,7 @@ public class UserController {
             Authentication authentication) {
         var userDetails = (UserDetails) authentication.getPrincipal();
         var userId = Long.parseLong(userDetails.getUsername());
-        var result = facade.getUserMyPageInfo(userId);
+        var result = userFacade.getUserMyPageInfo(userId);
         return BaseResponse.ok(result);
     }
 
@@ -74,9 +80,8 @@ public class UserController {
             Authentication authentication) {
         var userDetails = (UserDetails) authentication.getPrincipal();
         var userId = Long.parseLong(userDetails.getUsername());
-        var result = facade.getFollowingParty(userId);
+        var result = partyFacade.getFollowingParty(userId);
         return BaseResponse.ok(result);
-
     }
 
     @Operation(summary = "팔로우한 의원 조회", description = "마이 페이지에서 유저가 팔로우한 의원을 조회합니다. ")
@@ -97,9 +102,8 @@ public class UserController {
             Authentication authentication) {
         var userDetails = (UserDetails) authentication.getPrincipal();
         var userId = Long.parseLong(userDetails.getUsername());
-        var result = facade.getLikingCongressman(userId);
+        var result = congressmanFacade.getLikingCongressman(userId);
         return BaseResponse.ok(result);
-
     }
 
     @Operation(summary = "팔로우한 의원 수 반환", description = "마이페이지에서 팔로우한 의원 수 반환")
@@ -117,7 +121,7 @@ public class UserController {
     })
     @GetMapping("/liking/congressman/count")
     public BaseResponse<CountDto> getCongressmanLikeCount() {
-        var result = facade.getCongressmanLikeCount();
+        var result = congressmanFacade.getCongressmanLikeCount();
         return BaseResponse.ok(result);
     }
 
@@ -143,9 +147,8 @@ public class UserController {
     ) {
         var userId = AuthenticationUtil.getUserId()
                 .orElseThrow(UserException.UserNotFoundException::new);
-
         Pageable pageable = PageRequest.of(page, size);
-        var result = facade.getBookmarkedBills(pageable, userId);
+        var result = billFacade.getBookmarkedBills(pageable, userId);
         return BaseResponse.ok(result);
     }
     @Operation(summary = "스크랩한 법안 수 가져오기", description = "스크랩탭에서 유저가 북마크한 법안 수 제공 api ")
@@ -163,9 +166,7 @@ public class UserController {
     })
     @GetMapping("/bookmarking/bill/count")
     public BaseResponse<CountDto> getBookmarkedBillCount() {
-        var result = facade.getBookmarkedBillCount();
+        var result = billFacade.getBookmarkedBillCount();
         return BaseResponse.ok(result);
     }
-
-
 }

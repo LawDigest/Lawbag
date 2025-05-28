@@ -6,7 +6,7 @@ import com.everyones.lawmaking.common.dto.response.BillLikeResponse;
 import com.everyones.lawmaking.common.dto.response.BillListResponse;
 import com.everyones.lawmaking.common.dto.response.BillViewCountResponse;
 import com.everyones.lawmaking.facade.BillFacade;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.LikeFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import com.everyones.lawmaking.global.constant.BillStageType;
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,8 +33,8 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 @RequestMapping("/v1/bill")
 @Tag(name = "법안 API", description = "법안 조회 API")
 public class BillController {
-    private final Facade facade;
     private final BillFacade billFacade;
+    private final LikeFacade likeFacade;
 
     @Operation(summary = "메인피드 조회", description = "메인피드에 들어갈 데이터를 가져옵니다.")
     @ApiResponses(value = {
@@ -87,7 +87,6 @@ public class BillController {
         var pageable = PageRequest.of(page, size);
         var result = billFacade.getBillList(pageable, stage);
         return BaseResponse.ok(result);
-
     }
 
     @Operation(summary = "법안 상세 조회", description = "법안 id로 법안 데이터를 가져옵니다.")
@@ -107,9 +106,8 @@ public class BillController {
     public BaseResponse<BillDetailResponse> getBillWithDetail(
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @PathVariable("bill_id") String billId) {
-        var result = facade.getBillByBillId(billId);
+        var result = billFacade.getBillByBillId(billId);
         return BaseResponse.ok(result);
-
     }
 
     @Operation(summary = "법안 조회수 증가", description = "법안 id로 조회수를 증가시킵니다.")
@@ -130,7 +128,7 @@ public class BillController {
             @Parameter(example = "PRC_G2O3O1N2O1M1K1L5A0A8Z2Z2Y7W6X3")
             @RequestParam("bill_id") String billId
     ) {
-        var result = facade.updateViewCount(billId);
+        var result = billFacade.updateViewCount(billId);
         return BaseResponse.ok(result);
     }
 
@@ -154,14 +152,13 @@ public class BillController {
             @RequestParam("bill_id") String billId,
             @Schema(type = "boolean", allowableValues = {"true", "false"})
             @RequestParam("likeChecked") boolean likeChecked
-
     ) {
         var userDetails = (UserDetails) authentication.getPrincipal();
         var userId = Long.parseLong(userDetails.getUsername());
-        var result = facade.likeBill(userId, billId, likeChecked);
-
+        var result = likeFacade.likeBill(userId, billId, likeChecked);
         return BaseResponse.ok(result);
     }
+
     @Operation(summary = "인기 법안 조회", description = "인기 법안 조회 기능")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "조회 성공"),
@@ -177,9 +174,7 @@ public class BillController {
     })
     @GetMapping("/popular")
     public BaseResponse<List<BillDto>> getPopularBills() {
-        var result = facade.getPopularBills();
+        var result = billFacade.getPopularBills();
         return BaseResponse.ok(result);
     }
-
-
 }

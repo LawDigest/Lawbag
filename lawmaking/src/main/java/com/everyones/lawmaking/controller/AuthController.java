@@ -1,7 +1,9 @@
 package com.everyones.lawmaking.controller;
 
+import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
+
 import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
-import com.everyones.lawmaking.facade.Facade;
+import com.everyones.lawmaking.facade.UserFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,15 +21,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/auth")
 @Tag(name = "인증 API", description = "인증 관련 API")
 public class AuthController {
 
-    private final Facade facade;
+    private final UserFacade userFacade;
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴 합니다.")
     @ApiResponses(value = {
@@ -48,7 +48,7 @@ public class AuthController {
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
 
-        var result = facade.withdraw(request,response);
+        var result = userFacade.withdraw(request,response);
         return BaseResponse.ok(result);
     }
 
@@ -71,7 +71,7 @@ public class AuthController {
     public BaseResponse<String> reissueToken(
             HttpServletRequest request,
             HttpServletResponse response) throws Exception {
-        facade.reissueToken(request,response);
+        userFacade.reissueToken(request,response);
         return BaseResponse.ok("success");
     }
 }
