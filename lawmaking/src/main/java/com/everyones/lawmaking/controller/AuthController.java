@@ -1,7 +1,8 @@
 package com.everyones.lawmaking.controller;
 
+import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
+
 import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
-import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.facade.UserFacade;
 import com.everyones.lawmaking.global.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,8 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_CONTENT;
-
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/v1/auth")
@@ -29,8 +28,6 @@ import static com.everyones.lawmaking.global.SwaggerConstants.EXAMPLE_ERROR_500_
 public class AuthController {
 
     private final UserFacade userFacade;
-
-    private final Facade facade;
 
     @Operation(summary = "회원탈퇴", description = "회원탈퇴 합니다.")
     @ApiResponses(value = {

@@ -3,20 +3,18 @@ package com.everyones.lawmaking.global.config;
 import com.everyones.lawmaking.domain.entity.ColumnEventType;
 import com.everyones.lawmaking.domain.entity.Notification;
 import com.everyones.lawmaking.domain.entity.User;
-import com.everyones.lawmaking.facade.Facade;
 import com.everyones.lawmaking.facade.NotificationFacade;
 import com.everyones.lawmaking.global.error.CommonException;
 import com.everyones.lawmaking.repository.NotificationRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 @Component
 @Slf4j
