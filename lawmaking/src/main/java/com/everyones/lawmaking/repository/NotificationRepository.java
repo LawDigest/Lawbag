@@ -26,6 +26,15 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("""
             select n
             from Notification n
+            join n.user u
+            where u.id = :userId and n.isRead = false
+            order by n.createdDate desc
+            limit 3
+            """)
+    List<Notification> findTop3UnreadNotificationsByUserIdSorted(@Param("userId") Long userId);
+    @Query("""
+            select n
+            from Notification n
             Join n.user u
             where u.id = :userId
             order by n.createdDate desc

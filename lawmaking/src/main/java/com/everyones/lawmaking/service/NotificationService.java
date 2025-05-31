@@ -26,6 +26,12 @@ public class NotificationService {
         return NotificationResponse.from(notifications);
     }
 
+    public List<NotificationResponse> getTop3UnreadNotifications(long userId) {
+        List<Notification> notifications = notificationRepository.findTop3UnreadNotificationsByUserIdSorted(userId);
+
+        return NotificationResponse.from(notifications);
+    }
+
 
 
 
