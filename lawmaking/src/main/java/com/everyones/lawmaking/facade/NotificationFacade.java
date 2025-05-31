@@ -30,6 +30,10 @@ public class NotificationFacade {
         return notificationService.getNotifications(userId);
     }
 
+    public List<NotificationResponse> getTop3UnreadNotifications(long userId) {
+        return notificationService.getTop3UnreadNotifications(userId);
+    }
+
     public List<NotificationResponse> readAllNotifications(long userId) {
         return notificationService.readNotification(userId, Optional.empty());
     }

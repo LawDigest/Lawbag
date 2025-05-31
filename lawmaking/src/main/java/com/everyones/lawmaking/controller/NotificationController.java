@@ -48,6 +48,13 @@ public class NotificationController {
         return BaseResponse.ok(result);
     }
 
+    @GetMapping("/top3-unread")
+    public BaseResponse<List<NotificationResponse>> getTop3UnreadNotifications(Authentication authentication) {
+        final UserDetails user = (UserDetails) authentication.getPrincipal();
+        var result = notificationFacade.getTop3UnreadNotifications(Long.parseLong(user.getUsername()));
+        return BaseResponse.ok(result);
+    }
+
     @Operation(summary = "알림 읽음 처리 API", description = "모든 알림을 읽음 처리")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "읽음 성공"),
