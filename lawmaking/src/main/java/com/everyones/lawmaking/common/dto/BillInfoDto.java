@@ -5,12 +5,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.querydsl.core.annotations.QueryProjection;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Builder
 @Getter
@@ -29,7 +28,6 @@ public class BillInfoDto {
     private int billLikeCount;
     private String billStage;
     private String briefSummary;
-    private String billResult;
 
     @QueryProjection
     public BillInfoDto(Bill bill) {
@@ -57,9 +55,6 @@ public class BillInfoDto {
                 .billStage(bill.getStage())
                 .briefSummary(bill.getBriefSummary())
                 .build();
-    }
-    public void setBillResult(String billResult) {
-        this.billResult = billResult;
     }
 
 }
