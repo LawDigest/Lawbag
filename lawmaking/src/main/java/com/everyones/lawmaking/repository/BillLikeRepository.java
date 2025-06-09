@@ -18,8 +18,6 @@ public interface BillLikeRepository extends JpaRepository<BillLike, Long > {
 
     Long countByUserId(long userId);
 
-//    void deleteById(@Param("billLikeId") long billLikeId);
-
     @Modifying(clearAutomatically = true)
     void deleteAllByUserId(Long userId);
 

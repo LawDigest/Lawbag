@@ -107,17 +107,7 @@ public class BillStageType {
     public static boolean containsValue(String stage) {
         return KEY_MAP.containsKey(stage);
     }
-
-    /**
-     * 사전 정의된 단계에 새로운 단계 추가 (확장 가능성)
-     */
-    public static void registerPredefinedStage(BillStageType stage) {
-        if (!PREDEFINED_STAGES.contains(stage)) {
-            PREDEFINED_STAGES.add(stage);
-            KEY_MAP.computeIfAbsent(stage.getKey(), k -> new ArrayList<>()).add(stage.getValue());
-            VALUE_MAP.put(stage.getValue(), stage);
-        }
-    }
+    
 
     @Override
     public boolean equals(Object obj) {

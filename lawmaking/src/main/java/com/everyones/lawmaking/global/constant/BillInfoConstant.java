@@ -13,10 +13,6 @@ public class BillInfoConstant {
         return CURRENT_ASSEMBLY_NUMBER;
     }
 
-    public static LocalDate getOpeningOfTheNationalAssembly() {
-        return OPENING_OF_THE_NATIONAL_ASSEMBLY;
-    }
-
     public static Long getDaysSinceOpening() {
         return ChronoUnit.DAYS.between(OPENING_OF_THE_NATIONAL_ASSEMBLY, LocalDate.now());
     }

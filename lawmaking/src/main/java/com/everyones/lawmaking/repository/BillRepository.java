@@ -15,14 +15,6 @@ import java.util.Optional;
 @Repository
 public interface BillRepository extends JpaRepository<Bill, String>, BillRepositoryCustom{
 
-    // 단순한 법안 페이징으로 가져오기
-    Slice<Bill> findAllByOrderByProposeDateDescIdDesc(Pageable pageable);
-
-    // 단계 + 법안 페이징으로 가져오기
-    @Query("SELECT b FROM Bill b " +
-           "WHERE b.stage = :stage " +
-            "ORDER BY b.proposeDate DESC, b.id DESC ")
-    Slice<Bill> findByPage(Pageable pageable, @Param("stage") String stage);
 
     // 특정 의원이 대표 발의한 법안들
     @Query("SELECT b FROM Bill b " +
