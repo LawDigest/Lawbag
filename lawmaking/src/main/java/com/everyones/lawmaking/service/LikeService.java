@@ -25,7 +25,6 @@ public class LikeService {
     private final CongressmanLikeRepository congressmanLikeRepository;
     private final PartyFollowRepository partyFollowRepository;
 
-    private static final String UPDATE_PARAMETER = "updateParameter";
 
     public Boolean getCongressmanLike(String congressmanId, long userId) {
         var congressmanLike = congressmanLikeRepository.findByUserIdAndCongressmanId(userId, congressmanId);

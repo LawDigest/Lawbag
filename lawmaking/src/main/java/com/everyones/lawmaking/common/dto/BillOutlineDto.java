@@ -26,15 +26,7 @@ public class BillOutlineDto {
     private String billProposers;
     private String billBriefSummary;
 
-//    public static BillOutlineDto from(Bill bill) {
-//        return BillOutlineDto.builder()
-//                .billId(bill.getId())
-//                .billName(bill.getBillName())
-//                .billStage(bill.getStage())
-//                .billProposers(bill.getProposers())
-//                .billBriefSummary(bill.getBriefSummary())
-//                .build();
-//    }
+
     public static BillOutlineDto from(Bill bill) {
         var representProposers = bill.getRepresentativeProposer();
         List<PartyDto> partyList = new ArrayList<>();

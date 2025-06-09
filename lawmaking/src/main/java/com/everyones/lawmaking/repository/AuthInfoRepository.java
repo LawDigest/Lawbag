@@ -13,7 +13,6 @@ import java.util.Optional;
 
 @Repository
 public interface AuthInfoRepository extends JpaRepository<AuthInfo, Long> {
-    Optional<AuthInfo> findBySocialIdAndProvider(@NotNull String socialId, @NotNull Provider provider);
 
     @Query("select a " +
             "from AuthInfo a " +
