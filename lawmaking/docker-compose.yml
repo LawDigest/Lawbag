@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  mysql: # 서비스 명
+    image: mysql:8.0.35 # 사용할 이미지
+    container_name: law_mysql-local # 컨테이너 이름 설정
+    ports:
+      - "3306:3306" # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+    restart: always
+    environment: # -e 옵션
+      MYSQL_ROOT_PASSWORD: acOE-P?/<$(+z*mc5 # MYSQL 패스워드 설정 옵션
+      MYSQL_DATABASE: cloneOfLaw # 초기 생성 데이터베이스
+      MYSQL_USER: law_user
+      MYSQL_PASSWORD: law_password
+      TZ: Asia/Seoul
+    command: # 명령어 실행
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+    volumes:
+      - ./db:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+    container_name: law_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis:/data
+      - ./redis/conf/redis.conf:/usr/local/conf/redis.conf
+    command: redis-server /usr/local/conf/redis.conf
+
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: law_prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./prometheus/data:/data
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: law_grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/data:/data
+    depends_on:
+      - prometheus
