@@ -87,8 +87,8 @@ jobs:
              -e "ELASTIC_CACHE_PASSWORD=${{ secrets.ELASTIC_CACHE_PASSWORD }}" \
              -e "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" \
              -e "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" \
-             -e GOOGLE_CLIENT_ID ${{ secrets.GOOGLE_CLIENT_ID }}" \
-             -e GOOGLE_CLIENT_SECRET ${{ secrets.GOOGLE_CLIENT_SECRET }}" \
+             -e "GOOGLE_CLIENT_ID ${{ secrets.GOOGLE_CLIENT_ID }}" \
+             -e "GOOGLE_CLIENT_SECRET ${{ secrets.GOOGLE_CLIENT_SECRET }}" \
             ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker rmi -f $(docker images -f "dangling=true" -q) || true
           
