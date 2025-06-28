@@ -50,7 +50,10 @@ public class CustomOAuth2AuthorizedClientService implements OAuth2AuthorizedClie
 
     @Override
     public void saveAuthorizedClient(OAuth2AuthorizedClient authorizedClient, Authentication principal) {
-
+        System.out.println(authorizedClient.getAccessToken());
+        System.out.println(authorizedClient.getClientRegistration());
+        System.out.println(authorizedClient.getRefreshToken());
+        System.out.println(authorizedClient.getPrincipalName());
         SocialToken clientEntity = SocialToken.from(authorizedClient, principal);
 
         clientTokenRepository.save(clientEntity); // 데이터베이스에 저장
