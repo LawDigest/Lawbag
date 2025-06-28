@@ -75,7 +75,6 @@ jobs:
              -e "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
              -e "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" \
              -e "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" \
-             -e "KAKAO_USER_NAME_ATTRIBUTE=${{ secrets.KAKAO_USER_NAME_ATTRIBUTE }}" \
              -e "ACCESS_TOKEN_EXPIRY=${{ secrets.ACCESS_TOKEN_EXPIRY }}" \
              -e "REFRESH_TOKEN_EXPIRY=${{ secrets.REFRESH_TOKEN_EXPIRY }}" \
              -e "TOKEN_SECRET=${{ secrets.TOKEN_SECRET }}" \
@@ -86,6 +85,8 @@ jobs:
              -e "APP_ADMIN_KEY=${{ secrets.APP_ADMIN_KEY }}" \
              -e "ELASTIC_CACHE_HOST=${{ secrets.ELASTIC_CACHE_HOST }}" \
              -e "ELASTIC_CACHE_PASSWORD=${{ secrets.ELASTIC_CACHE_PASSWORD }}" \
+             -e "NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}" \
+             -e "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" \
             ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
             docker rmi -f $(docker images -f "dangling=true" -q) || true
           
