@@ -7,6 +7,7 @@ import com.everyones.lawmaking.global.error.AuthException;
 import com.everyones.lawmaking.global.error.ExternalException;
 import com.everyones.lawmaking.global.error.ErrorCode;
 import com.everyones.lawmaking.global.service.TokenService;
+import com.everyones.lawmaking.global.util.AuthenticationUtil;
 import com.everyones.lawmaking.service.AuthService;
 import com.everyones.lawmaking.service.OAuthService;
 import com.everyones.lawmaking.service.UserService;
@@ -42,19 +43,20 @@ public class UserFacade {
     }
 
     public WithdrawResponse withdraw(HttpServletRequest httpRequest, HttpServletResponse httpResponse) {
-        var userId = com.everyones.lawmaking.global.util.AuthenticationUtil.getUserId()
+        var userId = AuthenticationUtil.getUserId()
                 .orElseThrow(UserException.UserNotFoundException::new);
         var authInfo = authService.getAuthInfo(userId);
         var socialId = authInfo.getSocialId();
-        var provider = authInfo.getProvider().name();
+        var provider = authInfo.getProvider();
+        System.out.println("hi");
         return transactionTemplate.execute(status -> {
             try {
                 tokenService.logout(httpRequest, httpResponse);
                 deleteUserAccount(userId, socialId);
-                var oauthRefreshAccessTokenResponse = oAuthService.refreshAccessToken(provider, socialId);
-                var accessToken = Objects.requireNonNull(oauthRefreshAccessTokenResponse.getBody()).getAccessToken();
-                status.flush();
-                oAuthService.unlink(socialId, accessToken);
+                var oauthTokenResponse = oAuthService.getOAuthTokenResponse(provider, socialId);
+                var accessToken = Objects.requireNonNull(oauthTokenResponse.getBody()).getAccessToken();
+                status.flush(); // 왜 여기서 flush하지?
+                oAuthService.unlink(provider, socialId);
                 return WithdrawResponse.of(authInfo);
             } catch (AuthException | UserException e) {
                 status.setRollbackOnly();
