@@ -1,6 +1,10 @@
 package com.everyones.lawmaking.global.handler;
 
-import com.everyones.lawmaking.global.config.AppProperties;
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.ACCESS_TOKEN;
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REDIRECT_URI_PARAM_COOKIE_NAME;
+import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.REFRESH_TOKEN;
+
+import com.everyones.lawmaking.global.config.OAuthConfig.AppProperties;
 import com.everyones.lawmaking.global.service.TokenService;
 import com.everyones.lawmaking.global.util.CookieUtil;
 import com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository;
@@ -8,19 +12,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Map;
-import java.util.Optional;
-
-import static com.everyones.lawmaking.repository.OAuth2AuthorizationRequestBasedOnCookieRepository.*;
 
 @Slf4j
 @Component
@@ -54,15 +55,15 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         var minutes = 1000 * 60;
 
-        var refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
-        var accessTokenExpiry = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
+        var refreshTokenExpiry = (int) appProperties.getRefreshTokenExpiry() * minutes;
+        var accessTokenExpiry = (int) appProperties.getAccessTokenExpiry() * minutes;
 
 
 
 
 
         Map<String, String> userToken = tokenService.issueToken(authentication);
-        var cookieDomain = appProperties.getAuth().getCookieDomain();
+        var cookieDomain = appProperties.getCookieDomain();
         CookieUtil.deleteCookie(request, response, REFRESH_TOKEN);
         CookieUtil.deleteCookieForClient(request,response,ACCESS_TOKEN,cookieDomain);
         CookieUtil.addCookie(response, REFRESH_TOKEN, userToken.get("refreshToken"), refreshTokenExpiry);
@@ -84,7 +85,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
     private boolean isAuthorizedRedirectUri(String uri) {
         var checkUri = URI.create(uri);
 
-        var clientUri = appProperties.getOauth2().getClientRedirectUri();
+        var clientUri = appProperties.getOauth2ClientRedirectUri();
 
 
         return clientUri.stream()

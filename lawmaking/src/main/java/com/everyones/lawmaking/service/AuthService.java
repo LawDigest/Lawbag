@@ -1,7 +1,7 @@
 package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.domain.entity.AuthInfo;
-import com.everyones.lawmaking.global.config.AppProperties;
+import com.everyones.lawmaking.global.config.OAuthConfig.AppProperties;
 import com.everyones.lawmaking.global.error.AuthException;
 import com.everyones.lawmaking.global.service.TokenService;
 import com.everyones.lawmaking.global.util.CookieUtil;
@@ -59,7 +59,7 @@ public class AuthService {
             tokenService.logout(httpServletRequest, httpServletResponse);
             return;
         }
-        var cookieDomain = appProperties.getAuth().getCookieDomain();
+        var cookieDomain = appProperties.getCookieDomain();
 
         // 쿠키 설정
         setCookies(httpServletRequest, httpServletResponse, tokenMap, appProperties, cookieDomain);
@@ -67,8 +67,8 @@ public class AuthService {
 
     private void setCookies(HttpServletRequest httpServletRequest,HttpServletResponse httpServletResponse, Map<String, String> tokenMap, AppProperties appProperties, String cookieDomain) {
         int minutes = 1000 * 60;
-        int refreshTokenExpiry = (int) appProperties.getAuth().getRefreshTokenExpiry() * minutes;
-        int accessTokenExpiry = (int) appProperties.getAuth().getAccessTokenExpiry() * minutes;
+        int refreshTokenExpiry = (int) appProperties.getRefreshTokenExpiry() * minutes;
+        int accessTokenExpiry = (int) appProperties.getAccessTokenExpiry() * minutes;
 
         CookieUtil.deleteCookieForClient(httpServletRequest, httpServletResponse, ACCESS_TOKEN, cookieDomain);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);

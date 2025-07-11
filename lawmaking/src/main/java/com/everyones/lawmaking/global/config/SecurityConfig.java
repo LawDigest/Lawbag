@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.global.config;
 
+import com.everyones.lawmaking.global.config.OAuthConfig.AppProperties;
 import com.everyones.lawmaking.global.filterException.CustomAuthenticationEntryPoint;
 import com.everyones.lawmaking.global.handler.*;
 import com.everyones.lawmaking.global.jwt.AuthTokenProvider;
