@@ -5,12 +5,6 @@ import org.springframework.http.HttpEntity;
 
 public interface OAuth2ClientProperties {
 
-    String getClientId();
-
-    String getClientSecret();
-
-    String getWithdrawUri();
-
     URI getOAuthTokenUri();
 
     URI getUnlinkUri();

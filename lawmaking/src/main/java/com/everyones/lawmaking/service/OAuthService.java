@@ -5,20 +5,13 @@ import com.everyones.lawmaking.domain.entity.Provider;
 import com.everyones.lawmaking.global.config.OAuthConfig.OAuthPropertiesFactory;
 import com.everyones.lawmaking.global.error.SocialTokenException;
 import com.everyones.lawmaking.repository.OAuth2ClientTokenRepository;
-import java.net.URI;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 @RequiredArgsConstructor
 @Service
@@ -43,19 +36,19 @@ public class OAuthService {
         var oAuthClientProperties = OAuthPropertiesFactory.getClientProperties(provider);
         var uri = oAuthClientProperties.getOAuthTokenUri();
         var requestEntity = oAuthClientProperties.getOAuthTokenRequestEntity();
-        var kakaoAccessTokenRefreshResponse = restTemplate.postForEntity(uri, requestEntity, OAuthTokenResponse.class);
-        return ResponseEntity.ok(kakaoAccessTokenRefreshResponse.getBody());
+        var oauthTokenResponse = restTemplate.postForEntity(uri, requestEntity, OAuthTokenResponse.class);
+        return ResponseEntity.ok(oauthTokenResponse.getBody());
 
     }
 
     //소셜 연결 끊기
     public void unlink(Provider provider, String socialId){
-        // MultiValueMap으로 요청 데이터 설정
+
         var oAuthClientProperties = OAuthPropertiesFactory.getClientProperties(provider);
         var uri = oAuthClientProperties.getUnlinkUri();
 
         var requestEntity = oAuthClientProperties.getUnlinkRequestEntity(socialId);
-        restTemplate.postForEntity(uri, requestEntity, String.class).getBody();
+        restTemplate.postForEntity(uri, requestEntity, String.class);
 
     }
 
