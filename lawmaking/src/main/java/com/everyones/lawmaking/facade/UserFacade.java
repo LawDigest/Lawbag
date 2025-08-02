@@ -48,13 +48,10 @@ public class UserFacade {
         var authInfo = authService.getAuthInfo(userId);
         var socialId = authInfo.getSocialId();
         var provider = authInfo.getProvider();
-        System.out.println("hi");
         return transactionTemplate.execute(status -> {
             try {
                 tokenService.logout(httpRequest, httpResponse);
                 deleteUserAccount(userId, socialId);
-                var oauthTokenResponse = oAuthService.getOAuthTokenResponse(provider, socialId);
-                var accessToken = Objects.requireNonNull(oauthTokenResponse.getBody()).getAccessToken();
                 status.flush(); // 왜 여기서 flush하지?
                 oAuthService.unlink(provider, socialId);
                 return WithdrawResponse.of(authInfo);

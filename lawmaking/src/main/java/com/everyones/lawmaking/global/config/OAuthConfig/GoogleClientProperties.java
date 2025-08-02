@@ -27,12 +27,12 @@ public class GoogleClientProperties implements OAuth2ClientProperties{
     }
 
     @Override
-    public HttpEntity getOAuthTokenRequestEntity() {
+    public HttpEntity getOAuthTokenRequestEntity(String refreshToken) {
         return null;
     }
 
     @Override
-    public HttpEntity getUnlinkRequestEntity(Object targetId) {
+    public HttpEntity getUnlinkRequestEntity(String socialId) {
         return null;
     }
 }

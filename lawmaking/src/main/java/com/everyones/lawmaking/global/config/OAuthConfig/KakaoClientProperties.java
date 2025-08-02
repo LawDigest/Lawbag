@@ -1,14 +1,14 @@
 package com.everyones.lawmaking.global.config.OAuthConfig;
 
 import java.net.URI;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Getter
@@ -44,12 +44,13 @@ public class KakaoClientProperties implements OAuth2ClientProperties{
     }
 
     @Override
-    public HttpEntity<Map<String, String>> getOAuthTokenRequestEntity() {
+    public HttpEntity<MultiValueMap<String, String>> getOAuthTokenRequestEntity(String refreshToken) {
         // 필요한 form 데이터 주입
-        Map<String, String> requestData = new ConcurrentHashMap<>();
-        requestData.put("grant_type", "refresh_token");
-        requestData.put("client_id", clientId);
-        requestData.put("client_secret", clientSecret);
+        MultiValueMap<String, String> requestData = new LinkedMultiValueMap<>();
+        requestData.add("grant_type", "refresh_token");
+        requestData.add("client_id", clientId);
+        requestData.add("refresh_token", refreshToken);
+        requestData.add("client_secret", clientSecret);
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
@@ -60,14 +61,15 @@ public class KakaoClientProperties implements OAuth2ClientProperties{
     }
 
     @Override
-    public HttpEntity<Map<String, String>> getUnlinkRequestEntity(Object target_id) {
-        Map<String, String> requestData = new ConcurrentHashMap<>();
-        requestData.put("target_id_type", "user_id");
-        requestData.put("target_id", (String) target_id);
+    public HttpEntity<MultiValueMap<String, String>> getUnlinkRequestEntity(String targetId) {
+        MultiValueMap<String, String> requestData = new LinkedMultiValueMap<>();
+        requestData.add("target_id_type", "user_id");
+        requestData.add("target_id", targetId);
 
         // 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        headers.set("Authorization", "KakaoAK " + appAdminKey);
         return new HttpEntity<>(requestData, headers);
     }
 

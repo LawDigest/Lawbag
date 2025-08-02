@@ -9,8 +9,8 @@ public interface OAuth2ClientProperties {
 
     URI getUnlinkUri();
 
-    HttpEntity getOAuthTokenRequestEntity();
+    HttpEntity getOAuthTokenRequestEntity(String refreshToken);
 
-    HttpEntity getUnlinkRequestEntity(Object targetId);
+    HttpEntity getUnlinkRequestEntity(String socialId);
 
 }
