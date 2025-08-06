@@ -19,7 +19,7 @@ public class CorsConfig implements WebMvcConfigurer {
         var corsConfig = new CorsConfiguration();
         corsConfig.setAllowedHeaders(List.of("*"));
         corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        corsConfig.setAllowedOrigins(List.of("http://localhost.lawdigest.net:3000","https://localhost.lawdigest.net:3000","https://api.lawdigest.net","http://localhost:3000", "https://localhost:3000","https://lawdigest.store","https://lawdigest.net","https://www.lawdigest.net", "https://lawDigest.net:3000","https://law-digest-fe.vercel.app/","https://law-digest-fe.vercel.app*"));
+        corsConfig.setAllowedOrigins(List.of("https://localhost.lawdigest.net:7070","http://localhost.lawdigest.net:7070","http://localhost.lawdigest.net:3000","https://localhost.lawdigest.net:3000","https://api.lawdigest.net","http://localhost:3000", "https://localhost:3000","https://lawdigest.store","https://lawdigest.net","https://www.lawdigest.net", "https://lawDigest.net:3000","https://law-digest-fe.vercel.app/","https://law-digest-fe.vercel.app*"));
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(3600L);
 
