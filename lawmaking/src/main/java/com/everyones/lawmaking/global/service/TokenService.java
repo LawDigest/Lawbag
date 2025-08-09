@@ -2,7 +2,7 @@ package com.everyones.lawmaking.global.service;
 
 import com.everyones.lawmaking.domain.entity.Token;
 import com.everyones.lawmaking.global.auth.PrincipalDetails;
-import com.everyones.lawmaking.global.config.AppProperties;
+import com.everyones.lawmaking.global.config.OAuthConfig.AppProperties;
 import com.everyones.lawmaking.global.error.AuthException;
 import com.everyones.lawmaking.global.error.UserException;
 import com.everyones.lawmaking.global.jwt.AuthToken;
@@ -62,13 +62,13 @@ public class TokenService {
         AuthToken accessToken = tokenProvider.createAuthToken(
                 userLocalId,
                 userRole.getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getAccessTokenExpiry() * minutes)
+                new Date(now.getTime() + appProperties.getAccessTokenExpiry() * minutes)
         );
 
         // refresh 토큰 설정
 
         AuthToken refreshToken = tokenProvider.createAuthToken(
-                new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpiry() * minutes)
+                new Date(now.getTime() + appProperties.getRefreshTokenExpiry() * minutes)
         );
 
         var accessTokenForUse = accessToken.getToken();
@@ -118,13 +118,13 @@ public class TokenService {
         AuthToken newAccessToken = tokenProvider.createAuthToken(
                 savedToken.getUser().getId(),
                 role.getCode(),
-                new Date(now.getTime() + appProperties.getAuth().getAccessTokenExpiry() * minutes)
+                new Date(now.getTime() + appProperties.getAccessTokenExpiry() * minutes)
         );
 
         // refresh 토큰 설정
 
         AuthToken newRefreshToken = tokenProvider.createAuthToken(
-                new Date(now.getTime() + appProperties.getAuth().getRefreshTokenExpiry() * minutes)
+                new Date(now.getTime() + appProperties.getRefreshTokenExpiry() * minutes)
         );
 
         var newAccessTokenForUse = newAccessToken.getToken();
@@ -167,7 +167,7 @@ public class TokenService {
         if (session != null) {
             session.invalidate();
         }
-        var cookieDomain = appProperties.getAuth().getCookieDomain();
+        var cookieDomain = appProperties.getCookieDomain();
         CookieUtil.deleteCookieForClient(httpServletRequest, httpServletResponse, ACCESS_TOKEN, cookieDomain);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
