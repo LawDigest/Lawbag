@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.global.config.OAuthConfig;
 
+import com.everyones.lawmaking.domain.entity.Provider;
 import java.net.URI;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,10 +19,11 @@ public class KakaoClientProperties implements OAuth2ClientProperties{
     private String clientId;
     @Value("${app.auth.kakao-app-client-secret}")
     private String clientSecret;
-    @Value("${app.auth.kakao-withdraw-uri}")
-    private String withdrawUri;
-    @Value("${app.auth.kakao-app-admin-key}")
-    private String appAdminKey;
+
+    @Override
+    public Provider getProvider() {
+        return Provider.KAKAO;
+    }
 
     @Override
     public URI getOAuthTokenUri() {
@@ -41,36 +43,6 @@ public class KakaoClientProperties implements OAuth2ClientProperties{
                 .encode()
                 .build()
                 .toUri();
-    }
-
-    @Override
-    public HttpEntity<MultiValueMap<String, String>> getOAuthTokenRequestEntity(String refreshToken) {
-        // 필요한 form 데이터 주입
-        MultiValueMap<String, String> requestData = new LinkedMultiValueMap<>();
-        requestData.add("grant_type", "refresh_token");
-        requestData.add("client_id", clientId);
-        requestData.add("refresh_token", refreshToken);
-        requestData.add("client_secret", clientSecret);
-
-        // 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-        // HttpEntity 생성
-        return new HttpEntity<>(requestData, headers);
-    }
-
-    @Override
-    public HttpEntity<MultiValueMap<String, String>> getUnlinkRequestEntity(String targetId) {
-        MultiValueMap<String, String> requestData = new LinkedMultiValueMap<>();
-        requestData.add("target_id_type", "user_id");
-        requestData.add("target_id", targetId);
-
-        // 헤더 설정
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        headers.set("Authorization", "KakaoAK " + appAdminKey);
-        return new HttpEntity<>(requestData, headers);
     }
 
 }

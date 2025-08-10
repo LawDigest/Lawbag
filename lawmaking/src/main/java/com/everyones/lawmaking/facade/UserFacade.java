@@ -2,6 +2,7 @@ package com.everyones.lawmaking.facade;
 
 import com.everyones.lawmaking.common.dto.response.UserMyPageInfoResponse;
 import com.everyones.lawmaking.common.dto.response.WithdrawResponse;
+import com.everyones.lawmaking.global.config.OAuthConfig.OAuthServiceFactory;
 import com.everyones.lawmaking.global.error.UserException;
 import com.everyones.lawmaking.global.error.AuthException;
 import com.everyones.lawmaking.global.error.ExternalException;
@@ -32,7 +33,7 @@ public class UserFacade {
     private final UserService userService;
     private final AuthService authService;
     private final TokenService tokenService;
-    private final OAuthService oAuthService;
+    private final OAuthServiceFactory oAuthServiceFactory;
     private final LikeService likeService;
     private final NotificationService notificationService;
     private final SearchKeywordService searchKeywordService;
@@ -48,12 +49,15 @@ public class UserFacade {
         var authInfo = authService.getAuthInfo(userId);
         var socialId = authInfo.getSocialId();
         var provider = authInfo.getProvider();
+        var oAuthService = oAuthServiceFactory.getOAuthService(provider);
         return transactionTemplate.execute(status -> {
             try {
                 tokenService.logout(httpRequest, httpResponse);
                 deleteUserAccount(userId, socialId);
                 status.flush(); // 왜 여기서 flush하지?
-                oAuthService.unlink(provider, socialId);
+                var oAuthResponse = oAuthService.getOAuthTokenResponse(provider, socialId);
+                var accessToken = Objects.requireNonNull(oAuthResponse.getBody()).getAccessToken();
+                oAuthService.unlink(provider, accessToken);
                 return WithdrawResponse.of(authInfo);
             } catch (AuthException | UserException e) {
                 status.setRollbackOnly();

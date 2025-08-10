@@ -17,13 +17,11 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
-public class OAuthService {
-    private final OAuthPropertiesFactory oAuthPropertiesFactory;
+public abstract class OAuthService {
     private final OAuth2ClientTokenRepository oAuth2ClientTokenRepository;
     private static final String PRINCIPAL_NAME_STRING = "socialTokenPrincipalName";
 
-    private final RestTemplate restTemplate;
-
+    public abstract Provider getProvider();
 
     protected String getRecentSavedRefreshToken(Provider provider, String socialId) {
             return oAuth2ClientTokenRepository.findTop1ByClientRegistrationIdAndPrincipalNameOrderByCreatedDateDesc(provider.name(), socialId)
@@ -32,23 +30,9 @@ public class OAuthService {
     }
     //소셜 엑세스토큰 재발급 로직
     // 데이터베이스에 저장된 소셜 리프레시토큰을 활용해 엑세스토큰 발급
-    public ResponseEntity<OAuthTokenResponse> getOAuthTokenResponse(Provider provider, String socialId){
-        var recentSavedRefreshToken = getRecentSavedRefreshToken(provider, socialId);
-        var oAuthClientProperties = oAuthPropertiesFactory.getClientProperties(provider);
-        var uri = oAuthClientProperties.getOAuthTokenUri();
-        var requestEntity = oAuthClientProperties.getOAuthTokenRequestEntity(recentSavedRefreshToken);
-        var oauthTokenResponse = restTemplate.postForEntity(uri, requestEntity, OAuthTokenResponse.class);
-        return ResponseEntity.ok(oauthTokenResponse.getBody());
-
-    }
+    public abstract ResponseEntity<OAuthTokenResponse> getOAuthTokenResponse(Provider provider, String socialId);
 
     //소셜 연결 끊기
-    public void unlink(Provider provider, String socialId){
-        var oAuthClientProperties = oAuthPropertiesFactory.getClientProperties(provider);
-        var uri = oAuthClientProperties.getUnlinkUri();
-        var requestEntity = oAuthClientProperties.getUnlinkRequestEntity(socialId);
-        restTemplate.postForEntity(uri, requestEntity, String.class);
-
-    }
+    public abstract void unlink(Provider provider, String accessToken);
 
 }
