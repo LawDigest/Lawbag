@@ -34,6 +34,8 @@ public enum ErrorCode {
     NOTIFICATION_NOT_FOUND(404, "해당 알림을 찾을 수 없습니다."),
 
     SOCIAL_TOKEN_NOT_FOUND(404, "해당 소셜 토큰을 찾을 수 없습니다."),
+    COMMITTEE_CONGRESSMAN_NOT_FOUND(404, "해당 위원회 의원을 찾을 수 없습니다."),
+
     EXTERNAL_API_ERROR(502, "외부 API 호출 중 오류가 발생하였습니다."),
     WITHDRAWAL_FAILURE(409, "해당 유저의 탈퇴가 실패하였습니다."),
     USER_DELETE_FAILURE(500, "해당 유저의 삭제가 실패하였습니다."),

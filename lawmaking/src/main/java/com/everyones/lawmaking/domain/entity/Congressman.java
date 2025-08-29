@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -39,6 +40,9 @@ public class Congressman extends BaseEntity{
 
     @OneToMany(mappedBy = "congressman")
     private List<CongressmanLike> congressmanLike;
+
+    @OneToMany(mappedBy = "congressman", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommitteeCongressman> committeeLinks = new ArrayList<>();
 
     @Column(name = "elect_sort")
     private String electSort;
