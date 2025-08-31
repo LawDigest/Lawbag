@@ -54,7 +54,6 @@ public class UserFacade {
             try {
                 tokenService.logout(httpRequest, httpResponse);
                 deleteUserAccount(userId, socialId);
-                status.flush(); // 왜 여기서 flush하지?
                 var oAuthResponse = oAuthService.getOAuthTokenResponse(provider, socialId);
                 var accessToken = Objects.requireNonNull(oAuthResponse.getBody()).getAccessToken();
                 oAuthService.unlink(provider, accessToken);

@@ -2,7 +2,6 @@ package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.response.OAuthTokenResponse;
 import com.everyones.lawmaking.domain.entity.Provider;
-import com.everyones.lawmaking.global.config.OAuthConfig.OAuthPropertiesFactory;
 import com.everyones.lawmaking.global.error.SocialTokenException;
 import com.everyones.lawmaking.repository.OAuth2ClientTokenRepository;
 import java.util.Map;
@@ -11,7 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 
 @RequiredArgsConstructor
 @Service
