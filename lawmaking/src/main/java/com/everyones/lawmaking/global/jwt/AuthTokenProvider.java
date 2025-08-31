@@ -2,7 +2,7 @@ package com.everyones.lawmaking.global.jwt;
 
 
 import com.everyones.lawmaking.domain.entity.Role;
-import com.everyones.lawmaking.global.config.AppProperties;
+import com.everyones.lawmaking.global.config.OAuthConfig.AppProperties;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class AuthTokenProvider {
     @Autowired
     public AuthTokenProvider(AppProperties appProperties) {
         this.appProperties = appProperties;
-        this.key = Keys.hmacShaKeyFor(this.appProperties.getAuth().getTokenSecret().getBytes());
+        this.key = Keys.hmacShaKeyFor(this.appProperties.getTokenSecret().getBytes());
     }
 
     public AuthToken createAuthToken(Date expiry) {

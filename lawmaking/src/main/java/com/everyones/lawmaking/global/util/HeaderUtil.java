@@ -12,7 +12,6 @@ public class HeaderUtil {
 
     public static String getAccessToken(HttpServletRequest request) {
         String headerValue = request.getHeader(HEADER_AUTHORIZATION);
-
         if (headerValue == null) {
             return null;
         }

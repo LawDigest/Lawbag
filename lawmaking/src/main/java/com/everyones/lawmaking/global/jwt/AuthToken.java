@@ -62,7 +62,7 @@ public class AuthToken {
     }
 
     // ToDo(Exception 처리해야함)
-    public Claims getTokenClaims()  {
+    public Claims getTokenClaims() {
             return Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()

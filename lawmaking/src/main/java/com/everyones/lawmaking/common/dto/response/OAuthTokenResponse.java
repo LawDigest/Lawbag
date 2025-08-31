@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class KakaoAccessTokenRefreshResponse {
+public class OAuthTokenResponse {
     private String accessToken;
     private String tokenType;
     private Integer expiresIn;

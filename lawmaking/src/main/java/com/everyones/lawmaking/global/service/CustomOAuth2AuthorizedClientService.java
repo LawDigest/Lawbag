@@ -27,33 +27,33 @@ public class CustomOAuth2AuthorizedClientService implements OAuth2AuthorizedClie
     @SuppressWarnings("unchecked")
     public <T extends OAuth2AuthorizedClient> T loadAuthorizedClient(String clientRegistrationId, String principalName) {
         Optional<SocialToken> clientEntity = clientTokenRepository.findTop1ByClientRegistrationIdAndPrincipalNameOrderByCreatedDateDesc(clientRegistrationId, principalName);
+        try {
+            if (clientEntity.isPresent()) {
+                SocialToken socialToken = clientEntity.get();
+                ClientRegistration registration = clientRegistrationRepository.findByRegistrationId(clientRegistrationId);
+                OAuth2AccessToken accessToken = new OAuth2AccessToken(
+                        OAuth2AccessToken.TokenType.BEARER,
+                        socialToken.getAccessToken(),
+                        socialToken.getAccessTokenIssuedAt(),
+                        socialToken.getAccessTokenExpiresAt()
+                );
+                OAuth2RefreshToken refreshToken = new OAuth2RefreshToken(
+                        socialToken.getRefreshToken(),
+                        socialToken.getRefreshTokenIssuedAt()
+                );
 
-        if (clientEntity.isPresent()) {
-            SocialToken socialToken = clientEntity.get();
-            ClientRegistration registration = clientRegistrationRepository.findByRegistrationId(clientRegistrationId);
-            OAuth2AccessToken accessToken = new OAuth2AccessToken(
-                    OAuth2AccessToken.TokenType.BEARER,
-                    socialToken.getAccessToken(),
-                    socialToken.getAccessTokenIssuedAt(),
-                    socialToken.getAccessTokenExpiresAt()
-            );
-            OAuth2RefreshToken refreshToken = new OAuth2RefreshToken(
-                    socialToken.getRefreshToken(),
-                    socialToken.getRefreshTokenIssuedAt()
-            );
-
-            return (T) new OAuth2AuthorizedClient(registration, principalName, accessToken, refreshToken);
+                return (T) new OAuth2AuthorizedClient(registration, principalName, accessToken, refreshToken);
+            }
+        } catch (RuntimeException e) {
+            throw new RuntimeException( e.getMessage(), e.getCause());
         }
+
 
         return null;
     }
 
     @Override
     public void saveAuthorizedClient(OAuth2AuthorizedClient authorizedClient, Authentication principal) {
-        System.out.println(authorizedClient.getAccessToken());
-        System.out.println(authorizedClient.getClientRegistration());
-        System.out.println(authorizedClient.getRefreshToken());
-        System.out.println(authorizedClient.getPrincipalName());
         SocialToken clientEntity = SocialToken.from(authorizedClient, principal);
 
         clientTokenRepository.save(clientEntity); // 데이터베이스에 저장
