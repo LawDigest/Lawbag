@@ -55,7 +55,7 @@ public interface BillRepository extends JpaRepository<Bill, String>, BillReposit
             "WHERE exists (select rp FROM b.representativeProposer rp where rp.congressman.party.id = :partyId) " +
             "AND b.stage = :stage " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
-    Slice<Bill> findRepresentativeBillsByParty(Pageable pageable, @Param("partyId") long partyId, String stage);
+    Slice<Bill> findRepresentativeBillsByParty(Pageable pageable, @Param("partyId") long partyId,@Param("stage") String stage);
 
     // 정당 소속 의원들이 공동 발의한 법안
     // TODO: 쿼리 개선 필요
@@ -70,7 +70,7 @@ public interface BillRepository extends JpaRepository<Bill, String>, BillReposit
             "WHERE exists (select bp FROM b.publicProposer bp where bp.congressman.party.id = :partyId) " +
             "AND b.stage = :stage " +
             "ORDER BY b.proposeDate DESC, b.id DESC")
-    Slice<Bill> findPublicBillsByParty(Pageable pageable, @Param("partyId") long partyId, String stage);
+    Slice<Bill> findPublicBillsByParty(Pageable pageable, @Param("partyId") long partyId,@Param("stage") String stage);
 
     // 유저가 스크랩한 법안 페이징해서 가져오는 쿼리
     @Query("SELECT b FROM Bill b " +
