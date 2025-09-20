@@ -55,6 +55,7 @@ public class BillController {
             @RequestParam(name = "page")
             int page,
             @Parameter(example = "3", description = "한번에 가져올 데이터 크기를 의미합니다.")
+            @RequestParam(name = "size")
             int size,
             @Parameter(example = "공포", description = "법안의 단계 현황을 나타냅니다.")
             @Schema(type = "string", allowableValues = {"접수", "위원회심사",
