@@ -7,7 +7,6 @@ import com.everyones.lawmaking.common.dto.proposer.RepresentativeProposerDto;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.domain.entity.BillProposer;
 import com.everyones.lawmaking.domain.entity.RepresentativeProposer;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
@@ -31,11 +30,9 @@ public class BillDto {
     private BillInfoDto billInfoDto;
 
     @NotNull
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<RepresentativeProposerDto> representativeProposerDtoList;
 
     @NotNull
-    @JsonSetter(nulls = Nulls.AS_EMPTY)
     private List<PublicProposerDto> publicProposerDtoList;
 
     @NotNull
