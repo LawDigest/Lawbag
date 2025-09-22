@@ -20,6 +20,7 @@ import com.everyones.lawmaking.global.util.PaginationUtil;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -137,8 +138,8 @@ public class BillRepositoryImpl implements BillRepositoryCustom {
         return pagedBills.stream()
                 .map(bill -> BillDto.of(
                         bill,
-                        representativeProposerMap.get(bill.getBillId()),
-                        publicProposerMap.get(bill.getBillId()),
+                        representativeProposerMap.getOrDefault(bill.getBillId(), Collections.emptyList()),
+                        publicProposerMap.getOrDefault(bill.getBillId(), Collections.emptyList()),
                         billLikeMap.getOrDefault(bill.getBillId(), false)
                 ))
                 .toList();
