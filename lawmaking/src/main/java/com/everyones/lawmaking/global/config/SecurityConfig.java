@@ -121,7 +121,7 @@ public class SecurityConfig implements WebMvcConfigurer { // WebMvcConfigurer Ïù
      * */
     @Bean
     public OAuth2AuthorizationRequestBasedOnCookieRepository oAuth2AuthorizationRequestBasedOnCookieRepository() {
-        return new OAuth2AuthorizationRequestBasedOnCookieRepository();
+        return new OAuth2AuthorizationRequestBasedOnCookieRepository(appProperties);
     }
 
     /*
