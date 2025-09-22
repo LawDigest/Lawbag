@@ -7,6 +7,7 @@ import com.everyones.lawmaking.common.dto.proposer.RepresentativeProposerDto;
 import com.everyones.lawmaking.domain.entity.Bill;
 import com.everyones.lawmaking.domain.entity.BillProposer;
 import com.everyones.lawmaking.domain.entity.RepresentativeProposer;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import jakarta.validation.constraints.NotNull;
