@@ -2,6 +2,7 @@ package com.everyones.lawmaking.service;
 
 import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.domain.entity.*;
+import com.everyones.lawmaking.global.error.CommitteeCongressmanException;
 import com.everyones.lawmaking.global.error.CongressmanException;
 import com.everyones.lawmaking.global.error.PartyException;
 import com.everyones.lawmaking.repository.*;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,6 +20,7 @@ import java.util.*;
 // 데이터 변경에 관한 서비스이므로 readOnly 제거
 public class DataService {
     private final BillRepository billRepository;
+    private final BillAlternativeRelationRepository billAlternativeRelationRepository;
     private final CongressmanRepository congressmanRepository;
     private final BillProposerRepository billProposerRepository;
     private final RepresentativeProposerRepository representativeProposerRepository;
@@ -27,6 +30,8 @@ public class DataService {
     private final VotePartyRepository votePartyRepository;
     private final CongressmanRepositoryCustom congressmanRepositoryCustom;
     private final PartyRepositoryCustom partyRepositoryCustom;
+    private final CommitteeRepository committeeRepository;
+    private final CommitteeCongressmanRepository committeeCongressmanRepository;
 
     @Transactional
     public void insertBillInfoDf(List<BillDfRequest> billDfRequestList) {
@@ -43,30 +48,35 @@ public class DataService {
                 }
                 else {
                     Bill newBill = Bill.of(billDfRequest);
-
-
+                    if(ProposerKindType.CHAIRMAN.getProposerKind().equals(billDfRequest.getProposerKind())){
+                        newBill.setProposerKind(ProposerKindType.CHAIRMAN);
+                    }
+                    //정부발의안
+                    else if (ProposerKindType.GOVERNMENT.getProposerKind().equals(billDfRequest.getProposerKind())){
+                        newBill.setProposerKind(ProposerKindType.GOVERNMENT);
+                    }
+                    else{
+                        newBill.setProposerKind(ProposerKindType.CONGRESSMAN);
+                        //이름으로 congressmanId를 찾아서 billProposer 저장하기
+                        //현재는 state가 true인 조건만 추가
+                        //트랜잭션에서 에러가 발생하면 모든 트랜잭션이 롤백해야함.
+                        billDfRequest.getPublicProposerIdList()
+                                .forEach(congressmanId -> {
+                                            var billProposer = congressmanRepository.findLawmakerById(congressmanId)
+                                                    .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", congressmanId)));
+                                            billProposerUpdate(newBill, billProposer);
+                                        }
+                                );
+                        //대표발의자 이름 검색해서 RP 찾기
+                        billDfRequest.getRstProposerIdList().
+                                forEach((rpID) -> {
+                                            var representativeProposer = congressmanRepository.findLawmakerById(rpID)
+                                                    .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", rpID)));
+                                            updateRepresentativeProposer(newBill, representativeProposer);
+                                        }
+                                );
+                    }
                     billRepository.save(newBill);
-
-
-                    //이름으로 congressmanId를 찾아서 billProposer 저장하기
-                    //@ToDo 동명이인 필터링을 위해 후에 의원검색에 한글이름, 한자이름, 정당이름 세가지 조건을 추가하기.
-                    //현재는 state가 true인 조건만 추가
-                    //트랜잭션에서 에러가 발생하면 모든 트랜잭션이 롤백해야함.
-                    billDfRequest.getPublicProposerIdList()
-                            .forEach(congressmanId -> {
-                                var billProposer = congressmanRepository.findLawmakerById(congressmanId)
-                                        .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", congressmanId)));
-                                billProposerUpdate(newBill, billProposer);
-                                    }
-                            );
-                    //대표발의자 이름 검색해서 RP 찾기
-                    billDfRequest.getRstProposerIdList().
-                            forEach((rpID) -> {
-                        var representativeProposer = congressmanRepository.findLawmakerById(rpID)
-                                .orElseThrow(() -> new CongressmanException.CongressmanNotFound(Map.of("congressman", rpID)));
-                                updateRepresentativeProposer(newBill, representativeProposer);
-                            }
-                    );
                 }
                 }
             );
@@ -101,6 +111,17 @@ public class DataService {
                     }
                     // 중복된 billTimeline이 없고 bill이 존재할 경우
                     else{
+                        if(ProposerKindType.CHAIRMAN.getProposerKind().equals(foundBill.getProposerKind().getProposerKind())){
+                            var committee = billStageDfRequest.getCommittee();
+                            var foundCommittee = committeeRepository.findByCommitteeName(committee)
+                                    .orElse(null);
+                            if(foundCommittee != null){
+                                foundBill.setBillCommittee(committee);
+                            }
+                            else{
+                                foundBill.setBillCommittee("");
+                            }
+                        }
                         foundBill.updateStatusByStep(billStageDfRequest);
                         // billTimeline 객체 만들기
                         var billTimeline = BillTimeline.of(foundBill, billStageDfRequest);
@@ -347,6 +368,125 @@ public class DataService {
             congressman.updateBillProposeDate(billProposerUpdateDate);
             });
         }
+
+
+
+    @Transactional
+    public void insertAlternativeBill(List<AlternateBillDfRequest> alternateBillDfRequestList) {
+
+        alternateBillDfRequestList.forEach(billAlternativeRelationDfRequest -> {
+            var billId = billAlternativeRelationDfRequest.getBillId();
+            var includedBillId = billAlternativeRelationDfRequest.getIncludedBillId();
+            var foundBill = billRepository.findBillById(billId)
+                    .orElse(null);
+            var foundIncludedBill = billRepository.findBillById(includedBillId)
+                    .orElse(null);
+            if (foundBill == null || foundIncludedBill == null) {
+                // 없으면 이 람다 바디만 종료하고 다음 요소로 넘어감
+                return;
+            }
+
+            // 2) 이미 동일 조합이 존재하는지 체크
+            boolean alreadyExists = billAlternativeRelationRepository
+                    .existsByBill_IdAndIncludedBill_Id(billId, includedBillId);
+            if (alreadyExists) {
+                // 중복이면 람다 바디 종료 → 다음 요소로 넘어감
+                return;
+            }
+
+            // 3) 신규 생성 후 저장
+            BillAlternativeRelation relation =
+                    BillAlternativeRelation.create(foundBill, foundIncludedBill);
+            billAlternativeRelationRepository.save(relation);
+        });
+
+    }
+
+
+
+    @Transactional
+    public void updateCommittee(List<CommitteeDfRequest> committeeDfRequests) {
+        committeeDfRequests.forEach(committeeBillDfRequest -> {
+            // charmanId를 의원리스트에서 실제 존재하는지 확인하고
+            // 실제 존재해야 해당 위원회를 업데이트하고 아니면 해당 요청 continue
+            var chairmanId = committeeBillDfRequest.getChairmanId();
+
+            if (!congressmanRepository.existsById(chairmanId)) {
+                log.warn("의원 ID {}가 존재하지 않습니다. 해당 위원회 업데이트를 건너뜁니다.", chairmanId);
+                return; // 존재하지 않는 의원 ID는 건너뜁니다.
+            }
+
+
+            //committee이름으로 committee을 찾고
+            var committeeName = committeeBillDfRequest.getCommitteeName();
+            var committee = committeeRepository.findByCommitteeName(committeeName)
+                    .orElse(null);
+            //없다면 committee생성해서
+            if (committee == null) {
+                committee = Committee.create(committeeBillDfRequest);
+            }
+            else{
+                //있다면 committee정보 업데이트
+                committee.update(committeeBillDfRequest);
+            }
+            updateCommitteeCongressman(committeeBillDfRequest.getCongressmanIdList(), chairmanId, committee);
+
+            //committee 저장
+            committeeRepository.save(committee);
+        });
+    }
+    @Transactional
+    public void updateCommitteeCongressman(List<String> congressmanIdList,String chairmanId,Committee committee) {
+        long committeeId = committee.getId();
+        Set<String>  incomingIds = Set.copyOf(congressmanIdList);
+        Set<String> existingIds = Set.copyOf(committeeCongressmanRepository.findCongressmanIdsByCommitteeId(committeeId));
+        Set<String> toAdd = new HashSet<>(incomingIds);
+        Set<String> toDelete = new HashSet<>(existingIds);
+        Set<String> toUpdate     = new HashSet<>(existingIds);
+        Set<String> union = new HashSet<>(incomingIds);
+        union.addAll(existingIds);
+        Map<String,Congressman> congressmanMap = congressmanRepository.findAllById(union).stream()
+                .collect(Collectors.toMap(Congressman::getId, congressman -> congressman));
+        //삭제
+
+        toDelete.removeAll(incomingIds);
+        if (!toDelete.isEmpty()) {
+            committeeCongressmanRepository.deleteByCommitteeIdAndCongressmanIdIn(committeeId, toDelete);
+        }
+        //추가
+        toAdd.removeAll(existingIds);
+
+        Set<String> missing = new HashSet<>(toAdd);
+        missing.removeAll(congressmanMap.keySet());
+        if (!missing.isEmpty()) {
+            // 원하는 정책대로: 예외 처리하거나, 로그만 남기고 missing들은 건너뛰기
+            String joined = String.join(",", missing);
+            throw new CongressmanException.CongressmanNotFound(Map.of("congressman", joined));
+        }
+        var inserts = toAdd.stream()
+                .map(addNewId -> CommitteeCongressman.create(committee, congressmanMap.get(addNewId)))
+                .toList();
+        committeeCongressmanRepository.saveAll(inserts);
+
+        // 업데이트
+        toUpdate.retainAll(incomingIds);
+        toUpdate.forEach(id -> {
+            try {
+                Congressman congressman = congressmanMap.get(id);
+                CommitteeCongressman committeeCongressman = committeeCongressmanRepository.findByCommitteeIdAndCongressmanId(committeeId,id)
+                        .orElseThrow(() -> new CommitteeCongressmanException.CommitteeCongressmanNotFound(Map.of("congressman", id)));
+                //의장이랑 이름이 같으면 의장으로 업데이트하고
+                //그렇지 않으면 의원으로 업데이트하기
+                String position = congressman.getId().equals(chairmanId) ? "의장" : "위원";
+                committeeCongressman.updatePosition(position);
+            }
+            catch (CommitteeCongressmanException e) {
+                // 이 ID만 무시
+                log.warn("존재하지 않는 의원(ID={})별 위원회정보, 건너뜁니다.", id);
+            }
+        });
+
+    }
 }
 
 

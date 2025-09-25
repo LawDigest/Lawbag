@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -47,9 +48,8 @@ public class DataController {
     @PostMapping("/bill")
     public BaseResponse<String> insertBill(
             @Parameter(description = "발의법률안 삽입 데이터", required = true)
-            @RequestBody BillListDfRequest billListDfRequest) {
-        var billDfRequestList = billListDfRequest.getBillRequestList();
-        dataFacade.insertBillInfoDf(billDfRequestList);
+            @RequestBody List<BillDfRequest>  billListDfRequest) {
+        dataFacade.insertBillInfoDf(billListDfRequest);
         return BaseResponse.ok("발의법률안정보 삽입 데이터 요청 성공");
     }
 
@@ -69,9 +69,8 @@ public class DataController {
     @PostMapping("/bill/timeline")
     public BaseResponse<Map<String, List<String>>> updateBillStageDf(
             @Parameter(description = "날짜별 법안 처리상태 변동 수집 수정 데이터", required = true)
-            @RequestBody BillStageListDfRequest billStageListDfRequest) {
-        var billStageDfRequestList = billStageListDfRequest.getBillStageRequestList();
-        var result = dataFacade.updateBillStageDf(billStageDfRequestList);
+            @RequestBody List<BillStageDfRequest> billStageListDfRequest) {
+        var result = dataFacade.updateBillStageDf(billStageListDfRequest);
         return BaseResponse.ok(result);
     }
 
@@ -91,9 +90,8 @@ public class DataController {
     @PostMapping("/bill_result")
     public BaseResponse<String> updateBillResultDf(
             @Parameter(description = "당일 법안 본회의 처리 결과 수집 수정 데이터", required = true)
-            @RequestBody BillResultListDfRequest billResultListDfRequest) {
-        var billDfRequestList=billResultListDfRequest.getBillResultDfRequestList();
-        dataFacade.updateBillResultDf(billDfRequestList);
+            @RequestBody List<BillResultDfRequest> billResultListDfRequest) {
+        dataFacade.updateBillResultDf(billResultListDfRequest);
         return BaseResponse.ok("당일 법안 본회의 처리 결과 수집 수정 데이터 요청 성공");
     }
 
@@ -113,9 +111,8 @@ public class DataController {
     @PostMapping("/lawmaker")
     public BaseResponse<String> updateLawmakerDf(
             @Parameter(description = "국회의원 정보 수집 삽입 api", required = true)
-            @RequestBody LawmakerListDfRequest lawmakerListDfRequest) {
-        var lawmakerDfRequestList=lawmakerListDfRequest.getLawmakerDfRequestList();
-        dataFacade.updateLawmakerDf(lawmakerDfRequestList);
+            @RequestBody List<LawmakerDfRequest> lawmakerListDfRequest) {
+        dataFacade.updateLawmakerDf(lawmakerListDfRequest);
         return BaseResponse.ok("국회의원 정보 수집 삽입 데이터 요청 성공");
     }
 
@@ -135,9 +132,8 @@ public class DataController {
     @PostMapping("/vote")
     public BaseResponse<List<String>> insertAssemblyVote(
             @Parameter(description = "당일 본회의 투표수 삽입 API", required = true)
-            @RequestBody VoteListRequest voteListRequest) {
-        var voteDfRequestList=voteListRequest.getVoteDfRequestList();
-        var result = dataFacade.insertAssemblyVote(voteDfRequestList);
+            @RequestBody List<VoteDfRequest> voteListRequest) {
+        var result = dataFacade.insertAssemblyVote(voteListRequest);
         return BaseResponse.ok(result);
     }
 
@@ -157,9 +153,8 @@ public class DataController {
     @PostMapping("/vote/party")
     public BaseResponse<List<String>> insertVoteIndividual(
             @Parameter(description = "본회의 정당별 투표수 삽입 API", required = true)
-            @RequestBody VotePartyListRequest votePartyListRequest) {
-        var voteDfRequestList=votePartyListRequest.getVotePartyRequestList();
-        var result = dataFacade.insertVoteIndividual(voteDfRequestList);
+            @RequestBody List<VotePartyRequest> votePartyListRequest) {
+        var result = dataFacade.insertVoteIndividual(votePartyListRequest);
         return BaseResponse.ok(result);
     }
 
@@ -218,5 +213,49 @@ public class DataController {
     public BaseResponse<String> updateProposeDateByCongressman() {
         dataFacade.updateProposeDateByCongressman();
         return BaseResponse.ok("의원별 최신 발의날짜 업데이트 성공");
+    }
+
+    @Operation(summary = "폐기법안과 대안법안 관계 Insert API", description = "폐기법안과 대안법안 관계 Insert")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "삽입 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PostMapping("/bill/alternative")
+    public BaseResponse<String> insertAlternatives(
+            @Parameter(description = "폐기법안과 대안법안 관계 Insert API", required = true)
+            @RequestBody List<AlternateBillDfRequest> alternativeBillListDfRequest) {
+        dataFacade.insertAlternativeBill(alternativeBillListDfRequest);
+        return BaseResponse.ok("폐기법안과 대안법안 관계 Insert 성공");
+
+    }
+
+    @Operation(summary = "위원회 정보 Update API", description = "위원회 정보 Update")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "삽입 성공"),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 오류 (문제 지속시 BE팀 문의)",
+                    content = {@Content(
+                            mediaType = "application/json;charset=UTF-8",
+                            schema = @Schema(implementation = BaseResponse.class),
+                            examples = @ExampleObject(value = EXAMPLE_ERROR_500_CONTENT)
+                    )}
+            ),
+    })
+    @PostMapping("/committee")
+    public BaseResponse<String> updateCommittee(
+            @Parameter(description = "위원회 정보 Update API", required = true)
+            @Valid @RequestBody List<CommitteeDfRequest> committeeListDfRequest) {
+        dataFacade.updateCommittee(committeeListDfRequest);
+        return BaseResponse.ok("폐기된 법안에 따른 대안 법안 ID Insert 성공");
+
     }
 }

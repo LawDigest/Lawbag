@@ -1,14 +1,10 @@
 package com.everyones.lawmaking.facade;
 
-import com.everyones.lawmaking.common.dto.request.BillDfRequest;
-import com.everyones.lawmaking.common.dto.request.BillStageDfRequest;
-import com.everyones.lawmaking.common.dto.request.BillResultDfRequest;
-import com.everyones.lawmaking.common.dto.request.LawmakerDfRequest;
-import com.everyones.lawmaking.common.dto.request.VoteDfRequest;
-import com.everyones.lawmaking.common.dto.request.VotePartyRequest;
+import com.everyones.lawmaking.common.dto.request.*;
 import com.everyones.lawmaking.service.DataService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 
@@ -49,5 +45,15 @@ public class DataFacade {
     }
     public void updateProposeDateByCongressman(){
         dataService.updateProposeDateByCongressman();
+    }
+
+    public void insertAlternativeBill(List<AlternateBillDfRequest> alternativeBillDfRequestList){
+        dataService.insertAlternativeBill(alternativeBillDfRequestList);
+    }
+
+
+
+    public void updateCommittee(List<CommitteeDfRequest> committeeDfRequests) {
+        dataService.updateCommittee(committeeDfRequests);
     }
 } 
