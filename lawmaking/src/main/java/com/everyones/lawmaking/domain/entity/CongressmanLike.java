@@ -8,7 +8,8 @@ import lombok.*;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = @UniqueConstraint(name = "ix_congressman_like_unique", columnNames = {"user_id", "congressman_id"}))
+@Table(name = "CongressmanLike",
+        uniqueConstraints = @UniqueConstraint(name = "ix_congressman_like_unique", columnNames = {"user_id", "congressman_id"}))
 public class CongressmanLike extends BaseEntity {
 
     @Id
@@ -17,11 +18,11 @@ public class CongressmanLike extends BaseEntity {
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "congressman_id")
+    @JoinColumn(name = "congressman_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Congressman congressman;
 
 
