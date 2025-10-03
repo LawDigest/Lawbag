@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
+@Table(name = "Committee")
 public class Committee extends BaseEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -15,6 +15,7 @@ import java.util.List;
 @Entity
 @Data
 @Builder
+@Table(name = "Congressman")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -29,7 +30,7 @@ public class Congressman extends BaseEntity{
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_id")
+    @JoinColumn(name = "party_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Party party;
 
     @OneToMany(mappedBy = "congressman")

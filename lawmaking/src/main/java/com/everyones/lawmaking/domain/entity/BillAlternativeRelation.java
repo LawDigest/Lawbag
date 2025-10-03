@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-@Table(
+@Table(name = "BillAlternativeRelation",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_bill_included",
                 columnNames = { "bill_id", "included_bill_id" }
@@ -27,12 +27,12 @@ public class BillAlternativeRelation {
 
     //대안법안
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bill_id")
+    @JoinColumn(name = "bill_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Bill bill;
 
     //포함된 법안
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "included_bill_id")
+    @JoinColumn(name = "included_bill_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Bill includedBill;
 
     public static BillAlternativeRelation create(Bill committeeBill, Bill includedBill ){
@@ -41,6 +41,4 @@ public class BillAlternativeRelation {
                 .includedBill(includedBill)
                 .build();
     }
-
-
 }

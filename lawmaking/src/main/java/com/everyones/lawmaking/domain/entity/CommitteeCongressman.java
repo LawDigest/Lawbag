@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Getter
-@Table(
+@Table(name = "CommitteeCongressman",
         uniqueConstraints = @UniqueConstraint(
                 name = "UK_COMMITTEE_CONGRESSMAN",
                 columnNames = {"committee_id", "congressman_id"}
@@ -21,11 +21,11 @@ public class CommitteeCongressman extends BaseEntity {
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "committee_id", nullable = false)
+    @JoinColumn(name = "committee_id", nullable = false,foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Committee committee;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "congressman_id", nullable = false)
+    @JoinColumn(name = "congressman_id", nullable = false,foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Congressman congressman;
 
     @Column(name = "position")
