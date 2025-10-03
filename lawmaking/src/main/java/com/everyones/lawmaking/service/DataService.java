@@ -388,7 +388,7 @@ public class DataService {
 
             // 2) 이미 동일 조합이 존재하는지 체크
             boolean alreadyExists = billAlternativeRelationRepository
-                    .existsByBill_IdAndIncludedBill_Id(billId, includedBillId);
+                    .existsByBillIdAndIncludedBillId(billId, includedBillId);
             if (alreadyExists) {
                 // 중복이면 람다 바디 종료 → 다음 요소로 넘어감
                 return;
