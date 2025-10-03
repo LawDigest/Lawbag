@@ -27,12 +27,6 @@ public class BillDfRequest {
 
     private int assemblyNumber;
 
-    private String summary;
-
-    private String gptSummary;
-
-    private String briefSummary;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate proposeDate;
 
