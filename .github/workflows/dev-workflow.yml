@@ -49,7 +49,7 @@ jobs:
         working-directory: ./lawmaking
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker buildx build --push --platform linux/arm64 -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/lawmaking-back .
+          docker buildx build --push --platform linux/arm64 -f Dockerfile -t ${{ secrets.DOCKER_USERNAME }}/lawmaking-test-back .
 
 
 
@@ -63,7 +63,7 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             docker ps -q --filter "name=lawmaking-test-back" | grep -q . && docker stop lawmaking-test-back && docker rm lawmaking-test-back | true
-            docker pull ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
+            docker pull ${{ secrets.DOCKER_USERNAME }}/lawmaking-test-back
             docker run -d -p 808:808 --name=lawmaking-test-back \
             --network law_test_network \
              -v spring-log:/var/test/logs \
