@@ -69,7 +69,7 @@ jobs:
              -v spring-log:/var/test/logs \
              -v /usr/share/zoneinfo/Asia/Seoul:/etc/localtime:ro \
              -e "ACTIVE=${{ secrets.ACTIVE }}" \
-             -e "DB_HOSTNAME=${{ secrets.DB_HOSTNAME }}" \
+             -e "DB_HOSTNAME=${{ secrets.DB_HOSTNAME_TEST }}" \
              -e "DB_NAME=${{ secrets.DB_NAME }}" \
              -e "DB_USERNAME=${{ secrets.DB_USERNAME }}" \
              -e "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" \
