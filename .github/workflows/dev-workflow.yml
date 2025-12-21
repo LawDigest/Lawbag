@@ -89,7 +89,7 @@ jobs:
              -e "NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}" \
              -e "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" \
              -e "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" \
-            ${{ secrets.DOCKER_USERNAME }}/lawmaking-back
+            ${{ secrets.DOCKER_USERNAME }}/lawmaking-test-back
             docker rmi -f $(docker images -f "dangling=true" -q) || true
           
             
