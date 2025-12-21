@@ -1,5 +1,6 @@
 package com.everyones.lawmaking.global.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -9,6 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Configuration
 public class CorsConfig implements WebMvcConfigurer {
 
@@ -22,6 +24,10 @@ public class CorsConfig implements WebMvcConfigurer {
         corsConfig.setAllowedOrigins(List.of("https://localhost.lawdigest.net:7070","http://localhost.lawdigest.net:7070","http://localhost.lawdigest.net:3000","https://localhost.lawdigest.net:3000","https://api.lawdigest.net","http://localhost:3000", "https://localhost:3000","https://lawdigest.store","https://lawdigest.net","https://www.lawdigest.net", "https://lawDigest.net:3000","https://law-digest-fe.vercel.app","https://law-digest-fe-test.vercel.app"));
         corsConfig.setAllowCredentials(true);
         corsConfig.setMaxAge(3600L);
+
+        log.info("[CORS] allowedOrigins={}", corsConfig.getAllowedOrigins());
+        log.info("[CORS] allowedOriginPatterns={}", corsConfig.getAllowedOriginPatterns());
+        log.info("[CORS] allowCredentials={}", corsConfig.getAllowCredentials());
 
         corsConfigSource.registerCorsConfiguration("/**", corsConfig);
         return corsConfigSource;
