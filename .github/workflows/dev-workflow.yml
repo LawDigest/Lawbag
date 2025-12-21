@@ -62,7 +62,7 @@ jobs:
           username: ubuntu
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            docker ps -q --filter "name=lawmaking-test-back" | grep -q . && docker stop lawmaking-test-back && docker rm lawmaking-test-back | true
+            docker rm -f lawmaking-test-back 2>/dev/null || true
             docker pull ${{ secrets.DOCKER_USERNAME }}/lawmaking-test-back
             docker run -d -p 808:8080 --name=lawmaking-test-back \
             --network law_test_network \
