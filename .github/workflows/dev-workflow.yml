@@ -68,7 +68,7 @@ jobs:
             --network law_test_network \
              -v spring-log:/var/test/logs \
              -v /usr/share/zoneinfo/Asia/Seoul:/etc/localtime:ro \
-             -e "ACTIVE=${{ secrets.ACTIVE }}" \
+             -e "ACTIVE=test" \
              -e "DB_HOSTNAME=${{ secrets.DB_HOSTNAME_TEST }}" \
              -e "DB_NAME=${{ secrets.DB_NAME_TEST }}" \
              -e "DB_USERNAME=${{ secrets.DB_USERNAME_TEST }}" \
