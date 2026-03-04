@@ -14,17 +14,31 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Bean
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
-        var corsConfigSource = new UrlBasedCorsConfigurationSource();
 
-        var corsConfig = new CorsConfiguration();
-        corsConfig.setAllowedHeaders(List.of("*"));
-        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        corsConfig.setAllowedOrigins(List.of("https://localhost.lawdigest.net:7070","http://localhost.lawdigest.net:7070","http://localhost.lawdigest.net:3000","https://localhost.lawdigest.net:3000","https://api.lawdigest.net","http://localhost:3000", "https://localhost:3000","https://lawdigest.store","https://lawdigest.net","https://www.lawdigest.net", "https://lawDigest.net:3000","https://law-digest-fe.vercel.app","https://law-digest-fe-test.vercel.app"));
-        corsConfig.setAllowCredentials(true);
-        corsConfig.setMaxAge(3600L);
+        var source = new UrlBasedCorsConfigurationSource();
+        var config = new CorsConfiguration();
 
-        corsConfigSource.registerCorsConfiguration("/**", corsConfig);
-        return corsConfigSource;
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+
+        config.setAllowedOriginPatterns(List.of(
+                "http://localhost:*",
+                "https://localhost:*",
+                "http://localhost.lawdigest.net:*",
+                "https://localhost.lawdigest.net:*",
+                "https://lawdigest.net",
+                "https://www.lawdigest.net",
+                "https://lawdigest.store",
+                "https://api.lawdigest.net",
+                "https://law-digest-fe.vercel.app",
+                "https://law-digest-fe-test.vercel.app",
+                "https://test.lawdigest.cloud",
+                "https://*.lawdigest.cloud"
+        ));
+
+        source.registerCorsConfiguration("/**", config);
+        return source;
     }
-
 }
