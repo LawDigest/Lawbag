@@ -59,8 +59,19 @@ import java.util.List;
     private List<VoteParty> votePartyList;
 
 
+    @ManyToOne
+    @JoinColumn(name = "chairman_bill_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))  // 의원안이 속한 위원장안 (다대일 관계)
+    private Bill chairmanBill;
 
-    private String committee;
+    @OneToMany(mappedBy = "chairmanBill", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Bill> includedBills = new ArrayList<>();
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "committee_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Committee committee;
+
+    @Column(name = "bill_committee")
+    private String billCommittee;
 
     @Column(name = "propose_date")
     private LocalDate proposeDate;
@@ -109,9 +120,6 @@ import java.util.List;
                 .proposers(billDfRequest.getProposers())
                 .assemblyNumber(billDfRequest.getAssemblyNumber())
                 .stage(billDfRequest.getStage())
-                .gptSummary(billDfRequest.getGptSummary())
-                .summary(billDfRequest.getSummary())
-                .briefSummary(billDfRequest.getBriefSummary())
                 .proposerKind(ProposerKindType.from(billDfRequest.getProposerKind()))
                 .build();
     }
@@ -124,9 +132,6 @@ import java.util.List;
         this.setProposers(billDfRequest.getProposers());
         this.setAssemblyNumber(billDfRequest.getAssemblyNumber());
         this.setStage(billDfRequest.getStage());
-        this.setGptSummary(billDfRequest.getGptSummary());
-        this.setSummary(billDfRequest.getSummary());
-        this.setBriefSummary(billDfRequest.getBriefSummary());
         this.setProposerKind(ProposerKindType.from(billDfRequest.getProposerKind()));
 
     }
@@ -138,7 +143,7 @@ import java.util.List;
         // 단계의 order가 커야 수정 가능 (심의 단계가 다음 단계일 때만 수정이 가능.)
         if (BillStageType.canUpdateStage(currentStage, nextStage)) {
             this.setStage(billStageDfRequest.getStage());
-            this.setCommittee(billStageDfRequest.getCommittee());
+            this.setBillCommittee(billStageDfRequest.getCommittee());
         }
     }
 

@@ -3,19 +3,16 @@ package com.everyones.lawmaking.common.dto.request;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class BillResultDfRequest {
-    private int age;
-
+public class ChairmanBillUpdateDfRequest {
     private String billId;
-
-    private String billProposeResult;
-
-    private String includedBillId;
+    private String chairmanBillId;
 }

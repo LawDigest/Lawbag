@@ -10,8 +10,9 @@ import lombok.*;
 @Getter
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = @UniqueConstraint(name = "ix_bill_like_unique", columnNames = {"user_id", "bill_id"}),indexes = {
-        @Index(name = "idx_billlike_created_date_bill_id", columnList = "created_date DESC, bill_id DESC")
+@Table(name = "BillLike",
+        uniqueConstraints = @UniqueConstraint(name = "ix_bill_like_unique", columnNames = {"user_id", "bill_id"}),indexes = {
+        @Index(name = "idx_bill_like_created_date_bill_id", columnList = "created_date DESC, bill_id DESC")
 })
 public class BillLike extends BaseEntity {
 
@@ -21,11 +22,11 @@ public class BillLike extends BaseEntity {
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bill_id")
+    @JoinColumn(name = "bill_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Bill bill;
 
 }
