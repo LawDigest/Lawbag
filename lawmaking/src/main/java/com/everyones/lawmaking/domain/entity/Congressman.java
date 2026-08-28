@@ -8,12 +8,14 @@ import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
 @Entity
 @Data
 @Builder
+@Table(name = "Congressman")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -28,7 +30,7 @@ public class Congressman extends BaseEntity{
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_id")
+    @JoinColumn(name = "party_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Party party;
 
     @OneToMany(mappedBy = "congressman")
@@ -39,6 +41,9 @@ public class Congressman extends BaseEntity{
 
     @OneToMany(mappedBy = "congressman")
     private List<CongressmanLike> congressmanLike;
+
+    @OneToMany(mappedBy = "congressman", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CommitteeCongressman> committeeLinks = new ArrayList<>();
 
     @Column(name = "elect_sort")
     private String electSort;

@@ -1,6 +1,8 @@
 package com.everyones.lawmaking.common.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class BillDfRequest {
     private String billId;
 
@@ -23,12 +26,6 @@ public class BillDfRequest {
     private String billResult;
 
     private int assemblyNumber;
-
-    private String summary;
-
-    private String gptSummary;
-
-    private String briefSummary;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
     private LocalDate proposeDate;

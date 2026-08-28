@@ -13,7 +13,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(uniqueConstraints = @UniqueConstraint(name = "ix_party_follow_unique", columnNames = {"user_id", "party_id"}))
+@Table(name = "PartyFollow", uniqueConstraints = @UniqueConstraint(name = "ix_party_follow_unique", columnNames = {"user_id", "party_id"}))
 public class PartyFollow extends BaseEntity {
 
     @Id
@@ -22,11 +22,11 @@ public class PartyFollow extends BaseEntity {
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_id")
+    @JoinColumn(name = "party_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Party party;
 
 }

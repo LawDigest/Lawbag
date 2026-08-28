@@ -100,17 +100,14 @@ public interface BillRepository extends JpaRepository<Bill, String>, BillReposit
             "AND b.id != :billId ")
     List<Bill> findSimilarBills(@Param("billName") String billName, @Param("billId") String billId);
 
-    @Query(value = "select bill_id\n" +
-            "from\n" +
-            "(select bill_id, propose_date, match(bill_name) against(concat('*',:keyword,'*') in boolean mode) as bill_name_rel,\n" +
-            "match(brief_summary) against(concat('*',:keyword,'*') in boolean mode) as brief_summary_rel,\n" +
-            "match(gpt_summary) against(concat('*',:keyword,'*') in boolean mode) as gpt_summary_rel,\n" +
-            "match(summary) against(concat('*',:keyword,'*') in boolean mode) as summary_rel\n" +
-            "from Bill) search\n" +
-            "where bill_name_rel >0 or brief_summary_rel>0 or gpt_summary_rel>0 or summary_rel > 0\n" +
-            "order by propose_date desc, bill_name_rel desc, brief_summary_rel desc, gpt_summary_rel desc, summary_rel desc ;"
-            , nativeQuery = true)
-    Slice<String> findBillByKeyword(Pageable pageable,@Param("keyword") String keyword);
+    @Query(value = "SELECT bill_id " +
+            "FROM Bill " +
+            "WHERE MATCH(brief_summary, gpt_summary) AGAINST(:keyword IN BOOLEAN MODE) " +
+            "ORDER BY propose_date DESC, " +
+            "         MATCH(brief_summary, gpt_summary) AGAINST(:keyword IN BOOLEAN MODE) DESC",
+            nativeQuery = true)
+    Slice<String> findBillByKeyword(Pageable pageable, @Param("keyword") String keyword);
+
 
 
 

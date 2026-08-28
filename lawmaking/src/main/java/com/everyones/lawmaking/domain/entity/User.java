@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 @SuperBuilder
 @Builder
+@Table(name = "User")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
@@ -22,7 +23,7 @@ public class User extends BaseEntity {
     private long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "auth_info_id")
+    @JoinColumn(name = "auth_info_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private AuthInfo authInfo;
 
     @OneToMany(mappedBy = "user")

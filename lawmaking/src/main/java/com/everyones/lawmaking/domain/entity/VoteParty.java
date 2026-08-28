@@ -11,6 +11,7 @@ import lombok.*;
 @Entity
 @Data
 @Builder
+@Table(name = "VoteParty")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -22,11 +23,11 @@ public class VoteParty extends BaseEntity{
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bill_id")
+    @JoinColumn(name = "bill_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Bill bill;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "party_id")
+    @JoinColumn(name = "party_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Party party;
 
     @NotNull

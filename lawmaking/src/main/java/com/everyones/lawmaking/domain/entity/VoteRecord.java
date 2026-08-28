@@ -10,6 +10,7 @@ import lombok.*;
 @Entity
 @Data
 @Builder
+@Table(name = "VoteRecord")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -21,7 +22,7 @@ public class VoteRecord extends BaseEntity{
     private long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "bill_id")
+    @JoinColumn(name = "bill_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Bill bill;
 
     @NotNull

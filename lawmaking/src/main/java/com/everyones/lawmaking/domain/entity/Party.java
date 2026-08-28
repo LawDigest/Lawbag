@@ -14,6 +14,7 @@ import java.util.List;
 @Data
 @ToString
 @SuperBuilder
+@Table(name = "Party")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)

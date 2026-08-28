@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Entity
 @Data
 @Builder
+@Table(name = "BillTimeline")
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
@@ -22,7 +23,7 @@ public class BillTimeline extends BaseEntity{
     private long id;
 
     @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name = "bill_id")
+    @JoinColumn(name = "bill_id",foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Bill bill;
 
     @Column(name = "bill_result")
