@@ -74,7 +74,7 @@ public class AuthService {
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, REFRESH_TOKEN);
         CookieUtil.deleteCookie(httpServletRequest, httpServletResponse, JSESSIONID);
 
-        CookieUtil.addCookie(httpServletResponse, REFRESH_TOKEN, tokenMap.get("refreshToken"), refreshTokenExpiry);
+        CookieUtil.addCookie(httpServletResponse, REFRESH_TOKEN, tokenMap.get("refreshToken"), refreshTokenExpiry, cookieDomain);
         CookieUtil.addCookieForClient(httpServletResponse, ACCESS_TOKEN, tokenMap.get("accessToken"), accessTokenExpiry, cookieDomain);
     }
     private String getCookieValue(HttpServletRequest httpServletRequest, String name) {

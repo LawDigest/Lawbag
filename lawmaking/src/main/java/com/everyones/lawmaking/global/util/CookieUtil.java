@@ -23,13 +23,14 @@ public class CookieUtil {
         return Optional.empty();
     }
 
-    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge) {
+    public static void addCookie(HttpServletResponse response, String name, String value, int maxAge,String domain) {
         var cookie = ResponseCookie.from(name,value)
         .path("/")
         .httpOnly(true)
         .secure(true)
         .maxAge(maxAge)
         .sameSite("None")
+        .domain(domain)
         .build();
         response.addHeader("Set-Cookie",cookie.toString());
     }
